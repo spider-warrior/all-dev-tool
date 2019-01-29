@@ -1,8 +1,8 @@
-package cn.t.tool.dbtool.oracle;
+package cn.t.tool.rmdbtool.oracle;
 
-import cn.t.tool.dbtool.common.DbDao;
-import cn.t.tool.dbtool.common.ResultHolder;
-import cn.t.tool.dbtool.common.SqlExecution;
+import cn.t.tool.rmdbtool.common.DbDao;
+import cn.t.tool.rmdbtool.common.ResultHolder;
+import cn.t.tool.rmdbtool.common.SqlExecution;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

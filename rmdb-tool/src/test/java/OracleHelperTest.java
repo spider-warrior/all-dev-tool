@@ -1,5 +1,5 @@
-import cn.t.tool.dbtool.OracleHelper;
-import cn.t.tool.dbtool.common.DbConfiguration;
+import cn.t.tool.rmdbtool.OracleHelper;
+import cn.t.tool.rmdbtool.common.DbConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

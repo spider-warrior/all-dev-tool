@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.common;
+package cn.t.tool.rmdbtool.common;
 
 /**
  * DB configuration
@@ -56,4 +56,5 @@ public class DbConfiguration {
     public void setDriverName(String driverName) {
         this.driverName = driverName;
     }
+
 }

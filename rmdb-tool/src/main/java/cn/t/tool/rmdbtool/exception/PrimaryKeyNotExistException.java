@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.exception;
+package cn.t.tool.rmdbtool.exception;
 
 /**
  * 主键不存在异常

@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.exception;
+package cn.t.tool.rmdbtool.exception;
 
 public class RequiredParamMissingException extends Exception {
 

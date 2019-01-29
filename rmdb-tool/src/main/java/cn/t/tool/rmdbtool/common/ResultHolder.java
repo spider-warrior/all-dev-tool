@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.common;
+package cn.t.tool.rmdbtool.common;
 
 public class ResultHolder<T> {
 

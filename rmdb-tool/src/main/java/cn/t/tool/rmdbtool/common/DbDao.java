@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.common;
+package cn.t.tool.rmdbtool.common;
 
 import java.sql.SQLException;
 import java.util.List;

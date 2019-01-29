@@ -1,4 +1,4 @@
-package cn.t.tool.dbtool.common;
+package cn.t.tool.rmdbtool.common;
 
 import java.sql.*;
 import java.util.Map;
@@ -41,5 +41,9 @@ public class SqlExecution {
 
     public SqlExecution(DbConfiguration configuration) {
         jdbcHelper = new JdbcHelper(configuration);
+    }
+
+    public JdbcHelper getJdbcHelper() {
+        return jdbcHelper;
     }
 }

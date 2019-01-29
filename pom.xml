@@ -10,6 +10,7 @@
     <modules>
         <module>rmdb-tool</module>
         <module>redis-tool</module>
+        <module>integrated-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
@@ -43,7 +44,12 @@
         <dependencies>
             <dependency>
                 <groupId>cn.t</groupId>
-                <artifactId>dev-tool</artifactId>
+                <artifactId>rmdb-tool</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.t</groupId>
+                <artifactId>redis-tool</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

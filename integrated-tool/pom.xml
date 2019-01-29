@@ -9,14 +9,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>redis-tool</artifactId>
+    <artifactId>integrated-tool</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>2.9.0</version>
+            <groupId>cn.t</groupId>
+            <artifactId>rmdb-tool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>redis-tool</artifactId>
         </dependency>
     </dependencies>
 </project>
