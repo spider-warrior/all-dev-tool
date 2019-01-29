@@ -8,7 +8,7 @@
     <artifactId>dev-tool</artifactId>
     <version>${revision}</version>
     <modules>
-        <module>db-tool</module>
+        <module>rmdb-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
