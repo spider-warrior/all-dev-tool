@@ -9,6 +9,7 @@
     <version>${revision}</version>
     <modules>
         <module>rmdb-tool</module>
+        <module>redis-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
