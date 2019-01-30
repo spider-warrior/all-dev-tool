@@ -12,6 +12,11 @@
     <artifactId>integrated-tool</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <main-class>cn.t.tool.integratedtool.SynRedisPrimaryKeyHelper</main-class>
+        <output-dir>${project.build.directory}/libs</output-dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.t</groupId>
@@ -22,4 +27,49 @@
             <artifactId>redis-tool</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>integrated-tool</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>${output-dir}</classpathPrefix>
+                            <mainClass>${main-class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${output-dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

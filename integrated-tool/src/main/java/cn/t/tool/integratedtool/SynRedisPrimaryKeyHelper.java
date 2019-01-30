@@ -135,20 +135,22 @@ public class SynRedisPrimaryKeyHelper {
 
     private static PrimaryKeyConfiguration tryPrimaryKeyConfiguration() {
         Properties properties = new Properties();
+        PrimaryKeyConfiguration primaryKeyConfiguration = new PrimaryKeyConfiguration();
         try (
-            InputStream is = FileUtil.getResourceInputStream(JedisHelper.class, "/primary-key-cache.properties")
+            InputStream is = FileUtil.getResourceInputStream(SynRedisPrimaryKeyHelper.class, "/primary-key-cache.properties")
         ) {
             if(is == null) {
                 logger.info("redis集群配置文件未找到: {}, 使用默认配置", "primary-key-cache.properties");
+                primaryKeyConfiguration.setDbPrefix("GET_PRIMERYKEY_OF_TABLE_DB_");
+                primaryKeyConfiguration.setTablePrefix("_DB_");
             } else {
                 properties.load(is);
+                primaryKeyConfiguration.setDbPrefix(properties.getProperty("db-prefix", "GET_PRIMERYKEY_OF_TABLE_DB_"));
+                primaryKeyConfiguration.setTablePrefix(properties.getProperty("table-prefix", "_DB_"));
             }
         } catch (IOException e) {
             logger.error("", e);
         }
-        PrimaryKeyConfiguration primaryKeyConfiguration = new PrimaryKeyConfiguration();
-        primaryKeyConfiguration.setDbPrefix(properties.getProperty("db-prefix", "GET_PRIMERYKEY_OF_TABLE_DB_"));
-        primaryKeyConfiguration.setTablePrefix(properties.getProperty("table-prefix", "_DB_"));
         return primaryKeyConfiguration;
     }
 }
