@@ -1,5 +1,8 @@
 package cn.t.tool.rmdbtool.common;
 
+import cn.t.tool.rmdbtool.common.constraint.Constraint;
+import cn.t.tool.rmdbtool.common.constraint.ConstraintQueryParam;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,9 +14,9 @@ public interface DbDao {
     long queryMaxId(String tableName, String idColumn) throws SQLException, ClassNotFoundException;
 
     /**
-     * 获取主键列
-     */
-    String getPrimaryKeyName(String tableName) throws SQLException, ClassNotFoundException;
+     * 获取约束
+     * */
+    List<Constraint> queryConstraint(ConstraintQueryParam param) throws SQLException, ClassNotFoundException;
 
     /**
      * 检查表是否存在

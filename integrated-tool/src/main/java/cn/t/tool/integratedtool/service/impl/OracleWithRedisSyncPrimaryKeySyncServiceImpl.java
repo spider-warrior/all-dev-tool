@@ -4,6 +4,7 @@ import cn.t.tool.integratedtool.common.PrimaryKeyConfiguration;
 import cn.t.tool.integratedtool.service.PrimaryKeySyncService;
 import cn.t.tool.redistool.JedisHelper;
 import cn.t.tool.rmdbtool.OracleHelper;
+import cn.t.tool.rmdbtool.common.constraint.Constraint;
 import cn.t.tool.rmdbtool.exception.ColumnNotExistException;
 import cn.t.tool.rmdbtool.exception.RequiredParamMissingException;
 import cn.t.tool.rmdbtool.exception.TableNotExistException;
@@ -34,7 +35,10 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
                 throw new TableNotExistException(tableName);
             }
             if (idColumn == null || idColumn.length() == 0) {
-                idColumn = oracleHelper.getPrimaryKeyName(tableName);
+                Constraint constraint = oracleHelper.getPrimaryKeyConstraint(tableName);
+                if(constraint != null) {
+                    idColumn = constraint.getColumnName();
+                }
             }
             if (idColumn == null) {
                 throw new RequiredParamMissingException("主键");

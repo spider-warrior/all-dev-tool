@@ -1,5 +1,5 @@
 import cn.t.tool.rmdbtool.OracleHelper;
-import cn.t.tool.rmdbtool.common.DbConfiguration;
+import cn.t.tool.rmdbtool.common.constraint.Constraint;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,21 +12,10 @@ import java.util.List;
 public class OracleHelperTest {
 
     private static final Logger logger = LoggerFactory.getLogger(OracleHelperTest.class);
-    private OracleHelper oracleHelper;
+    private OracleHelper oracleHelper = new OracleHelper();
 
     @Before
-    public void init() {
-        String username = "dev_test";
-        String password = "6sAKodk1UKqYfH7hLriR";
-        String jdbcUrl = "jdbc:oracle:thin:@192.168.14.39:1521:ORCL";
-        String driverName = "oracle.jdbc.OracleDriver";
-        DbConfiguration configuration = new DbConfiguration();
-        configuration.setUsername(username);
-        configuration.setPassword(password);
-        configuration.setJdbcUrl(jdbcUrl);
-        configuration.setDriverName(driverName);
-        oracleHelper = new OracleHelper(configuration);
-    }
+    public void init() {}
 
     @Test
     public void queryAllTablesTest() throws SQLException, ClassNotFoundException {
@@ -67,8 +56,22 @@ public class OracleHelperTest {
         }
     }
 
-    @After
-    public void destroy() {
-
+    @Test
+    public void queryConstraintTest() throws SQLException, ClassNotFoundException {
+        String tableName = "student";
+        Constraint constraint = oracleHelper.getPrimaryKeyConstraint(tableName);
+        System.out.println(constraint);
     }
+
+    @Test
+    public void getTableConstraintListTest() throws SQLException, ClassNotFoundException {
+        String tableName = "student";
+        List<Constraint> constraintList = oracleHelper.getTableConstraintList(tableName);
+        for(Constraint constraint: constraintList) {
+            System.out.println("constraint: " + constraint);
+        }
+    }
+
+    @After
+    public void destroy() { }
 }

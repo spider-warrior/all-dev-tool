@@ -4,7 +4,11 @@ package cn.t.tool.rmdbtool;
 import cn.t.tool.rmdbtool.common.DbConfiguration;
 import cn.t.tool.rmdbtool.common.DbDao;
 import cn.t.tool.rmdbtool.common.SqlExecution;
+import cn.t.tool.rmdbtool.common.constraint.Constraint;
+import cn.t.tool.rmdbtool.common.constraint.ConstraintQueryParam;
+import cn.t.tool.rmdbtool.common.constraint.ConstraintType;
 import cn.t.tool.rmdbtool.oracle.OracleDaoImpl;
+import cn.t.util.common.CollectionUtil;
 import cn.t.util.io.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +26,22 @@ public class OracleHelper {
     private DbDao dbDao;
     private final String dbName;
 
+    public Constraint getPrimaryKeyConstraint(String tableName) throws SQLException, ClassNotFoundException {
+        ConstraintQueryParam constraintQueryParam = new ConstraintQueryParam();
+        constraintQueryParam.setTableName(tableName);
+        constraintQueryParam.setType(ConstraintType.PRIMARY_KEY.value);
+        List<Constraint> constraintList = dbDao.queryConstraint(constraintQueryParam);
+        if(CollectionUtil.isEmpty(constraintList)) {
+            return null;
+        } else {
+            return constraintList.get(0);
+        }
+    }
 
-    public String getPrimaryKeyName(String tableName) throws SQLException, ClassNotFoundException {
-        return dbDao.getPrimaryKeyName(tableName);
+    public List<Constraint> getTableConstraintList(String tableName) throws SQLException, ClassNotFoundException {
+        ConstraintQueryParam constraintQueryParam = new ConstraintQueryParam();
+        constraintQueryParam.setTableName(tableName);
+        return dbDao.queryConstraint(constraintQueryParam);
     }
 
     public boolean checkTableExist(String tableName) throws SQLException, ClassNotFoundException {
