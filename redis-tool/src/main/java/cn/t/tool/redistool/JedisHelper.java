@@ -1,17 +1,23 @@
 package cn.t.tool.redistool;
 
 import cn.t.tool.redistool.common.RedisConfiguration;
+import cn.t.util.io.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedHashSet;
+import java.util.Properties;
+import java.util.Set;
 
 public class JedisHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisHelper.class);
 
-    private final JedisCluster jc;
+    private JedisCluster jc;
 
     public JedisCluster getJedisCluster() {
         return jc;
@@ -27,5 +33,32 @@ public class JedisHelper {
 
     public JedisHelper(RedisConfiguration redisConfiguration) {
         jc = new JedisCluster(redisConfiguration.getHosts());
+    }
+
+    public JedisHelper() {
+        this(tryRedisConfiguration());
+    }
+
+    private static RedisConfiguration tryRedisConfiguration() {
+        Properties properties = new Properties();
+        try (
+            InputStream is = FileUtil.getResourceInputStream(JedisHelper.class, "/redis-cluster.properties")
+        ) {
+            if(is == null) {
+                logger.error("redis cluster创建失败, 未找到默认的配置文件: {}", "redis-cluster.properties");
+            } else {
+                properties.load(is);
+            }
+        } catch (IOException e) {
+            logger.error("", e);
+        }
+        String hostStr = properties.getProperty("redis.host", "localhost");
+        String[] hosts = hostStr.split(",");
+        Set<HostAndPort> hostAndPortSet = new LinkedHashSet<>();
+        for (String host : hosts) {
+            String[] elements = host.split(":");
+            hostAndPortSet.add(new HostAndPort(elements[0], Integer.parseInt(elements[1])));
+        }
+        return new RedisConfiguration(hostAndPortSet);
     }
 }

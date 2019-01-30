@@ -1,38 +1,28 @@
 package cn.t.tool.redistool;
 
-import cn.t.tool.redistool.common.RedisConfiguration;
-import redis.clients.jedis.HostAndPort;
-
 import java.util.*;
 
 public class JedisUserInterface {
 
-
-    private static final RedisConfiguration configuration = new RedisConfiguration(
-        new HostAndPort("192.168.14.45", 6381),
-        new HostAndPort("192.168.14.45", 6382),
-        new HostAndPort("192.168.14.45", 6383),
-        new HostAndPort("192.168.14.45", 6384),
-        new HostAndPort("192.168.14.45", 6385),
-        new HostAndPort("192.168.14.45", 6386)
-    );
-
-    private static final JedisHelper jedisHelper = new JedisHelper(configuration);
+    private static final JedisHelper jedisHelper = new JedisHelper();
 
     public static void main(String[] args) {
 
         String KEY_QUERY = "1";
-        String KEY_DEL = "2";
-        String KEY_EXIST = "3";
+        String KEY_SET = "2";
+        String KEY_DEL = "3";
+        String KEY_EXIST = "4";
         String EXIT = "99";
 
         List<String> keyOperations = new ArrayList<>();
         keyOperations.add(KEY_QUERY);
+        keyOperations.add(KEY_SET);
         keyOperations.add(KEY_DEL);
         keyOperations.add(KEY_EXIST);
 
         Map<String, String> functions = new LinkedHashMap<>();
         functions.put(KEY_QUERY, "key查询");
+        functions.put(KEY_SET, "key设置");
         functions.put(KEY_DEL, "key删除");
         functions.put(KEY_EXIST, "key是否存在");
         functions.put(EXIT, "退出");
@@ -56,6 +46,10 @@ public class JedisUserInterface {
                     String key = scanner.nextLine();
                     if (KEY_QUERY.equals(command)) {
                         System.out.println(jedisHelper.getJedisCluster().get(key));
+                    } else if (KEY_SET.equals(command)) {
+                        System.out.println("请输入值:");
+                        String value = scanner.nextLine();
+                        jedisHelper.getJedisCluster().set(key, value);
                     } else if (KEY_DEL.equals(command)) {
                         jedisHelper.getJedisCluster().del(key);
                         System.out.println("del ok");

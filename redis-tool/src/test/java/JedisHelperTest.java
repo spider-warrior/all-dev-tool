@@ -33,7 +33,6 @@ public class JedisHelperTest {
         logger.info("jedis cluster: {}", jedisHelper.getJedisCluster());
     }
 
-
     @After
     public void destroy() throws IOException {
         jedisHelper.getJedisCluster().close();

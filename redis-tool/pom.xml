@@ -12,11 +12,67 @@
     <artifactId>redis-tool</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <main-class>cn.t.tool.redistool.JedisUserInterface</main-class>
+        <output-dir>${project.build.directory}/libs</output-dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>2.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>doc-util</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <finalName>redis-tool</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>${output-dir}</classpathPrefix>
+                            <mainClass>${main-class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${output-dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
 </project>
