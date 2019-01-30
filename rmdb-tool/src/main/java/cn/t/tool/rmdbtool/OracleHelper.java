@@ -5,11 +5,19 @@ import cn.t.tool.rmdbtool.common.DbConfiguration;
 import cn.t.tool.rmdbtool.common.DbDao;
 import cn.t.tool.rmdbtool.common.SqlExecution;
 import cn.t.tool.rmdbtool.oracle.OracleDaoImpl;
+import cn.t.util.io.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 public class OracleHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(OracleHelper.class);
 
     private DbDao dbDao;
     private final String dbName;
@@ -47,5 +55,30 @@ public class OracleHelper {
         SqlExecution sqlExecution = new SqlExecution(configuration);
         dbDao = new OracleDaoImpl(sqlExecution);
         dbName = sqlExecution.getJdbcHelper().getDbName();
+    }
+
+    public OracleHelper() {
+        this(tryOracleConfiguration());
+    }
+
+    private static DbConfiguration tryOracleConfiguration() {
+        Properties properties = new Properties();
+        try (
+            InputStream is = FileUtil.getResourceInputStream(OracleHelper.class, "/oracle.properties")
+        ) {
+            if(is == null) {
+                logger.error("oracle数据库配置文件未找: {}", "oracle.properties");
+            } else {
+                properties.load(is);
+            }
+        } catch (IOException e) {
+            logger.error("", e);
+        }
+        DbConfiguration dbConfiguration = new DbConfiguration();
+        dbConfiguration.setUsername(properties.getProperty("username"));
+        dbConfiguration.setPassword(properties.getProperty("password"));
+        dbConfiguration.setJdbcUrl(properties.getProperty("jdbcUrl"));
+        dbConfiguration.setDriverName(properties.getProperty("driverName"));
+        return dbConfiguration;
     }
 }

@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>cn.t</groupId>
-            <artifactId>doc-util</artifactId>
+            <artifactId>io-util</artifactId>
             <version>1.0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>

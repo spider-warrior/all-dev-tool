@@ -4,19 +4,24 @@ import cn.t.tool.integratedtool.common.PrimaryKeyConfiguration;
 import cn.t.tool.integratedtool.service.PrimaryKeySyncService;
 import cn.t.tool.integratedtool.service.impl.OracleWithRedisSyncPrimaryKeySyncServiceImpl;
 import cn.t.tool.redistool.JedisHelper;
-import cn.t.tool.redistool.common.RedisConfiguration;
 import cn.t.tool.rmdbtool.OracleHelper;
-import cn.t.tool.rmdbtool.common.DbConfiguration;
 import cn.t.tool.rmdbtool.exception.ColumnNotExistException;
 import cn.t.tool.rmdbtool.exception.RequiredParamMissingException;
 import cn.t.tool.rmdbtool.exception.TableNotExistException;
-import redis.clients.jedis.HostAndPort;
+import cn.t.util.io.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class SynRedisPrimaryKeyHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(SynRedisPrimaryKeyHelper.class);
 
     private static final String SYNCHRONIZE_ALL_PRIMARY_KEY = "1";
     private static final String SYNCHRONIZE_PRIMARY_KEY = "2";
@@ -32,35 +37,7 @@ public class SynRedisPrimaryKeyHelper {
         }
     };
     private static final Scanner scanner = new Scanner(System.in);
-    private static final PrimaryKeySyncService PRIMARY_KEY_SYNC_SERVICE;
-
-    static {
-        String username = "dev_test";
-        String password = "6sAKodk1UKqYfH7hLriR";
-        String jdbcUrl = "jdbc:oracle:thin:@192.168.14.39:1521:ORCL";
-        String driverName = "oracle.jdbc.OracleDriver";
-        DbConfiguration oracleConfiguration = new DbConfiguration();
-        oracleConfiguration.setUsername(username);
-        oracleConfiguration.setPassword(password);
-        oracleConfiguration.setJdbcUrl(jdbcUrl);
-        oracleConfiguration.setDriverName(driverName);
-
-        RedisConfiguration redisConfiguration = new RedisConfiguration(
-            new HostAndPort("192.168.14.45", 6381),
-            new HostAndPort("192.168.14.45", 6382),
-            new HostAndPort("192.168.14.45", 6383),
-            new HostAndPort("192.168.14.45", 6384),
-            new HostAndPort("192.168.14.45", 6385),
-            new HostAndPort("192.168.14.45", 6386)
-        );
-
-        PrimaryKeyConfiguration primaryKeyConfiguration = new PrimaryKeyConfiguration();
-        primaryKeyConfiguration.setDbPrefix("GET_PRIMERYKEY_OF_TABLE_DB_");
-        primaryKeyConfiguration.setTablePrefix("_DB_");
-
-        PRIMARY_KEY_SYNC_SERVICE = new OracleWithRedisSyncPrimaryKeySyncServiceImpl(new OracleHelper(oracleConfiguration), new JedisHelper(redisConfiguration), primaryKeyConfiguration);
-    }
-
+    private static final PrimaryKeySyncService PRIMARY_KEY_SYNC_SERVICE = new OracleWithRedisSyncPrimaryKeySyncServiceImpl(new OracleHelper(), new JedisHelper(), tryPrimaryKeyConfiguration());
 
 
     public static void main(String[] args) {
@@ -82,11 +59,12 @@ public class SynRedisPrimaryKeyHelper {
                 } else if (OTHERS.equals(command)) {
                     System.out.println("暂无其他功能");
                 } else if (EXIT.equals(command)) {
-                    System.out.println("app is stopping....");
                     break;
                 }
+                System.out.println("==========================================================================");
             }
         } finally {
+            System.out.println("app is stopping....");
             PRIMARY_KEY_SYNC_SERVICE.destroy();
         }
     }
@@ -153,5 +131,24 @@ public class SynRedisPrimaryKeyHelper {
                 return input;
             }
         }
+    }
+
+    private static PrimaryKeyConfiguration tryPrimaryKeyConfiguration() {
+        Properties properties = new Properties();
+        try (
+            InputStream is = FileUtil.getResourceInputStream(JedisHelper.class, "/primary-key-cache.properties")
+        ) {
+            if(is == null) {
+                logger.info("redis集群配置文件未找到: {}, 使用默认配置", "primary-key-cache.properties");
+            } else {
+                properties.load(is);
+            }
+        } catch (IOException e) {
+            logger.error("", e);
+        }
+        PrimaryKeyConfiguration primaryKeyConfiguration = new PrimaryKeyConfiguration();
+        primaryKeyConfiguration.setDbPrefix(properties.getProperty("db-prefix", "GET_PRIMERYKEY_OF_TABLE_DB_"));
+        primaryKeyConfiguration.setTablePrefix(properties.getProperty("table-prefix", "_DB_"));
+        return primaryKeyConfiguration;
     }
 }

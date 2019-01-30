@@ -47,7 +47,6 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
             if (targetId < 1) {
                 targetId = oracleHelper.queryMaxId(tableName, idColumn) + 1;
             }
-            //GET_PRIMERYKEY_OF_TABLE_DB_XXX_ORCL_DB_XXX
             //GET_PRIMERYKEY_OF_TABLE_DB_ORCL_DB_XF_INSPECTION_PLAN
             if (key == null || key.length() == 0) {
                 key = (primaryKeyConfiguration.getDbPrefix().concat(oracleHelper.getDbName()).concat(primaryKeyConfiguration.getTablePrefix()).concat(tableName)).toUpperCase();
@@ -70,10 +69,6 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
         try {
             List<String> tableNames = oracleHelper.queryAllTables();
             for (String tableName : tableNames) {
-
-                if ("XF_APPS".equals(tableName)) {
-                    System.out.println();
-                }
                 try {
                     boolean success = synchronizePrimaryKey(tableName, null, -1, null);
                     if (success) {

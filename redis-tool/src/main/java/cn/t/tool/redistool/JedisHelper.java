@@ -45,7 +45,7 @@ public class JedisHelper {
             InputStream is = FileUtil.getResourceInputStream(JedisHelper.class, "/redis-cluster.properties")
         ) {
             if(is == null) {
-                logger.error("redis cluster创建失败, 未找到默认的配置文件: {}", "redis-cluster.properties");
+                logger.error("redis集群配置文件未找到: {}", "redis-cluster.properties");
             } else {
                 properties.load(is);
             }

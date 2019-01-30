@@ -15,8 +15,13 @@
     <dependencies>
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>6</version>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>io-util</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
