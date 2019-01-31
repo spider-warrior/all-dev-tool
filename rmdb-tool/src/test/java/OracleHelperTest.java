@@ -59,17 +59,23 @@ public class OracleHelperTest {
     @Test
     public void queryConstraintTest() throws SQLException, ClassNotFoundException {
         String tableName = "student";
-        Constraint constraint = oracleHelper.getPrimaryKeyConstraint(tableName);
+        Constraint constraint = oracleHelper.queryPrimaryKeyConstraint(tableName);
         System.out.println(constraint);
     }
 
     @Test
     public void getTableConstraintListTest() throws SQLException, ClassNotFoundException {
         String tableName = "student";
-        List<Constraint> constraintList = oracleHelper.getTableConstraintList(tableName);
+        List<Constraint> constraintList = oracleHelper.queryTableConstraintList(tableName);
         for(Constraint constraint: constraintList) {
             System.out.println("constraint: " + constraint);
         }
+    }
+
+    @Test
+    public void queryTableColumnListTest() throws SQLException, ClassNotFoundException {
+        String tableName = "student";
+        System.out.println(oracleHelper.queryCreateTableStatement(tableName));
     }
 
     @After

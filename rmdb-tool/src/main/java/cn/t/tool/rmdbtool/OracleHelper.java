@@ -26,7 +26,7 @@ public class OracleHelper {
     private DbDao dbDao;
     private final String dbName;
 
-    public Constraint getPrimaryKeyConstraint(String tableName) throws SQLException, ClassNotFoundException {
+    public Constraint queryPrimaryKeyConstraint(String tableName) throws SQLException, ClassNotFoundException {
         ConstraintQueryParam constraintQueryParam = new ConstraintQueryParam();
         constraintQueryParam.setTableName(tableName);
         constraintQueryParam.setType(ConstraintType.PRIMARY_KEY.value);
@@ -38,10 +38,14 @@ public class OracleHelper {
         }
     }
 
-    public List<Constraint> getTableConstraintList(String tableName) throws SQLException, ClassNotFoundException {
+    public List<Constraint> queryTableConstraintList(String tableName) throws SQLException, ClassNotFoundException {
         ConstraintQueryParam constraintQueryParam = new ConstraintQueryParam();
         constraintQueryParam.setTableName(tableName);
         return dbDao.queryConstraint(constraintQueryParam);
+    }
+
+    public String queryCreateTableStatement(String tableName) throws SQLException, ClassNotFoundException {
+        return dbDao.queryCreateTableStatement(tableName);
     }
 
     public boolean checkTableExist(String tableName) throws SQLException, ClassNotFoundException {
@@ -60,7 +64,7 @@ public class OracleHelper {
         return dbDao.queryAllViews();
     }
 
-    public String getDbName() {
+    public String queryDbName() {
         return dbName;
     }
 

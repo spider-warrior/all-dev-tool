@@ -38,4 +38,9 @@ public interface DbDao {
      */
     List<String> queryAllViews() throws SQLException, ClassNotFoundException;
 
+    /**
+     * 查询建表语句
+     * */
+    String queryCreateTableStatement(String tableName) throws SQLException, ClassNotFoundException;
+
 }

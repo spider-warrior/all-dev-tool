@@ -35,7 +35,7 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
                 throw new TableNotExistException(tableName);
             }
             if (idColumn == null || idColumn.length() == 0) {
-                Constraint constraint = oracleHelper.getPrimaryKeyConstraint(tableName);
+                Constraint constraint = oracleHelper.queryPrimaryKeyConstraint(tableName);
                 if(constraint != null) {
                     idColumn = constraint.getColumnName();
                 }
@@ -53,7 +53,7 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
             }
             //GET_PRIMERYKEY_OF_TABLE_DB_ORCL_DB_XF_INSPECTION_PLAN
             if (key == null || key.length() == 0) {
-                key = (primaryKeyConfiguration.getDbPrefix().concat(oracleHelper.getDbName()).concat(primaryKeyConfiguration.getTablePrefix()).concat(tableName)).toUpperCase();
+                key = (primaryKeyConfiguration.getDbPrefix().concat(oracleHelper.queryDbName()).concat(primaryKeyConfiguration.getTablePrefix()).concat(tableName)).toUpperCase();
                 System.out.println("prepared key: " + key + ", value: " + targetId);
             }
             jedisHelper.getJedisCluster().set(key, String.valueOf(targetId));
