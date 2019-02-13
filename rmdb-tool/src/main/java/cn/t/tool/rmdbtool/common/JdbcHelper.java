@@ -1,17 +1,21 @@
 package cn.t.tool.rmdbtool.common;
 
-import java.sql.*;
+import org.apache.commons.dbcp.BasicDataSource;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class JdbcHelper {
     private static final ThreadLocal<Connection> tt = new ThreadLocal<>();
+    private final BasicDataSource dataSource;
     private final DbConfiguration dbConfiguration;
 
-    public Connection getConnection() throws SQLException, ClassNotFoundException {
+    public Connection getConnection() throws SQLException {
         Connection conn = tt.get();
         if (conn == null) {
-            Class.forName(dbConfiguration.getDriverName());
-            conn = DriverManager.getConnection(dbConfiguration.getJdbcUrl(),
-                dbConfiguration.getUsername(), dbConfiguration.getPassword());
+            conn = dataSource.getConnection();
             tt.set(conn);
         }
         return conn;
@@ -87,5 +91,10 @@ public class JdbcHelper {
 
     public JdbcHelper(DbConfiguration dbConfiguration) {
         this.dbConfiguration = dbConfiguration;
+        dataSource = new BasicDataSource();
+        dataSource.setUsername(dbConfiguration.getUsername());
+        dataSource.setPassword(dbConfiguration.getPassword());
+        dataSource.setUrl(dbConfiguration.getJdbcUrl());
+        dataSource.setDriverClassName(dbConfiguration.getDriverName());
     }
 }
