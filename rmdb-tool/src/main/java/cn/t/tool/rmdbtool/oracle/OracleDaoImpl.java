@@ -131,22 +131,20 @@ public class OracleDaoImpl implements DbDao {
     public String queryCreateTableStatement(String tableName) throws SQLException, ClassNotFoundException {
         String prepareSql =
             "BEGIN " +
-            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'STORAGE', false);" +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'STORAGE', true);" +
             "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SEGMENT_ATTRIBUTES', false);" +
-            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR', false);" +
-            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'PRETTY', false);" +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR', true);" +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'PRETTY', true);" +
             "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'TABLESPACE', true);" +
             "END;";
-        List<String> prepareSqlList = new ArrayList<>();
-        prepareSqlList.add(prepareSql);
         Map<Integer, String> param = new HashMap<>();
         param.put(1, tableName.toUpperCase());
         ResultHolder<String> resultHolder = new ResultHolder<>();
-        sqlExecution.executeCall(prepareSqlList, "SELECT DBMS_METADATA.GET_DDL('TABLE', ?) FROM DUAL", param, rs -> {
+        sqlExecution.executeSql("SELECT DBMS_METADATA.GET_DDL('TABLE', ?) FROM DUAL", param, rs -> {
             if (rs.next()) {
                 resultHolder.setResult(rs.getString(1));
             }
-        });
+        }, prepareSql);
         return resultHolder.getResult();
     }
 
