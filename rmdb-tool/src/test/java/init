@@ -1,0 +1,308 @@
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (1, .14, '建筑防火', 0, 1, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (2, .2467, '火灾危险源', 0, 1, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (3, .08, '消防设施', 0, 1, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (4, .5333, '建筑动态评分', 0, 1, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (5, .2224, '建筑参数', 0, 1, 1);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (6, .1585, '建筑高度', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (7, .0636, '建筑面积', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (8, .3908, '建筑用途', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (9, .0962, '建筑层数', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (10, .042, '建筑年代', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (11, .5761, '耐火等级', 0, 1, 1);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (12, .122, '结构类型', 0, 1, 11);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (13, .5584, '室内陈设', 0, 1, 11);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (14, .3196, '装饰装修', 0, 1, 11);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (15, .1251, '防火间距及防火分隔', 0, 1, 1);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (16, 1, '建筑内防火间距', 0, 1, 15);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (17, .0764, '安全疏散条件', 0, 1, 1);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (18, .4484, '安全出口数量', 0, 1, 17);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (19, .289, '疏散宽度', 0, 1, 17);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (20, .1823, '疏散距离', 0, 1, 17);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (21, .0803, '应急照明设施', 0, 1, 17);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (22, .3925, '避雷', 0, 1, 2);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (23, .3515, '雷击接闪历史', 0, 1, 22);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (24, .4429, '外部防雷装置', 0, 1, 22);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (25, .1195, '内部防雷装置', 0, 1, 22);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (26, .0861, '内部金属及管线布置', 0, 1, 22);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (27, .6075, '电气设备隐患', 0, 1, 2);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (28, .2301, '电气线路敷设', 0, 1, 27);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (29, .1566, '开关插座安装', 0, 1, 27);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (30, .6133, '电气设备', 0, 1, 27);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (31, .4118, '火灾报警系统', 0, 1, 3);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (32, .4, '火灾探测器', 0, 1, 31);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (33, .3, '手动报警按钮', 0, 1, 31);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (34, .3, '火灾报警控制器和联动装置', 0, 1, 31);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (35, .3713, '消防给水', 0, 1, 3);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (36, 1, '室内消防栓', 0, 1, 35);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (37, .2169, '灭火设施', 0, 1, 3);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (38, .3445, '自动灭火设施', 0, 1, 37);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (39, .5469, '灭火器', 0, 1, 37);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (40, .1086, '其他灭火器材', 0, 1, 37);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (41, .2, '季节因素', 0, 1, 45);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (42, .2, '温度条件', 0, 1, 45);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (43, .3, '湿度条件', 0, 1, 45);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (44, .3, '风力条件', 0, 1, 45);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (45, .0583, '气象因素', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (46, .0291, '室内活动', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (47, .0697, '活动重要性', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (48, .1207, '参加人数', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (49, .0414, '举办时间', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (50, .3478, '活动是否有明火', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (51, .2174, '活动否禁烟', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (52, .203, '引入危险源', 0, 1, 46);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (53, .6505, '报警火情', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (54, .5, '火情发生率', 0, 1, 53);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (55, .5, '建筑内报警占比', 0, 1, 53);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (56, .1456, '隐患危险', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (57, .3, '隐患问题上报', 0, 1, 56);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (58, .4, '隐患问题整改', 0, 1, 56);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (59, .3, '危险品处理', 0, 1, 56);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (60, .0971, '设备故障', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (61, 1, '设备故障率', 0, 1, 60);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (62, .0194, '预案编制', 0, 1, 4);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (63, 1, '火灾应急预案编制', 0, 1, 62);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (64, .1197, '建筑防火', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (65, .1649, '火灾危险源', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (66, .0212, '消防设施', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (67, .0603, '消防安全管理', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (68, .034, '灭火救援', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (69, .6, '动态评分', 0, 2, 0);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (70, .2489, '建筑重要性', 0, 1, 5);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (71, .6208, '防火间距及防火间隔', 0, 2, 64);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (72, 1, '建筑间防火间距', 0, 2, 71);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (73, .3792, '安全疏散条件', 0, 2, 64);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (74, 1, '事故广播系统', 0, 2, 73);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (75, .2683, '避雷', 0, 2, 65);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (76, .5556, '防雷检测系统', 0, 2, 75);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (77, .4444, '避雷设施定期检查', 0, 2, 75);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (78, .1581, '明火', 0, 2, 65);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (79, .1953, '燃灯焚香祭祀', 0, 2, 78);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (80, .3905, '施工作业项目', 0, 2, 78);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (81, .2761, '人员因素影响', 0, 2, 78);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (82, .1381, '其他外部因素', 0, 2, 78);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (83, .4154, '电气设备隐患', 0, 2, 65);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (84, .5556, '电气火灾监控系统', 0, 2, 83);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (85, .4444, '电气防火定期检测', 0, 2, 83);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (86, .1581, '生活用火隐患', 0, 2, 65);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (87, .5, '燃料使用情况', 0, 2, 86);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (88, .25, '燃气泄漏报警系统', 0, 2, 86);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (89, .25, '油烟道定期清洗', 0, 2, 86);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (90, 1, '消防给水', 0, 2, 66);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (91, .2001, '天然水源', 0, 2, 90);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (92, .7999, '室外消防栓', 0, 2, 90);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (93, .1564, '消防安全制度与安全操作规程', 0, 2, 67);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (94, .8, '消防安全管理制度', 0, 2, 93);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (95, .2, '消防安全操作规程', 0, 2, 93);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (96, .2723, '火灾应急预案编制与演练', 0, 2, 67);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (97, .2001, '火灾应急预案合理性', 0, 2, 96);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (98, .7999, '应急演练与元修订', 0, 2, 96);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (99, .2988, '消防设施维护及保养情况', 0, 2, 67);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (100, 1, '消防设施定期检测维保', 0, 2, 99);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (101, .2725, '消防安全培训与人员消防安全素质', 0, 2, 67);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (102, .6667, '员工的消防培训情况', 0, 2, 101);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (103, .3333, '员工的消防安全素质', 0, 2, 101);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (104, .2308, '消防站点', 0, 2, 68);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (105, .6667, '最近的消防站距离', 0, 2, 104);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (106, .3333, '装备配置情况', 0, 2, 104);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (107, .4105, '救援场地和消防车道', 0, 2, 68);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (108, .6667, '消防车道', 0, 2, 107);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (109, .3333, '消防车作业场地', 0, 2, 107);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (110, .3581, '微型消防站', 0, 2, 68);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (111, .5936, '微型消防站建设', 0, 2, 110);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (112, .1571, '装备配置情况', 0, 2, 110);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (113, .2493, '队员培训情况', 0, 2, 110);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (114, .1273, '建筑评分', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (115, 1, '各建筑评分固定总和/建筑数量', 0, 2, 114);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (116, .1636, '报警火情', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (117, 1, '火情发生率', 0, 2, 116);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (118, .1455, '隐患危险', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (119, .2308, '隐患问题上报', 0, 2, 118);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (120, .3846, '隐患问题整改', 0, 2, 118);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (121, .3846, '危险品处理率', 0, 2, 118);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (122, .1273, '巡检执勤', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (123, .1429, '巡检人员活跃度', 0, 2, 122);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (124, .2381, '巡检任务执行率', 0, 2, 122);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (125, .2381, '防火巡查检查', 0, 2, 122);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (126, .0952, '终端巡查人数', 0, 2, 122);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (127, .2857, '消防控制中心人员值守', 0, 2, 122);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (128, .1455, '设备故障', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (129, 1, '设备故障率', 0, 2, 128);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (130, .0909, '预案编制', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (131, 1, '火灾应急预案编制', 0, 2, 130);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (132, .0545, '气象因素', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (133, .2, '季节因素', 0, 2, 132);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (134, .2, '温度条件', 0, 2, 132);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (135, .3, '湿度条件', 0, 2, 132);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (136, .3, '风力条件', 0, 2, 132);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (137, .1455, '活动因素', 0, 2, 69);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (138, .1207, '活动重要性', 0, 2, 137);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (139, .0697, '参加人数', 0, 2, 137);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (140, .0414, '举办时间', 0, 2, 137);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (141, .3478, '活动是否禁烟', 0, 2, 137);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (142, .203, '引入危险源', 0, 2, 137);
+insert into RISK_ASSESS_FACTOR (ID, RATIO, NAME, STATUS, TYPE, PARENTID)
+values (143, .2174, '活动是否有明火', 0, 2, 137);
+
+
+insert into XF_ROLE (ID, RCODE, RNAME, PROLEID, NOTE, STATUS)
+values (2, 'xf_admin', '超级管理员', 0, '超级管理员权限', 1);
+insert into XF_ROLE (ID, RCODE, RNAME, PROLEID, NOTE, STATUS)
+values (3, 'xf_linkman', '单位管理员', 0, '消防负责人权限', 1);
+insert into XF_ROLE (ID, RCODE, RNAME, PROLEID, NOTE, STATUS)
+values (1, 'admin', '创始人', 0, '创始人的权限', 1);
+insert into XF_ROLE (ID, RCODE, RNAME, PROLEID, NOTE, STATUS)
+values (4, 'admin', '巡检员', 0, '巡检员的权限', 1);
+
+
+insert into XF_UNIT (ID, NAME, LOCATION, TELEPHONE, STAFFNUM, CORPORATION, PROPERTY, FIREMENNAME, FIREMENTEL, STATUS, IDCODE, BETWEENTIME, POINTX, POINTY, UNITPOINTX, UNITPOINTY, MAPLEVEL, ROLE, PARENTID, PATH, WORKPUNCH, IMGURL, CREATETIME, ISPOWER, PUNCHTIME, CONTINUEDTIME, ALIAS, IOGO)
+values (1, '管理单位', '广西南宁', '010-123333', 0, '刘建', '监管单位', '王金', '13593368130', 0, null, .5, 0, 0, 0, 0, 0, 0, 0, '0/1', 2, '/xf/api/unit_img/3df248cd-76c8-4728-8346-5bf436103b35.jpg', to_timestamp('21-10-2018 08:50:27.417000', 'dd-mm-yyyy hh24:mi:ss.ff'), 1, 2, 1, null, null);
+
+insert into XF_USER (ID, USERNAME, PASSWORD, SALT, PAYPASSWORD, PAYSALT, CELLPHONE, EMAIL, NICKNAME, STATUS, UNITID, IDCODE, CREATETIME, REVIEW, REVIEWCONTENT, REVIEWID, PINYIN, HEADIMGURL, REVIEWNAME, REVIEWTIME, MESSAGE, UNIONID, OPENID, ORBIT, ROLEID, ROLENAME)
+values (2, '18612532963', '152bd4af40f5ccba5272835957391fad', '16222', '32b981869de552b7654d891c11b8b277', '81073', '18612532963', null, '王金', 1, 1, null, to_timestamp('05-11-2018 11:02:49.000000', 'dd-mm-yyyy hh24:mi:ss.ff'), 0, null, null, 'wangjin', '/xf/api/user_img/ceacca08-77b6-42e6-8a1a-d000ca9a0a02.jpg', null, null, 0, 'ozecexBskAZET9ScjfoYh-5usGb0', null, 0, 1, '创始人');
+
+insert into XF_USER_INFO (ID, USERID, SEX, BIRTHDAY, REALNAME, IDENTIFY, STATUS, ADDRESS, POSITION)
+values (2, 2, 1, to_date('05-11-2018', 'dd-mm-yyyy'), '王金', null, 1, null, null);
+
+
