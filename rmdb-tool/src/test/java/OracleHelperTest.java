@@ -83,7 +83,7 @@ public class OracleHelperTest {
         List<String> statementList = oracleHelper.queryAllCreateTableStatement();
         for(String str: statementList) {
             System.out.println(str);
-            System.out.println("=====================================================================");
+            System.out.println("---------------------------------------------------------------------");
         }
     }
 
