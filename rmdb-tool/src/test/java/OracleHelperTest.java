@@ -78,6 +78,15 @@ public class OracleHelperTest {
         System.out.println(oracleHelper.queryCreateTableStatement(tableName));
     }
 
+    @Test
+    public void queryAllCreateTableStatementTest() throws SQLException, ClassNotFoundException {
+        List<String> statementList = oracleHelper.queryAllCreateTableStatement();
+        for(String str: statementList) {
+            System.out.println(str);
+            System.out.println("=====================================================================");
+        }
+    }
+
     @After
     public void destroy() { }
 }

@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,6 +48,19 @@ public class OracleHelper {
 
     public String queryCreateTableStatement(String tableName) throws SQLException, ClassNotFoundException {
         return dbDao.queryCreateTableStatement(tableName);
+    }
+
+    public List<String> queryAllCreateTableStatement() throws SQLException, ClassNotFoundException {
+        List<String> tableNameList = queryAllTables();
+        if(!CollectionUtil.isEmpty(tableNameList)) {
+            List<String> statementList = new ArrayList<>(tableNameList.size());
+            for(String tableName: tableNameList) {
+                statementList.add(dbDao.queryCreateTableStatement(tableName));
+            }
+            return statementList;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     public boolean checkTableExist(String tableName) throws SQLException, ClassNotFoundException {
