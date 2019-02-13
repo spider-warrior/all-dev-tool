@@ -145,7 +145,25 @@ public class OracleDaoImpl implements DbDao {
                 resultHolder.setResult(rs.getString(1));
             }
         }, prepareSql);
-        return resultHolder.getResult();
+        if(resultHolder.getResult() != null) {
+            StringBuilder commentBuilder = new StringBuilder();
+            sqlExecution.executeSql("SELECT TABLE_NAME, COLUMN_NAME, COMMENTS FROM USER_COL_COMMENTS WHERE TABLE_NAME = ?", param, rs -> {
+                while (rs.next()) {
+                    String tName = rs.getString(1);
+                    String cName = rs.getString(2);
+                    String comment = rs.getString(3);
+                    if(!StringUtil.isEmpty(comment)) {
+                        commentBuilder.append("COMMENT ON COLUMN ");
+                        commentBuilder.append(tName).append(".").append(cName).append(" ");
+                        commentBuilder.append("IS '").append(comment).append("';");
+                        commentBuilder.append("\n");
+                    }
+                }
+            });
+            return resultHolder.getResult().concat("\n").concat(commentBuilder.toString());
+        } else {
+            return null;
+        }
     }
 
     public OracleDaoImpl(SqlExecution sqlExecution) {

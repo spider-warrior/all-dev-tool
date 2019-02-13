@@ -11,4 +11,8 @@ public class ResultHolder<T> {
     public void setResult(T result) {
         this.result = result;
     }
+
+    public void clear() {
+        result = null;
+    }
 }
