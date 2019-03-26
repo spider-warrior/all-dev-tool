@@ -1,4 +1,4 @@
-package cn.t.tool.nettytool;
+package cn.t.tool.nettytool.handler;
 
 import io.netty.channel.*;
 import org.slf4j.Logger;

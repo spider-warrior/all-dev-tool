@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.shuiya;
 
-import cn.t.tool.nettytool.NettyChannelInitializer;
+import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 
 public class ShuiYaNettyChannelInitializer extends NettyChannelInitializer {

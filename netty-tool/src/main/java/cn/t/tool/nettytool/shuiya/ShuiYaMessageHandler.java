@@ -26,13 +26,15 @@ public class ShuiYaMessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
         logger.info("连接建立成功: {}", ctx.channel().remoteAddress());
         ByteBuf controlMsg = PooledByteBufAllocator.DEFAULT.buffer();
         //地址码
-        controlMsg.writeByte(1);
+        controlMsg.writeByte(0x1);
         //功能码
-        controlMsg.writeByte(3);
+        controlMsg.writeByte(0x3);
         //起始地址
-        controlMsg.writeShort(0);
+        controlMsg.writeShort(0x00);
+        controlMsg.writeShort(0x10);
         //读取点数
-        controlMsg.writeShort(1);
+        controlMsg.writeShort(0x00);
+        controlMsg.writeShort(0x2);
         int writerIndex = controlMsg.writerIndex();
         byte[] data = new byte[controlMsg.readableBytes()];
         controlMsg.readBytes(data);
@@ -43,19 +45,17 @@ public class ShuiYaMessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private static int calculateCrc(byte[] bytes) {
-        int crc = 0xFFFF;
-        for (int j = 0; j < bytes.length ; j++) {
-            crc = ((crc  >>> 8) | (crc  << 8) )& 0xffff;
-            crc ^= (bytes[j] & 0xff);//byte to int, trunc sign
-            crc ^= ((crc & 0xff) >> 4);
-            crc ^= (crc << 12) & 0xffff;
-            crc ^= ((crc & 0xFF) << 5) & 0xffff;
+        int value = 0xFFFF;
+        for(byte b: bytes) {
+            for(int i=0; i<8; i++) {
+                if((((b>>i) ^ value) & 1) == 1) {
+                    value = ((value>>1) ^ 0xA001);
+                } else {
+                    value>>=1;
+                }
+            }
         }
-        crc &= 0xffff;
-        return crc;
+        return (short)value;
     }
 
-    public static void main(String[] args) {
-        System.out.println(calculateCrc("123456789".getBytes()));
-    }
 }
