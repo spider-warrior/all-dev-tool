@@ -30,17 +30,15 @@ public class ShuiYaMessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
         //功能码
         controlMsg.writeByte(0x3);
         //起始地址
-        controlMsg.writeShort(0x00);
         controlMsg.writeShort(0x10);
         //读取点数
-        controlMsg.writeShort(0x00);
         controlMsg.writeShort(0x2);
-        int writerIndex = controlMsg.writerIndex();
+        int readerIndex = controlMsg.readerIndex();
         byte[] data = new byte[controlMsg.readableBytes()];
         controlMsg.readBytes(data);
-        controlMsg.writerIndex(writerIndex);
+        controlMsg.readerIndex(readerIndex);
         //CRC
-        controlMsg.writeShort(calculateCrc(data));
+        controlMsg.writeShortLE(calculateCrc(data));
         ctx.writeAndFlush(controlMsg);
     }
 
