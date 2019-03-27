@@ -1,17 +1,17 @@
-package cn.t.tool.nettytool.shuiya.test;
+package cn.t.tool.nettytool.watersystem.test;
 
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpSever;
-import cn.t.tool.nettytool.shuiya.ShuiYaNettyChannelInitializer;
+import cn.t.tool.nettytool.watersystem.WaterSystemNettyChannelInitializer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShuiYaTest {
+public class WaterSystemServerTest {
 
     public static void main(String[] args) {
-        ShuiYaNettyChannelInitializer channelInitializer = new ShuiYaNettyChannelInitializer();
+        WaterSystemNettyChannelInitializer channelInitializer = new WaterSystemNettyChannelInitializer();
         NettyTcpSever tcpSever = new NettyTcpSever("水压", 7600, channelInitializer);
         List<DaemonServer> daemonServerList = new ArrayList<>();
         daemonServerList.add(tcpSever);

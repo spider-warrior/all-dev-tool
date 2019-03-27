@@ -1,4 +1,4 @@
-package cn.t.tool.nettytool.shuiya;
+package cn.t.tool.nettytool.watersystem;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public class ShuiYaMessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class WaterSystemMessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShuiYaMessageHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
