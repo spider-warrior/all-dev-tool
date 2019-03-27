@@ -33,13 +33,14 @@ public class WaterSystemMessageDecoder extends NettyTcpDecoder {
         } else {
             logger.info("no register data available, data byte length: {}", dataByteLength);
         }
-        short crc = in.readShortLE();
+        short crc16 = in.readShortLE();
+        readRegisterCommandResponse.setCrc16(crc16);
         in.resetReaderIndex();
         byte[] data = new byte[in.readableBytes() - 2];
         in.readBytes(data);
         in.skipBytes(2);
         short calculateCrc = WaterSystemUtil.calculateCrc(data);
-        if(crc != calculateCrc) {
+        if(crc16 != calculateCrc) {
             logger.error("crc校验错误");
             return readButNothing;
         } else {
