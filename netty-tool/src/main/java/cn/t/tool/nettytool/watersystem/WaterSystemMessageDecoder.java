@@ -1,0 +1,49 @@
+package cn.t.tool.nettytool.watersystem;
+
+import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.watersystem.entity.ReadRegisterCommandResponse;
+import cn.t.tool.nettytool.watersystem.util.WaterSystemUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class WaterSystemMessageDecoder extends NettyTcpDecoder {
+
+    private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageDecoder.class);
+
+    @Override
+    protected Object readMessage(ChannelHandlerContext ctx, ByteBuf in) {
+        in.markReaderIndex();
+        byte address = in.readByte();
+        byte func = in.readByte();
+        byte dataByteLength = in.readByte();
+        if(dataByteLength + 2 > in.readableBytes()) {
+            logger.info("bytes not enough, expect: {}, actually: {}", (dataByteLength + 2 + 3), (in.readableBytes() + 3));
+            return null;
+        }
+        ReadRegisterCommandResponse readRegisterCommandResponse = new ReadRegisterCommandResponse();
+        readRegisterCommandResponse.setAddress(address);
+        readRegisterCommandResponse.setFunc(func);
+        readRegisterCommandResponse.setDataByteLength(dataByteLength);
+        if(dataByteLength > 1) {
+            for(int i=0; i<dataByteLength/2; i++) {
+                readRegisterCommandResponse.getRegisterDataList().add(in.readShort());
+            }
+        } else {
+            logger.info("no register data available, data byte length: {}", dataByteLength);
+        }
+        short crc = in.readShortLE();
+        in.resetReaderIndex();
+        byte[] data = new byte[in.readableBytes() - 2];
+        in.readBytes(data);
+        in.skipBytes(2);
+        short calculateCrc = WaterSystemUtil.calculateCrc(data);
+        if(crc != calculateCrc) {
+            logger.error("crc校验错误");
+            return readButNothing;
+        } else {
+            return readRegisterCommandResponse;
+        }
+    }
+}

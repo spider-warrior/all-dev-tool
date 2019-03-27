@@ -62,7 +62,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpClient.this);
             }
-            logger.info(String.format("[TCP Client]: %s closed, port: %d ", name, port));
+            logger.info(String.format("[TCP Client]: %s closed, host: %s, port: %d ", name, host, port));
             workerGroup.shutdownGracefully();
         }
     }

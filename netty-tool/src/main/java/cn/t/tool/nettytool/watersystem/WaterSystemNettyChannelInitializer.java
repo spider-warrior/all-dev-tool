@@ -8,7 +8,8 @@ public class WaterSystemNettyChannelInitializer extends NettyChannelInitializer 
     @Override
     protected void addSimpleChannelInboundHandlers(ChannelPipeline channelPipeline) {
         channelPipeline.addLast(new WaterSystemMessageEncoder());
-        channelPipeline.addLast(new WaterSystemMessageHandler());
+        channelPipeline.addLast(new WaterSystemMessageDecoder());
+        channelPipeline.addLast(new WaterSystemReadRegisterCommandResponseHandler());
     }
 
     public WaterSystemNettyChannelInitializer() {

@@ -6,6 +6,8 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class NettyTcpDecoder extends ByteToMessageDecoder {
@@ -17,6 +19,12 @@ public abstract class NettyTcpDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if(in.isReadable()) {
+            ByteBuf copied = in.copy();
+            byte[] content = new byte[copied.readableBytes()];
+            copied.readBytes(content);
+            String hex = DatatypeConverter.printHexBinary(content);
+            logger.info("hex: \r\n" + hex);
+            logger.info("bytes: \r\n" + Arrays.toString(content));
             int readerIndex = in.readerIndex();
             Object msg = readMessage(ctx, in);
             if(msg == null) {
