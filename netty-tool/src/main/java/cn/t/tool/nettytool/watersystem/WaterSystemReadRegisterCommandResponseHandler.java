@@ -24,8 +24,8 @@ public class WaterSystemReadRegisterCommandResponseHandler extends SimpleChannel
         ReadRegisterCommand readRegisterCommand = new ReadRegisterCommand();
         readRegisterCommand.setAddress((byte)0x1);
         readRegisterCommand.setFunc(FunctionCode.READ_REGISTER_CONTENT);
-        readRegisterCommand.setRegisterStartAddress((short)0x10);
-        readRegisterCommand.setRegisterCount((short)0x2);
+        readRegisterCommand.setRegisterStartAddress((short)0);
+        readRegisterCommand.setRegisterCount((short)17);
 
         ctx.writeAndFlush(readRegisterCommand);
     }
