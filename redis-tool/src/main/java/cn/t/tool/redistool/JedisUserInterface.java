@@ -1,5 +1,7 @@
 package cn.t.tool.redistool;
 
+import cn.t.tool.redistool.func.DefaultChannelMessageHandler;
+
 import java.util.*;
 
 public class JedisUserInterface {
@@ -12,6 +14,7 @@ public class JedisUserInterface {
         String KEY_SET = "2";
         String KEY_DEL = "3";
         String KEY_EXIST = "4";
+        String SUBSCRIBE_CHANNEL = "5";
         String EXIT = "99";
 
         List<String> keyOperations = new ArrayList<>();
@@ -19,12 +22,14 @@ public class JedisUserInterface {
         keyOperations.add(KEY_SET);
         keyOperations.add(KEY_DEL);
         keyOperations.add(KEY_EXIST);
+        keyOperations.add(SUBSCRIBE_CHANNEL);
 
         Map<String, String> functions = new LinkedHashMap<>();
         functions.put(KEY_QUERY, "key查询");
         functions.put(KEY_SET, "key设置");
         functions.put(KEY_DEL, "key删除");
         functions.put(KEY_EXIST, "key是否存在");
+        functions.put(SUBSCRIBE_CHANNEL, "订阅消息");
         functions.put(EXIT, "退出");
 
         Scanner scanner = new Scanner(System.in);
@@ -55,7 +60,10 @@ public class JedisUserInterface {
                         System.out.println("del ok");
                     } else if (KEY_EXIST.equals(command)) {
                         System.out.println((jedisHelper.getJedisCluster().exists(key)) ? "存在" : "不存在");
-                    } else if (EXIT.equals(command)) {
+                    } else if(SUBSCRIBE_CHANNEL.equals(command)) {
+                        System.out.println("going to subscribe channel: " + key);
+                        jedisHelper.getJedisCluster().psubscribe(new DefaultChannelMessageHandler(), key);
+                    } else {
                         System.out.println("该功能未实现");
                     }
                 } else {
