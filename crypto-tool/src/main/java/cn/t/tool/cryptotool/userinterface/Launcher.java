@@ -10,7 +10,10 @@ import java.util.Map;
 
 public class Launcher {
     public static void main(String[] args) throws IOException {
-        args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-encrypt", "sourcePath=/home/amen/tmp/yuntong-back-end.jar"};
+//        encrypt
+//        args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-encrypt", "sourcePath=/home/amen/tmp/yuntong-back-end.jar"};
+        //query
+        args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-query", "key=2019-09-03"};
         Map<String, String> argMap = ArgUtil.resolveMainArgs(args);
         AppInit appInit = new AppInit();
         Context context = appInit.init(argMap);

@@ -1,7 +1,9 @@
 package cn.t.tool.cryptotool.task;
 
+import cn.t.tool.cryptotool.constants.EncryptType;
 import cn.t.tool.cryptotool.constants.FileType;
 import cn.t.tool.cryptotool.construct.RepositoryConfig;
+import cn.t.tool.cryptotool.domain.EncryptResult;
 import cn.t.tool.cryptotool.exception.AppException;
 import cn.t.util.common.ArrayUtil;
 import cn.t.util.common.digital.IntUtil;
@@ -14,7 +16,7 @@ public class SimpleEncryptTask {
 
     private RepositoryConfig repositoryConfig;
 
-    public void encrypt(String key, String path) throws IOException {
+    public EncryptResult encrypt(String key, String path) throws IOException {
         String dataDir = repositoryConfig.calculateDataDirectoryName();
         File dataFile = new File(FileUtil.appendFilePath(dataDir, key));
         boolean success = FileUtil.initFile(dataFile);
@@ -25,6 +27,13 @@ public class SimpleEncryptTask {
         try (OutputStream os = new FileOutputStream(dataFile)) {
             os.write(encryptBytes);
         }
+        EncryptResult encryptResult = new EncryptResult();
+        encryptResult.setKey(key);
+        encryptResult.setDataFile(key);
+        encryptResult.setDataFileSize(encryptBytes.length);
+        encryptResult.setEncryptType(EncryptType.SIMPLE.value);
+        encryptResult.setCreateTime(System.currentTimeMillis());
+        return encryptResult;
     }
 
     private byte[] doEncrypt(File file) throws IOException {
