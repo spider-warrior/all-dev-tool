@@ -2,8 +2,8 @@ package cn.t.tool.cryptotool.constants;
 
 public enum  FileType {
 
-    文件((byte)0),
-    文件夹((byte)1)
+    FILE((byte)0),
+    DIRECTORY((byte)1)
     ;
 
     public final byte value;

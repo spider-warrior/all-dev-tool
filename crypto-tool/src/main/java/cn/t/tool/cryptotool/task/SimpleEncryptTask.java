@@ -38,26 +38,30 @@ public class SimpleEncryptTask {
 
     private byte[] doEncrypt(File file) throws IOException {
         if(file.isFile()) {
-            return wrapFile(file);
+            return encryptFile(file);
         } else if (file.isDirectory()) {
-            return wrapDirectory(file);
+            return encryptDirectory(file);
         } else {
             throw new AppException("文件加密失败, 未处理的文件类型, 文件地址: " + file.getCanonicalPath());
         }
     }
 
-    private byte[] wrapFile(File file) throws IOException {
+    private byte[] encryptFile(File file) throws IOException {
         try (InputStream inputStream = new FileInputStream(file)) {
             byte[] fileNameBytes = file.getName().getBytes();
-            byte[] bs = new byte[1 + 1 + fileNameBytes.length + inputStream.available()];
+            byte[] bs = new byte[1 + 1 + fileNameBytes.length + 4 + inputStream.available()];
             int index = 0;
             //type
-            bs[index++] = FileType.文件.value;
-            //length
+            bs[index++] = FileType.FILE.value;
+            //file name byte length
             bs[index++] = (byte)fileNameBytes.length;
             //file name
             System.arraycopy(fileNameBytes, 0, bs, index, fileNameBytes.length);
             index+=fileNameBytes.length;
+            //content byte length
+            byte[] contentLength = IntUtil.intToBytes(inputStream.available(), ByteOrder.BIG_ENDIAN);
+            System.arraycopy(contentLength, 0, bs, index, contentLength.length);
+            index+=contentLength.length;
             //content
             int len = inputStream.read(bs, index, inputStream.available());
             if(len != bs.length - index) {
@@ -67,7 +71,7 @@ public class SimpleEncryptTask {
         }
     }
 
-    private byte[] wrapDirectory(File file) throws IOException {
+    private byte[] encryptDirectory(File file) throws IOException {
         byte[] subFileContents = new byte[0];
         for(File sub: file.listFiles()) {
             byte[] subContent = doEncrypt(sub);
@@ -77,10 +81,12 @@ public class SimpleEncryptTask {
         byte[] bs = new byte[1 + 4 + dirNameBytes.length + subFileContents.length];
         int index = 0;
         //type
-        bs[index++] = FileType.文件夹.value;
-        //length
+        bs[index++] = FileType.DIRECTORY.value;
+        //dir name length
         System.arraycopy(IntUtil.intToBytes((dirNameBytes.length + subFileContents.length), ByteOrder.BIG_ENDIAN), 0, bs, index, 4);
         index+=4;
+        //dir name
+        System.arraycopy(dirNameBytes, 0, bs, index, dirNameBytes.length);
         //content
         System.arraycopy(subFileContents, 0, bs, index, subFileContents.length);
         return bs;
