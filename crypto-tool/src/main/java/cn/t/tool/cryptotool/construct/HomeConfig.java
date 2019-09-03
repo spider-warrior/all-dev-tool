@@ -1,6 +1,6 @@
 package cn.t.tool.cryptotool.construct;
 
-public class HomeConstruct {
+public class HomeConfig {
 
     private String basePath;
 

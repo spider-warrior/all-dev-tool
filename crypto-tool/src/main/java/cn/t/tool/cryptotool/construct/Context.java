@@ -1,22 +1,28 @@
 package cn.t.tool.cryptotool.construct;
 
+import java.util.Map;
+
 public class Context {
-    private HomeConstruct homeConstruct;
-    private RepositoryConstruct repositoryConstruct;
+    private Map<String, String> argMap;
+    private HomeConfig homeConfig;
+    private RepositoryConfig repositoryConfig;
 
-    public HomeConstruct getHomeConstruct() {
-        return homeConstruct;
+    public Map<String, String> getArgMap() {
+        return argMap;
     }
-
-    public void setHomeConstruct(HomeConstruct homeConstruct) {
-        this.homeConstruct = homeConstruct;
+    public void setArgMap(Map<String, String> argMap) {
+        this.argMap = argMap;
     }
-
-    public RepositoryConstruct getRepositoryConstruct() {
-        return repositoryConstruct;
+    public HomeConfig getHomeConfig() {
+        return homeConfig;
     }
-
-    public void setRepositoryConstruct(RepositoryConstruct repositoryConstruct) {
-        this.repositoryConstruct = repositoryConstruct;
+    public void setHomeConfig(HomeConfig homeConfig) {
+        this.homeConfig = homeConfig;
+    }
+    public RepositoryConfig getRepositoryConfig() {
+        return repositoryConfig;
+    }
+    public void setRepositoryConfig(RepositoryConfig repositoryConfig) {
+        this.repositoryConfig = repositoryConfig;
     }
 }

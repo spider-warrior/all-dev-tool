@@ -1,6 +1,5 @@
 package cn.t.tool.cryptotool.construct;
 
-import cn.t.util.common.ArgUtil;
 import cn.t.util.common.StringUtil;
 import cn.t.util.common.SystemUtil;
 import org.slf4j.Logger;
@@ -13,8 +12,7 @@ public class ContextBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ContextBuilder.class);
     private static final String HOME_PATH = "CRYPTO_HOME";
 
-    public Context buildContext(String[] args) {
-        Map<String, String> argMap = ArgUtil.resolveMainArgs(args);
+    public Context buildContext(Map<String, String> argMap) {
         String basePath = argMap.get(HOME_PATH);
         if(StringUtil.isEmpty(basePath)) {
             basePath = SystemUtil.getApplicationVar(HOME_PATH);
@@ -24,14 +22,14 @@ public class ContextBuilder {
         }
         logger.info("use base path: {}", basePath);
         //home
-        HomeConstruct homeConstruct = new HomeConstruct();
-        homeConstruct.setBasePath(basePath);
+        HomeConfig homeConfig = new HomeConfig();
+        homeConfig.setBasePath(basePath);
         //repository
-        RepositoryConstruct repositoryConstruct = new RepositoryConstruct();
-        repositoryConstruct.setHomeConstruct(homeConstruct);
+        RepositoryConfig repositoryConfig = new RepositoryConfig();
+        repositoryConfig.setHomeConfig(homeConfig);
         Context context = new Context();
-        context.setHomeConstruct(homeConstruct);
-        context.setRepositoryConstruct(repositoryConstruct);
+        context.setHomeConfig(homeConfig);
+        context.setRepositoryConfig(repositoryConfig);
         return context;
     }
 }

@@ -2,9 +2,9 @@ package cn.t.tool.cryptotool.construct;
 
 import cn.t.util.io.FileUtil;
 
-public class RepositoryConstruct {
+public class RepositoryConfig {
 
-    private HomeConstruct homeConstruct;
+    private HomeConfig homeConfig;
 
     /**
      * 资源库文件夹名称
@@ -21,12 +21,12 @@ public class RepositoryConstruct {
      * */
     private String dataDirectoryName = "data";
 
-    public HomeConstruct getHomeConstruct() {
-        return homeConstruct;
+    public HomeConfig getHomeConfig() {
+        return homeConfig;
     }
 
-    public void setHomeConstruct(HomeConstruct homeConstruct) {
-        this.homeConstruct = homeConstruct;
+    public void setHomeConfig(HomeConfig homeConfig) {
+        this.homeConfig = homeConfig;
     }
 
     public String getRepositoryDirectoryName() {
@@ -54,7 +54,7 @@ public class RepositoryConstruct {
     }
 
     public String calculateRepositoryDirectoryName() {
-        return FileUtil.appendFilePath(homeConstruct.getBasePath(), repositoryDirectoryName);
+        return FileUtil.appendFilePath(homeConfig.getBasePath(), repositoryDirectoryName);
     }
 
     public String calculateIndexDirectoryName() {

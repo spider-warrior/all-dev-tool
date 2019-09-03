@@ -1,7 +1,7 @@
 package cn.t.tool.cryptotool.init;
 
 import cn.t.tool.cryptotool.construct.Context;
-import cn.t.tool.cryptotool.construct.HomeConstruct;
+import cn.t.tool.cryptotool.construct.HomeConfig;
 import cn.t.tool.cryptotool.exception.AppException;
 import cn.t.util.io.FileUtil;
 import org.slf4j.Logger;
@@ -14,8 +14,8 @@ public class HomeInit {
     private static final Logger logger = LoggerFactory.getLogger(HomeInit.class);
 
     public void init(Context context) {
-        HomeConstruct homeConstruct = context.getHomeConstruct();
-        File file = new File(homeConstruct.getBasePath());
+        HomeConfig homeConfig = context.getHomeConfig();
+        File file = new File(homeConfig.getBasePath());
         try {
             if(!file.exists()) {
                 logger.info("first time init home directory: {}", file.getCanonicalPath());
