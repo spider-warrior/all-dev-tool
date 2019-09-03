@@ -12,6 +12,7 @@
         <module>redis-tool</module>
         <module>integrated-tool</module>
         <module>netty-tool</module>
+        <module>crypto-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
@@ -54,6 +55,13 @@
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
                 <version>Cairo-SR7</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>cn.t</groupId>
+                <artifactId>util</artifactId>
+                <version>1.0.7-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
