@@ -36,7 +36,7 @@ public class SimpleDecryptTask {
             fileInputStream.read(bytes);
             ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
             buffer.put(bytes);
-            buffer.put(bytes);
+            buffer.flip();
             while (buffer.remaining() > 0) {
                 //file type
                 byte type = buffer.get();
@@ -71,6 +71,7 @@ public class SimpleDecryptTask {
 
     public void decryptFile(File parent, String fileName, byte[] content) throws IOException {
         File targetFile = new File(FileUtil.appendFilePath(parent.getPath(), fileName));
+        logger.info("decrypting file: {}", targetFile.getAbsolutePath());
         boolean success = FileUtil.initFile(targetFile);
         if(!success) {
             throw new AppException("解密文件失败");
