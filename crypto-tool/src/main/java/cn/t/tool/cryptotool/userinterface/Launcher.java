@@ -11,7 +11,7 @@ import java.util.Map;
 public class Launcher {
     public static void main(String[] args) throws IOException {
 //        encrypt
-//        args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-encrypt", "sourcePath=/home/amen/tmp/yuntong-back-end.jar"};
+//        args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-encrypt", "sourcePath=/home/amen/tmp/upload-jars"};
 //        decrypt
         args = new String[] {"CRYPTO_HOME=/home/amen/tmp/crypto-app", "-decrypt", "targetDir=/home/amen/tmp/encrypt-output", "key=2019-09-04"};
         //query

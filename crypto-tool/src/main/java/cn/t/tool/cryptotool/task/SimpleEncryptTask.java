@@ -58,7 +58,7 @@ public class SimpleEncryptTask {
             //file name
             System.arraycopy(fileNameBytes, 0, bs, index, fileNameBytes.length);
             index+=fileNameBytes.length;
-            //content byte length
+            //content length
             byte[] contentLength = IntUtil.intToBytes(inputStream.available(), ByteOrder.BIG_ENDIAN);
             System.arraycopy(contentLength, 0, bs, index, contentLength.length);
             index+=contentLength.length;
@@ -78,15 +78,18 @@ public class SimpleEncryptTask {
             subFileContents = ArrayUtil.combine(subFileContents, subContent);
         }
         byte[] dirNameBytes = file.getName().getBytes();
-        byte[] bs = new byte[1 + 4 + dirNameBytes.length + subFileContents.length];
+        byte[] bs = new byte[1 + 1 + dirNameBytes.length + 4 + subFileContents.length];
         int index = 0;
         //type
         bs[index++] = FileType.DIRECTORY.value;
         //dir name length
-        System.arraycopy(IntUtil.intToBytes((dirNameBytes.length + subFileContents.length), ByteOrder.BIG_ENDIAN), 0, bs, index, 4);
-        index+=4;
+        bs[index++] = (byte)dirNameBytes.length;
         //dir name
         System.arraycopy(dirNameBytes, 0, bs, index, dirNameBytes.length);
+        index+=dirNameBytes.length;
+        //content length
+        System.arraycopy(IntUtil.intToBytes(subFileContents.length, ByteOrder.BIG_ENDIAN), 0, bs, index, 4);
+        index+=4;
         //content
         System.arraycopy(subFileContents, 0, bs, index, subFileContents.length);
         return bs;

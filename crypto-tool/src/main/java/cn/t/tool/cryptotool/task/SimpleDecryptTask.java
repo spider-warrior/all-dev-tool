@@ -22,50 +22,62 @@ public class SimpleDecryptTask {
         if(!dataFile.exists()) {
             logger.info("key[{}] data file not found", encryptResult.getKey());
         } else {
-            doDecrypt(dataFile, new File(targetDir));
+            File outputFile = new File(targetDir);
+            boolean success = FileUtil.initDirectory(outputFile);
+            if(!success) {
+                throw new AppException("初始化输出目录失败: " + outputFile.getAbsolutePath());
+            }
+            try(FileInputStream fileInputStream = new FileInputStream(dataFile)) {
+                byte[] bytes = new byte[fileInputStream.available()];
+                fileInputStream.read(bytes);
+                ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
+                buffer.put(bytes);
+                buffer.flip();
+                doDecrypt(buffer, outputFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                throw new AppException("文件不存在");
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new AppException("解密文件IO异常");
+            }
         }
     }
 
-    public void doDecrypt(File dataFile, File outputFile) {
-        boolean success = FileUtil.initDirectory(outputFile);
-        if(!success) {
-            throw new AppException("初始化输出目录失败: " + outputFile.getAbsolutePath());
-        }
-        try(FileInputStream fileInputStream = new FileInputStream(dataFile)) {
-            byte[] bytes = new byte[fileInputStream.available()];
-            fileInputStream.read(bytes);
-            ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
-            buffer.put(bytes);
-            buffer.flip();
-            while (buffer.remaining() > 0) {
-                //file type
-                byte type = buffer.get();
-                FileType fileType = FileType.getFileType(type);
-                if(FileType.FILE == fileType) {
-                    //file name length
-                    byte fileNameBytesLen = buffer.get();
-                    //file name
-                    byte[] fileNameBytes = new byte[fileNameBytesLen];
-                    buffer.get(fileNameBytes);
-                    String fileName = new String(fileNameBytes);
-                    //content byte length
-                    int contentLength = buffer.getInt();
-                    //content
-                    byte[] content = new byte[contentLength];
-                    buffer.get(content);
-                    decryptFile(outputFile, fileName, content);
-                } else if(FileType.DIRECTORY == fileType) {
-
-                } else {
-                    throw new AppException("文件加密失败, 未处理的文件类型: " + type);
-                }
+    public void doDecrypt(ByteBuffer buffer, File outputFile) throws IOException {
+        while (buffer.remaining() > 0) {
+            //file type
+            byte type = buffer.get();
+            FileType fileType = FileType.getFileType(type);
+            if(FileType.FILE == fileType) {
+                //file name length
+                byte fileNameBytesLen = buffer.get();
+                //file name
+                byte[] fileNameBytes = new byte[fileNameBytesLen];
+                buffer.get(fileNameBytes);
+                String fileName = new String(fileNameBytes);
+                //content byte length
+                int contentLength = buffer.getInt();
+                //content
+                byte[] content = new byte[contentLength];
+                buffer.get(content);
+                decryptFile(outputFile, fileName, content);
+            } else if(FileType.DIRECTORY == fileType) {
+                //dir name length
+                byte dirNameBytesLen = buffer.get();
+                //dir name
+                byte[] dirNameBytes = new byte[dirNameBytesLen];
+                buffer.get(dirNameBytes);
+                String dirName = new String(dirNameBytes);
+                //content length
+                int contentLength = buffer.getInt();
+                //content
+                byte[] content = new byte[contentLength];
+                buffer.get(content);
+                decryptDirectory(outputFile, dirName, content);
+            } else {
+                throw new AppException("文件加密失败, 未处理的文件类型: " + type);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            throw new AppException("文件不存在");
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new AppException("解密文件IO异常");
         }
     }
 
@@ -81,8 +93,14 @@ public class SimpleDecryptTask {
         }
     }
 
-    public void decryptDirectory(ByteBuffer byteBuffer) {
-
+    public void decryptDirectory(File parent, String dirName, byte[] content) throws IOException {
+        File targetDir = new File(FileUtil.appendFilePath(parent.getPath(), dirName));
+        logger.info("creating dir: {}", targetDir.getAbsolutePath());
+        FileUtil.initDirectory(targetDir);
+        ByteBuffer buffer = ByteBuffer.allocate(content.length);
+        buffer.put(content);
+        buffer.flip();
+        doDecrypt(buffer, targetDir);
     }
 
     public SimpleDecryptTask(RepositoryConfig repositoryConfig) {
