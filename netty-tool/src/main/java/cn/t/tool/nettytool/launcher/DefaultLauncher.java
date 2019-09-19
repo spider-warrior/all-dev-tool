@@ -97,9 +97,11 @@ public class DefaultLauncher extends AbstractLauncher {
     @PostConstruct
     public void init() {
         this.setDaemonServerList(daemonServerList);
-        this.setLauncherListenerList(new ArrayList<LauncherListener>(){{
-            add(defaultLauncherListener);
-        }});
+        if(defaultLauncherListener != null) {
+            this.setLauncherListenerList(new ArrayList<LauncherListener>(){{
+                add(defaultLauncherListener);
+            }});
+        }
         this.startup();
     }
 

@@ -82,4 +82,12 @@ public class NettyTcpClient extends AbstractDaemonClient {
     public void setDemonListenerList(List<DemonListener> demonListenerList) {
         this.demonListenerList = demonListenerList;
     }
+
+    public void sendMsg(Object msg) {
+        if(clientChannel != null && clientChannel.isOpen()) {
+            clientChannel.writeAndFlush(msg);
+        } else {
+            logger.warn("channel not available, msg ignored, detail: {}", msg);
+        }
+    }
 }
