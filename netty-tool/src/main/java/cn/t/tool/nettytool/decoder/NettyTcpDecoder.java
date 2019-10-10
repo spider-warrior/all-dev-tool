@@ -50,10 +50,12 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         logger.info("连接建立成功: {}", ctx.channel().remoteAddress());
+        ctx.fireChannelActive();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         logger.info("连接断开: {}", ctx.channel().remoteAddress());
+        ctx.fireChannelInactive();
     }
 }
