@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NettyTcpSever extends AbstractDaemonServer {
+public class NettyTcpServer extends AbstractDaemonServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyTcpSever.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyTcpServer.class);
 
     private ChannelInitializer channelInitializer;
     private List<DemonListener> demonListenerList;
@@ -60,7 +60,7 @@ public class NettyTcpSever extends AbstractDaemonServer {
             serverChannel.closeFuture().sync().addListener(f -> {
                 if (demonListenerList != null && !demonListenerList.isEmpty()) {
                     for (DemonListener listener: demonListenerList) {
-                        listener.close(NettyTcpSever.this);
+                        listener.close(NettyTcpServer.this);
                     }
                 }
             });
@@ -68,7 +68,7 @@ public class NettyTcpSever extends AbstractDaemonServer {
             logger.error(String.format("TCP Server: %s Down, port: %d ", name, port), e);
         } finally {
             if(launcher != null) {
-                launcher.serverShutdownSuccess(NettyTcpSever.this);
+                launcher.serverShutdownSuccess(NettyTcpServer.this);
             }
             logger.info(String.format("[TCP Server]: %s closed, port: %d ", name, port));
             bossGroup.shutdownGracefully();
@@ -83,18 +83,18 @@ public class NettyTcpSever extends AbstractDaemonServer {
         }
     }
 
-    public NettyTcpSever(String name, int port, ChannelInitializer channelInitializer) {
+    public NettyTcpServer(String name, int port, ChannelInitializer channelInitializer) {
         super(name, port);
         this.channelInitializer = channelInitializer;
     }
 
 
-    public NettyTcpSever setChannelInitializer(ChannelInitializer channelInitializer) {
+    public NettyTcpServer setChannelInitializer(ChannelInitializer channelInitializer) {
         this.channelInitializer = channelInitializer;
         return this;
     }
 
-    public NettyTcpSever setDemonListenerList(List<DemonListener> demonListenerList) {
+    public NettyTcpServer setDemonListenerList(List<DemonListener> demonListenerList) {
         this.demonListenerList = demonListenerList;
         return this;
     }
