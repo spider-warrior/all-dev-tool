@@ -1,6 +1,7 @@
 package cn.t.tool.nettytool.watersystem;
 
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
+import cn.t.tool.nettytool.util.NullMessage;
 import cn.t.tool.nettytool.watersystem.entity.ReadRegisterCommandResponse;
 import cn.t.tool.nettytool.watersystem.util.WaterSystemUtil;
 import io.netty.buffer.ByteBuf;
@@ -8,12 +9,12 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WaterSystemMessageDecoder extends NettyTcpDecoder {
+public class WaterSystemMessageAnalyser extends ByteBufAnalyser<Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageAnalyser.class);
 
     @Override
-    protected Object readMessage(ChannelHandlerContext ctx, ByteBuf in) {
+    public Object analyse(ChannelHandlerContext ctx, ByteBuf in) {
         in.markReaderIndex();
         byte address = in.readByte();
         byte func = in.readByte();
@@ -42,7 +43,7 @@ public class WaterSystemMessageDecoder extends NettyTcpDecoder {
         short calculateCrc = WaterSystemUtil.calculateCrc(data);
         if(crc16 != calculateCrc) {
             logger.error("crc校验错误");
-            return readButNothing;
+            return NullMessage.getNullMessage();
         } else {
             return readRegisterCommandResponse;
         }

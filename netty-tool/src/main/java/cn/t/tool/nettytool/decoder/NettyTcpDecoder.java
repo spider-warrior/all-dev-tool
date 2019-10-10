@@ -1,5 +1,7 @@
 package cn.t.tool.nettytool.decoder;
 
+import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
+import cn.t.tool.nettytool.util.NullMessage;
 import cn.t.util.common.digital.HexUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,11 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class NettyTcpDecoder extends ByteToMessageDecoder {
+public class NettyTcpDecoder extends ByteToMessageDecoder {
 
     private static Logger logger = LoggerFactory.getLogger(NettyTcpDecoder.class);
 
-    protected final Object readButNothing = new Object();
+    private ByteBufAnalyser<?> byteBufAnalyser;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
@@ -23,15 +25,15 @@ public abstract class NettyTcpDecoder extends ByteToMessageDecoder {
             byte[] content = new byte[copied.readableBytes()];
             copied.readBytes(content);
             String hex = HexUtil.bytesToHex(content);
-            logger.info("hex: \r\n" + hex);
-            logger.info("bytes: \r\n" + Arrays.toString(content));
+            logger.info("hex: \r\n{}", hex);
+            logger.info("bytes: \r\n{}", Arrays.toString(content));
             int readerIndex = in.readerIndex();
-            Object msg = readMessage(ctx, in);
+            Object msg = byteBufAnalyser.analyse(ctx, in);
             if(msg == null) {
                 logger.info("消息不完整，重置读取索引");
                 in.readerIndex(readerIndex);
             } else {
-                if(readButNothing != msg) {
+                if(NullMessage.getNullMessage() != msg) {
                     logger.info("读取到消息，类型为: {}", msg.getClass().getName());
                     out.add(msg);
                 } else {
@@ -41,7 +43,7 @@ public abstract class NettyTcpDecoder extends ByteToMessageDecoder {
         }
     }
 
-
-    protected abstract Object readMessage(ChannelHandlerContext ctx, ByteBuf in);
-
+    public NettyTcpDecoder(ByteBufAnalyser byteBufAnalyser) {
+        this.byteBufAnalyser = byteBufAnalyser;
+    }
 }
