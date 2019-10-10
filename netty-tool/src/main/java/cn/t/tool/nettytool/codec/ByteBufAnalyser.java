@@ -1,4 +1,4 @@
-package cn.t.tool.nettytool.analyser;
+package cn.t.tool.nettytool.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
