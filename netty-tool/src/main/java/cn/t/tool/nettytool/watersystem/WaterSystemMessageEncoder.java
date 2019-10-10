@@ -1,5 +1,6 @@
 package cn.t.tool.nettytool.watersystem;
 
+import cn.t.tool.nettytool.codec.ByteBufEncoder;
 import cn.t.tool.nettytool.watersystem.entity.ReadRegisterCommand;
 import cn.t.tool.nettytool.watersystem.util.WaterSystemUtil;
 import io.netty.buffer.ByteBuf;
@@ -11,13 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public class WaterSystemMessageEncoder extends MessageToByteEncoder<ReadRegisterCommand> {
+public class WaterSystemMessageEncoder extends ByteBufEncoder<ReadRegisterCommand> {
 
     private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageEncoder.class);
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ReadRegisterCommand msg, ByteBuf out) {
-
+    public void encode(ByteBuf byteBuf, ReadRegisterCommand msg, ChannelHandlerContext context) {
         ByteBuf controlMsg = PooledByteBufAllocator.DEFAULT.buffer();
         //地址码
         controlMsg.writeByte(msg.getAddress());
@@ -38,7 +38,7 @@ public class WaterSystemMessageEncoder extends MessageToByteEncoder<ReadRegister
         controlMsg.readBytes(data);
         controlMsg.resetReaderIndex();
 
-        ctx.writeAndFlush(controlMsg);
+        context.writeAndFlush(controlMsg);
         logger.info("write a msg: {}", Arrays.toString(data));
     }
 

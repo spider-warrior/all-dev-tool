@@ -8,7 +8,7 @@ import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;
 import cn.t.tool.nettytool.server.listener.DemonListener;
 import cn.t.tool.nettytool.server.listener.NettyTcpListener;
-import cn.t.tool.nettytool.watersystem.WaterSystemNettyChannelInitializer;
+import cn.t.tool.nettytool.watersystem.WaterSystemNettyChannelBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,8 @@ public class WaterSystemServerTest {
 
     public static void main(String[] args) {
 
-        WaterSystemNettyChannelInitializer channelInitializer = new WaterSystemNettyChannelInitializer();
-        NettyTcpServer tcpSever = new NettyTcpServer("水压", 7600, channelInitializer);
+        WaterSystemNettyChannelBuilder channelInitializer = new WaterSystemNettyChannelBuilder();
+        NettyTcpServer tcpSever = new NettyTcpServer("水压", 7600, channelInitializer.build());
 
         List<DemonListener> demonListenerList = new ArrayList<>();
         demonListenerList.add(new NettyTcpListener());
@@ -29,7 +29,6 @@ public class WaterSystemServerTest {
 
         List<LauncherListener> launcherListenerList = new ArrayList<>();
         launcherListenerList.add(new DefaultLauncherListener());
-
 
         DefaultLauncherBuilder defaultLauncherBuilder = new DefaultLauncherBuilder();
         defaultLauncherBuilder.setTimeout(10000);

@@ -1,44 +1,50 @@
 package cn.t.tool.nettytool.initializer;
 
-import cn.t.tool.nettytool.handler.NettyExceptionHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.handler.NettyExceptionHandler;
+import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.function.Supplier;
 
-public abstract class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
+public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private long readerIdleTime;
-    private long writerIdleTime;
-    private long allIdleTime;
-    private NettyTcpDecoder nettyTcpDecoder;
-    private NettyTcpEncoder<?> nettyTcpEncoder;
+    private Supplier<IdleStateHandler> idleStateHandlerSupplier;
+    private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
+    private Supplier<NettyTcpEncoder> nettyTcpEncoderSupplier;
+    private Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier;
 
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline channelPipeline = ch.pipeline();
-        channelPipeline.addLast(new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
-        if(nettyTcpEncoder != null) {
-            channelPipeline.addLast(nettyTcpEncoder);
+        if(idleStateHandlerSupplier != null) {
+            channelPipeline.addLast(idleStateHandlerSupplier.get());
         }
-        if(nettyTcpDecoder != null) {
-            channelPipeline.addLast(nettyTcpDecoder);
+        if(nettyTcpDecoderSupplier != null) {
+            channelPipeline.addLast(nettyTcpDecoderSupplier.get());
         }
-        addSimpleChannelInboundHandlers(channelPipeline);
+        if(nettyTcpEncoderSupplier != null) {
+            channelPipeline.addLast(nettyTcpEncoderSupplier.get());
+        }
+        if(channelInboundHandlerListSupplier != null) {
+            List<SimpleChannelInboundHandler> channelInboundHandlerList = channelInboundHandlerListSupplier.get();
+            if(!CollectionUtil.isEmpty(channelInboundHandlerList)) {
+                channelInboundHandlerList.forEach(channelPipeline::addLast);
+            }
+        }
         channelPipeline.addLast(new NettyExceptionHandler());
     }
 
-    protected abstract void addSimpleChannelInboundHandlers(ChannelPipeline channelPipeline);
-
-    public NettyChannelInitializer(long readerIdleTime, long writerIdleTime, long allIdleTime, NettyTcpDecoder nettyTcpDecoder, NettyTcpEncoder<?> nettyTcpEncoder) {
-        this.readerIdleTime = readerIdleTime;
-        this.writerIdleTime = writerIdleTime;
-        this.allIdleTime = allIdleTime;
-        this.nettyTcpDecoder = nettyTcpDecoder;
-        this.nettyTcpEncoder = nettyTcpEncoder;
+    public NettyChannelInitializer(Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<NettyTcpEncoder> nettyTcpEncoderSupplier, Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier) {
+        this.idleStateHandlerSupplier = idleStateHandlerSupplier;
+        this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
+        this.nettyTcpEncoderSupplier = nettyTcpEncoderSupplier;
+        this.channelInboundHandlerListSupplier = channelInboundHandlerListSupplier;
     }
 }

@@ -19,14 +19,11 @@ public class WaterSystemReadRegisterCommandResponseHandler extends SimpleChannel
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        logger.info("连接建立成功: {}", ctx.channel().remoteAddress());
-
         ReadRegisterCommand readRegisterCommand = new ReadRegisterCommand();
         readRegisterCommand.setAddress((byte)0x1);
         readRegisterCommand.setFunc(FunctionCode.READ_REGISTER_CONTENT);
         readRegisterCommand.setRegisterStartAddress((short)0);
         readRegisterCommand.setRegisterCount((short)17);
-
         ctx.writeAndFlush(readRegisterCommand);
     }
 
