@@ -16,7 +16,7 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
 
     private static Logger logger = LoggerFactory.getLogger(NettyTcpDecoder.class);
 
-    private ByteBufAnalyser<?> byteBufAnalyser;
+    private ByteBufAnalyser byteBufAnalyser;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {

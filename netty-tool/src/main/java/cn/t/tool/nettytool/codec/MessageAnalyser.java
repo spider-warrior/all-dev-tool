@@ -1,5 +1,5 @@
 package cn.t.tool.nettytool.codec;
 
-public interface MessageAnalyser<In, Out, RuntimeParam> {
-    Out analyse(RuntimeParam param, In in);
+public interface MessageAnalyser<In, RuntimeParam> {
+    Object analyse(RuntimeParam param, In in);
 }

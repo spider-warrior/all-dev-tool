@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WaterSystemMessageAnalyser extends ByteBufAnalyser<Object> {
+public class WaterSystemMessageAnalyser extends ByteBufAnalyser {
 
     private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageAnalyser.class);
 
