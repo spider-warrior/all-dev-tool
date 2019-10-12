@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.watersystem;
 
-import cn.t.tool.nettytool.codec.ByteBufAnalyser;
+import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.util.NullMessage;
 import cn.t.tool.nettytool.watersystem.entity.ReadRegisterCommandResponse;
 import cn.t.tool.nettytool.watersystem.util.WaterSystemUtil;

@@ -1,23 +1,22 @@
 package cn.t.tool.nettytool.watersystem;
 
-import cn.t.tool.nettytool.codec.ByteBufEncoder;
+import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.tool.nettytool.watersystem.entity.ReadRegisterCommand;
 import cn.t.tool.nettytool.watersystem.util.WaterSystemUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public class WaterSystemMessageEncoder extends ByteBufEncoder<ReadRegisterCommand> {
+public class WaterSystemMessageEncoder extends NettyTcpEncoder<ReadRegisterCommand> {
 
     private static final Logger logger = LoggerFactory.getLogger(WaterSystemMessageEncoder.class);
 
     @Override
-    public void encode(ByteBuf byteBuf, ReadRegisterCommand msg, ChannelHandlerContext context) {
+    protected void doEncode(ChannelHandlerContext ctx, ReadRegisterCommand msg, ByteBuf out) {
         ByteBuf controlMsg = PooledByteBufAllocator.DEFAULT.buffer();
         //地址码
         controlMsg.writeByte(msg.getAddress());
@@ -38,8 +37,7 @@ public class WaterSystemMessageEncoder extends ByteBufEncoder<ReadRegisterComman
         controlMsg.readBytes(data);
         controlMsg.resetReaderIndex();
 
-        context.writeAndFlush(controlMsg);
+        ctx.writeAndFlush(controlMsg);
         logger.info("write a msg: {}", Arrays.toString(data));
     }
-
 }

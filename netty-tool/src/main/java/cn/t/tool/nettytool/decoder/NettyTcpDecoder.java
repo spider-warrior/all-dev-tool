@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.decoder;
 
-import cn.t.tool.nettytool.codec.ByteBufAnalyser;
+import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.util.NullMessage;
 import cn.t.util.common.digital.HexUtil;
 import io.netty.buffer.ByteBuf;
