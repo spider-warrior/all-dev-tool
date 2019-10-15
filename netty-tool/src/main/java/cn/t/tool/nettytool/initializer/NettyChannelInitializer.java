@@ -8,6 +8,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.function.Supplier;
 
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+    private LogLevel logLevel = LogLevel.ERROR;
     private Supplier<IdleStateHandler> idleStateHandlerSupplier;
     private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
     private Supplier<List<NettyTcpEncoder>> NettyTcpEncoderListSupplier;
@@ -23,6 +26,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline channelPipeline = ch.pipeline();
+        channelPipeline.addLast("logging",new LoggingHandler(logLevel));
         if(idleStateHandlerSupplier != null) {
             channelPipeline.addLast(idleStateHandlerSupplier.get());
         }
@@ -44,10 +48,11 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         channelPipeline.addLast(new NettyExceptionHandler());
     }
 
-    public NettyChannelInitializer(Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder>> NettyTcpEncoderListSupplier, Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier) {
+    public NettyChannelInitializer(LogLevel logLevel, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder>> nettyTcpEncoderListSupplier, Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier) {
+        this.logLevel = logLevel;
         this.idleStateHandlerSupplier = idleStateHandlerSupplier;
         this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
-        this.NettyTcpEncoderListSupplier = NettyTcpEncoderListSupplier;
+        NettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
         this.channelInboundHandlerListSupplier = channelInboundHandlerListSupplier;
     }
 }

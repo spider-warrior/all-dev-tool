@@ -21,12 +21,6 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if(in.isReadable()) {
-            ByteBuf copied = in.copy();
-            byte[] content = new byte[copied.readableBytes()];
-            copied.readBytes(content);
-            String hex = HexUtil.bytesToHex(content);
-            logger.info("hex: \r\n{}", hex);
-            logger.info("bytes: \r\n{}", Arrays.toString(content));
             int readerIndex = in.readerIndex();
             Object msg = byteBufAnalyser.analyse(ctx, in);
             if(msg == null) {

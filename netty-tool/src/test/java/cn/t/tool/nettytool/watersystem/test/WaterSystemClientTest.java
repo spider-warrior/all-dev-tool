@@ -11,8 +11,8 @@ import java.util.List;
 public class WaterSystemClientTest {
 
     public static void main(String[] args) {
-        WaterSystemNettyChannelBuilder channelInitializer = new WaterSystemNettyChannelBuilder();
-        NettyTcpClient tcpClient = new NettyTcpClient("水压", "120.211.60.16", 10001, channelInitializer.build());
+        WaterSystemNettyChannelBuilder channelInitializerBuilder = new WaterSystemNettyChannelBuilder();
+        NettyTcpClient tcpClient = new NettyTcpClient("水压", "120.211.60.16", 10001, channelInitializerBuilder.build());
         List<DaemonServer> daemonServerList = new ArrayList<>();
         daemonServerList.add(tcpClient);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
