@@ -5,6 +5,7 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 
 public class NettyChannelInitializerBuilder {
 
+    private Supplier<LogLevel> logLevelSupplier;
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
     private List<Supplier<NettyTcpEncoder>> nettyTcpEncoderSupplierList = new ArrayList<>();
@@ -21,6 +23,7 @@ public class NettyChannelInitializerBuilder {
 
     public NettyChannelInitializer build() {
         return new NettyChannelInitializer(
+            logLevelSupplier,
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
             () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
             () -> {
@@ -70,6 +73,10 @@ public class NettyChannelInitializerBuilder {
         if(simpleChannelInboundHandlerSupplier != null) {
             this.simpleChannelInboundHandlerSupplierList.add(simpleChannelInboundHandlerSupplier);
         }
+    }
+
+    public void setLogLevelSupplier(Supplier<LogLevel> logLevelSupplier) {
+        this.logLevelSupplier = logLevelSupplier;
     }
 
     private static class IdleStateConfig {

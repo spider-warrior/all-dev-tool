@@ -48,8 +48,10 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         channelPipeline.addLast(new NettyExceptionHandler());
     }
 
-    public NettyChannelInitializer(LogLevel logLevel, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder>> nettyTcpEncoderListSupplier, Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier) {
-        this.logLevel = logLevel;
+    public NettyChannelInitializer(Supplier<LogLevel> logLevelSupplier, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder>> nettyTcpEncoderListSupplier, Supplier<List<SimpleChannelInboundHandler>> channelInboundHandlerListSupplier) {
+        if(logLevelSupplier != null) {
+            this.logLevel = logLevelSupplier.get();
+        }
         this.idleStateHandlerSupplier = idleStateHandlerSupplier;
         this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
         NettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
