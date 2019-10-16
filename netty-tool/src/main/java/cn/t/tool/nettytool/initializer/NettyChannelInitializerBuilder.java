@@ -7,6 +7,7 @@ import cn.t.util.common.CollectionUtil;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.function.Supplier;
 
 public class NettyChannelInitializerBuilder {
 
-    private Supplier<LogLevel> logLevelSupplier;
+    private LogLevel logLevel;
+    private InternalLoggerFactory internalLoggerFactory;
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
     private List<Supplier<NettyTcpEncoder>> nettyTcpEncoderSupplierList = new ArrayList<>();
@@ -23,7 +25,8 @@ public class NettyChannelInitializerBuilder {
 
     public NettyChannelInitializer build() {
         return new NettyChannelInitializer(
-            logLevelSupplier,
+            logLevel,
+            internalLoggerFactory,
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
             () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
             () -> {
@@ -75,8 +78,12 @@ public class NettyChannelInitializerBuilder {
         }
     }
 
-    public void setLogLevelSupplier(Supplier<LogLevel> logLevelSupplier) {
-        this.logLevelSupplier = logLevelSupplier;
+    public void setLogLevel(LogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public void setInternalLoggerFactory(InternalLoggerFactory internalLoggerFactory) {
+        this.internalLoggerFactory = internalLoggerFactory;
     }
 
     private static class IdleStateConfig {
