@@ -40,7 +40,7 @@ public class DefaultLauncher extends AbstractLauncher {
             final int period = 5;
             timer.newTimeout(new TimerTask() {
                 public void run(Timeout timeout) {
-                    logger.info("check down server....");
+                    logger.info("monitor down server....");
                     if (downDaemonServer.size() > 0) {
                         logger.info(stop + ", find down server, size: " + downDaemonServer.size());
                         while (downDaemonServer.size() > 0) {

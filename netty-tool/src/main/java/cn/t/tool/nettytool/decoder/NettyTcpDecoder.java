@@ -24,14 +24,14 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
             int readerIndex = in.readerIndex();
             Object msg = byteBufAnalyser.analyse(ctx, in);
             if(msg == null) {
-                logger.info("消息不完整，重置读取索引");
+                logger.info("message is incomplete，reader index reset");
                 in.readerIndex(readerIndex);
             } else {
                 if(NullMessage.getNullMessage() != msg) {
-                    logger.info("读取到消息，类型为: {}", msg.getClass().getName());
+                    logger.info("produce message success，type: {}", msg.getClass().getSimpleName());
                     out.add(msg);
                 } else {
-                    logger.info("未读取到消息，不重置读取索引");
+                    logger.info("read a null message，reader index will not reset");
                 }
             }
         }
@@ -43,13 +43,13 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        logger.info("连接建立成功: {}", ctx.channel().remoteAddress());
+        logger.info("build connection success: {}", ctx.channel().remoteAddress());
         ctx.fireChannelActive();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        logger.info("连接断开: {}", ctx.channel().remoteAddress());
+        logger.info("connection disconnect: {}", ctx.channel().remoteAddress());
         ctx.fireChannelInactive();
     }
 }
