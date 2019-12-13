@@ -1,6 +1,8 @@
 package cn.t.tool.redistool;
 
 import cn.t.tool.redistool.func.DefaultChannelMessageHandler;
+import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.MultiKeyJedisClusterCommands;
 
 import java.util.*;
 
@@ -50,19 +52,24 @@ public class JedisUserInterface {
                     System.out.println("请输入要操作的key:");
                     String key = scanner.nextLine();
                     if (KEY_QUERY.equals(command)) {
-                        System.out.println(jedisHelper.getJedisCluster().get(key));
+                        System.out.println(jedisHelper.getJedisCommands().get(key));
                     } else if (KEY_SET.equals(command)) {
                         System.out.println("请输入值:");
                         String value = scanner.nextLine();
-                        jedisHelper.getJedisCluster().set(key, value);
+                        jedisHelper.getJedisCommands().set(key, value);
                     } else if (KEY_DEL.equals(command)) {
-                        jedisHelper.getJedisCluster().del(key);
+                        jedisHelper.getJedisCommands().del(key);
                         System.out.println("del ok");
                     } else if (KEY_EXIST.equals(command)) {
-                        System.out.println((jedisHelper.getJedisCluster().exists(key)) ? "存在" : "不存在");
+                        System.out.println((jedisHelper.getJedisCommands().exists(key)) ? "存在" : "不存在");
                     } else if(SUBSCRIBE_CHANNEL.equals(command)) {
                         System.out.println("going to subscribe channel: " + key);
-                        jedisHelper.getJedisCluster().psubscribe(new DefaultChannelMessageHandler(), key);
+                        JedisCommands jedisCommands = jedisHelper.getJedisCommands();
+                        if(jedisCommands instanceof MultiKeyJedisClusterCommands) {
+                            ((MultiKeyJedisClusterCommands)jedisCommands).psubscribe(new DefaultChannelMessageHandler(), key);
+                        } else {
+                            throw new RuntimeException("未知的redis集群客户端实现");
+                        }
                     } else {
                         System.out.println("该功能未实现");
                     }

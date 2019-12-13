@@ -1,15 +1,16 @@
 package cn.t.tool.redistool;
 
+import cn.t.tool.redistool.adapter.PseudoJedisCluster;
 import cn.t.tool.redistool.common.RedisConfiguration;
 import cn.t.util.io.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisCommands;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -17,22 +18,45 @@ public class JedisHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisHelper.class);
 
-    private JedisCluster jc;
+    private JedisCommands jedisCommands;
 
-    public JedisCluster getJedisCluster() {
-        return jc;
+    public JedisCommands getJedisCommands() {
+        return jedisCommands;
     }
 
     public void close() {
         try {
-            jc.close();
+            if(jedisCommands != null) {
+                if(jedisCommands instanceof JedisCluster) {
+                    ((JedisCluster)jedisCommands).close();
+                } else if(jedisCommands instanceof PseudoJedisCluster) {
+                    ((PseudoJedisCluster)jedisCommands).close();
+                } else {
+                    throw new RuntimeException("未知的redis集群客户端实现");
+                }
+            }
         } catch (IOException e) {
             logger.error("", e);
         }
     }
 
     public JedisHelper(RedisConfiguration redisConfiguration) {
-        jc = new JedisCluster(redisConfiguration.getHosts());
+        Set<HostAndPort> hostAndPortSet = redisConfiguration.getHostAndPortSet();
+        if(hostAndPortSet.size() == 1) {
+            Object[] arr = hostAndPortSet.toArray();
+            jedisCommands = new PseudoJedisCluster(
+                (HostAndPort)arr[0],
+                redisConfiguration.getConnectionTimeout(),
+                redisConfiguration.getSoTimeout(),
+                redisConfiguration.getPassword());
+        } else {
+            jedisCommands = new JedisCluster(redisConfiguration.getHostAndPortSet(),
+                redisConfiguration.getConnectionTimeout(),
+                redisConfiguration.getSoTimeout(),
+                redisConfiguration.getMaxAttempts(),
+                redisConfiguration.getPassword(),
+                redisConfiguration.getPoolConfig());
+        }
     }
 
     public JedisHelper() {
@@ -52,13 +76,6 @@ public class JedisHelper {
         } catch (IOException e) {
             logger.error("", e);
         }
-        String hostStr = properties.getProperty("redis.host", "localhost");
-        String[] hosts = hostStr.split(",");
-        Set<HostAndPort> hostAndPortSet = new LinkedHashSet<>();
-        for (String host : hosts) {
-            String[] elements = host.split(":");
-            hostAndPortSet.add(new HostAndPort(elements[0], Integer.parseInt(elements[1])));
-        }
-        return new RedisConfiguration(hostAndPortSet);
+        return new RedisConfiguration(properties);
     }
 }
