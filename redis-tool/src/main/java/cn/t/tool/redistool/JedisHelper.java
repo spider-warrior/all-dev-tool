@@ -1,6 +1,5 @@
 package cn.t.tool.redistool;
 
-import cn.t.tool.redistool.adapter.PseudoJedisCluster;
 import cn.t.tool.redistool.common.RedisConfiguration;
 import cn.t.util.io.FileUtil;
 import org.slf4j.Logger;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.SingleNodeJedisClusterAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,22 +18,16 @@ public class JedisHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisHelper.class);
 
-    private JedisCommands jedisCommands;
+    private JedisCluster jc;
 
     public JedisCommands getJedisCommands() {
-        return jedisCommands;
+        return jc;
     }
 
     public void close() {
         try {
-            if(jedisCommands != null) {
-                if(jedisCommands instanceof JedisCluster) {
-                    ((JedisCluster)jedisCommands).close();
-                } else if(jedisCommands instanceof PseudoJedisCluster) {
-                    ((PseudoJedisCluster)jedisCommands).close();
-                } else {
-                    throw new RuntimeException("未知的redis集群客户端实现");
-                }
+            if(jc != null) {
+                jc.close();
             }
         } catch (IOException e) {
             logger.error("", e);
@@ -44,13 +38,11 @@ public class JedisHelper {
         Set<HostAndPort> hostAndPortSet = redisConfiguration.getHostAndPortSet();
         if(hostAndPortSet.size() == 1) {
             Object[] arr = hostAndPortSet.toArray();
-            jedisCommands = new PseudoJedisCluster(
+            jc = new SingleNodeJedisClusterAdapter(
                 (HostAndPort)arr[0],
-                redisConfiguration.getConnectionTimeout(),
-                redisConfiguration.getSoTimeout(),
                 redisConfiguration.getPassword());
         } else {
-            jedisCommands = new JedisCluster(redisConfiguration.getHostAndPortSet(),
+            jc = new JedisCluster(redisConfiguration.getHostAndPortSet(),
                 redisConfiguration.getConnectionTimeout(),
                 redisConfiguration.getSoTimeout(),
                 redisConfiguration.getMaxAttempts(),
