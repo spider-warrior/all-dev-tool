@@ -20,7 +20,7 @@ public class JedisHelper {
 
     private JedisCluster jc;
 
-    public JedisCommands getJedisCommands() {
+    public JedisCluster getJedisCluster() {
         return jc;
     }
 
