@@ -15,6 +15,7 @@ public class JedisUserInterface {
         String KEY_DEL = "3";
         String KEY_EXIST = "4";
         String SUBSCRIBE_CHANNEL = "5";
+        String PUBLISH_CHANNEL = "6";
         String EXIT = "99";
 
         List<String> keyOperations = new ArrayList<>();
@@ -23,6 +24,7 @@ public class JedisUserInterface {
         keyOperations.add(KEY_DEL);
         keyOperations.add(KEY_EXIST);
         keyOperations.add(SUBSCRIBE_CHANNEL);
+        keyOperations.add(PUBLISH_CHANNEL);
 
         Map<String, String> functions = new LinkedHashMap<>();
         functions.put(KEY_QUERY, "key查询");
@@ -30,6 +32,7 @@ public class JedisUserInterface {
         functions.put(KEY_DEL, "key删除");
         functions.put(KEY_EXIST, "key是否存在");
         functions.put(SUBSCRIBE_CHANNEL, "订阅消息");
+        functions.put(PUBLISH_CHANNEL, "发布消息");
         functions.put(EXIT, "退出");
 
         Scanner scanner = new Scanner(System.in);
@@ -63,6 +66,11 @@ public class JedisUserInterface {
                     } else if(SUBSCRIBE_CHANNEL.equals(command)) {
                         System.out.println("going to subscribe channel: " + key);
                         jedisHelper.getJedisCluster().psubscribe(new DefaultChannelMessageHandler(), key);
+                    } else if(PUBLISH_CHANNEL.equals(command)) {
+                        System.out.println("going to publish channel: " + key);
+                        System.out.println("请输入值:");
+                        String value = scanner.nextLine();
+                        jedisHelper.getJedisCluster().publish(key, value);
                     } else {
                         System.out.println("该功能未实现");
                     }
