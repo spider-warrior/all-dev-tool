@@ -13,6 +13,7 @@
         <module>integrated-tool</module>
         <module>netty-tool</module>
         <module>crypto-tool</module>
+        <module>dns-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
