@@ -21,5 +21,5 @@ public class Header {
     /* authoritative name server count（2字节）*/
     private short authoritativeNameServerCount;
     /* additional records（2字节）*/
-    private short additionalRecords;
+    private short additionalRecordsCount;
 }
