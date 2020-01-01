@@ -32,9 +32,6 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
     @Override
     public Object handler(Request request) throws IOException {
         String domain = request.getDomain();
-        if(domain.endsWith("ishansong.com")) {
-            System.out.println();
-        }
         //读取配置域名
         String ip = ipv4DomainHelper.getCustomDomainMapping(domain);
         if(!StringUtil.isEmpty(ip)) {
