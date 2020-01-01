@@ -16,7 +16,10 @@
         <dependency>
             <groupId>cn.t</groupId>
             <artifactId>common-util</artifactId>
-            <version>1.0.7-RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>io-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

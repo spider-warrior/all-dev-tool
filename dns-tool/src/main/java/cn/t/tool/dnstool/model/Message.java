@@ -1,5 +1,7 @@
 package cn.t.tool.dnstool.model;
 
+import cn.t.tool.dnstool.QueryClass;
+import cn.t.tool.dnstool.QueryType;
 import lombok.Data;
 
 /**
@@ -11,6 +13,6 @@ public class Message {
     private Header header;
     private String domain;
     private byte labelCount;
-    private short type;
-    private short clazz;
+    private QueryType type;
+    private QueryClass clazz;
 }

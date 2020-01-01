@@ -1,6 +1,10 @@
 package cn.t.tool.dnstool.protocal;
 
 
+import cn.t.tool.dnstool.FlagUtil;
+import cn.t.tool.dnstool.ForbidServiceException;
+import cn.t.tool.dnstool.QueryClass;
+import cn.t.tool.dnstool.QueryType;
 import cn.t.tool.dnstool.model.Header;
 import cn.t.tool.dnstool.model.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +24,7 @@ public class DnsMessageDecoder {
             //报文Id
             short id = messageBuffer.getShort();
             //报文标志
-            short flags = messageBuffer.getShort();
+            short flag = messageBuffer.getShort();
             //查询问题区域的数量
             short queryDomainCount = messageBuffer.getShort();
             //回答区域的数量
@@ -29,6 +33,10 @@ public class DnsMessageDecoder {
             short authoritativeNameServerCount = messageBuffer.getShort();
             //附加区域的数量
             short additionalRecordsCount = messageBuffer.getShort();
+
+            //服务检查
+            serviceCheck(flag);
+
             //解析报文体
             if(queryDomainCount > 0) {
                 StringBuilder domainBuilder = new StringBuilder();
@@ -58,8 +66,8 @@ public class DnsMessageDecoder {
                 message.setHeader(header);
                 message.setDomain(domain);
                 message.setLabelCount(labelCount);
-                message.setType(type);
-                message.setClazz(clazz);
+                message.setType(QueryType.getQueryType(type));
+                message.setClazz(QueryClass.getQueryClass(clazz));
                 return message;
             } else {
                 log.warn("query domain count is 0");
@@ -68,6 +76,15 @@ public class DnsMessageDecoder {
         } else {
             log.warn("handled message should not be null");
             return null;
+        }
+    }
+
+    private void serviceCheck(short flag) {
+        if(!FlagUtil.isQuery(flag)) {
+            throw new ForbidServiceException("flag只支持查询");
+        }
+        if(!FlagUtil.isForwardDirection(flag)) {
+            throw new ForbidServiceException("flag只支持正向查询");
         }
     }
 }

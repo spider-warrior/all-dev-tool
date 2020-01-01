@@ -5,6 +5,7 @@ import cn.t.tool.dnstool.protocal.Context;
 import cn.t.tool.dnstool.protocal.DnsMessageDecoder;
 import cn.t.tool.dnstool.protocal.MessageEncoder;
 import cn.t.tool.dnstool.protocal.MessageHandlerAdapter;
+import cn.t.util.common.digital.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class DomainNameServer {
     private static MessageEncoder messageEncoder = new MessageEncoder();
 
     public static void main(String[] args) throws IOException {
+        SystemPropertiesLoader.loadDefaultProperties();
         DatagramSocket socket = new DatagramSocket(53);
         while (true) {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
