@@ -1,12 +1,10 @@
 package cn.t.tool.dnstool.protocal.handler.in;
 
+import cn.t.tool.dnstool.FlagUtil;
 import cn.t.tool.dnstool.Ipv4DomainHelper;
 import cn.t.tool.dnstool.RecordClass;
 import cn.t.tool.dnstool.RecordType;
-import cn.t.tool.dnstool.model.InternetResolveResponse;
-import cn.t.tool.dnstool.model.Message;
-import cn.t.tool.dnstool.model.ResolveResult;
-import cn.t.tool.dnstool.model.ResolvedRecord;
+import cn.t.tool.dnstool.model.*;
 import cn.t.tool.dnstool.protocal.MessageHandler;
 import cn.t.util.common.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +26,14 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
     private Ipv4DomainHelper ipv4DomainHelper = new Ipv4DomainHelper();
 
     @Override
-    public boolean support(Message message) {
+    public boolean support(Request request) {
         //class: internet && type: A
-        return message != null && RecordClass.IN == message.getClazz() && RecordType.A == message.getType();
+        return request != null && RecordClass.IN == request.getClazz() && RecordType.A == request.getType();
     }
 
     @Override
-    public Object handler(Message message) throws IOException {
-        String domain = message.getDomain();
+    public Object handler(Request request) throws IOException {
+        String domain = request.getDomain();
         //读取配置域名
         String ip = ipv4DomainHelper.getCustomDomainMapping(domain);
         if(StringUtil.isEmpty(ip)) {
@@ -47,7 +44,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 log.info("domain: {} cannot be resolved by local resolver, use 114.114.114.114", domain);
                 InetAddress dnsServerAddress = InetAddress.getByName("114.114.114.114");
                 DatagramSocket internetSocket = new DatagramSocket();
-                byte[] data = message.toBytes();
+                byte[] data = request.toBytes();
                 DatagramPacket internetSendPacket = new DatagramPacket(data, data.length, dnsServerAddress, 53);
                 internetSocket.send(internetSendPacket);
                 byte[] receivedData = new byte[1024];
@@ -62,31 +59,36 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 //因为域名字符的限制(最大为63)所以byte字节的高两位始终为00，所以使用高两位使用11表示使用偏移量来表示对应的域名,10和01两种状态被保留
                 //前面内容都是定长，所以偏移量一定是从12开始算起
                 short offset = 12;
-                ResolveResult response = new ResolveResult();
-                response.setHeader(message.getHeader());
-                response.setLabelCount(message.getLabelCount());
+                Response response = new Response();
+                response.setLabelCount(request.getLabelCount());
                 response.setDomain(domain);
-                response.setType(message.getType());
-                response.setClazz(message.getClazz());
-                List<ResolvedRecord> resolvedRecordList = new ArrayList<>();
-                response.setResolvedRecordList(resolvedRecordList);
+                response.setType(request.getType());
+                response.setClazz(request.getClazz());
+                List<Record> recordList = new ArrayList<>();
+                response.setRecordList(recordList);
                 for(InetAddress inetAddress: addresses) {
-                    ResolvedRecord record = new ResolvedRecord();
+                    Record record = new Record();
                     record.setOffset(offset);
                     record.setRecordType(RecordType.A);
                     record.setRecordClass(RecordClass.IN);
                     record.setTtl(1);
                     record.setValue(inetAddress.getHostAddress());
-                    resolvedRecordList.add(record);
+                    recordList.add(record);
                 }
+                Header header = request.getHeader();
+                short flag = header.getFlags();
+                flag = FlagUtil.markResponse(flag);
+                //如果客户端设置建议递归查询
+                if(FlagUtil.isRecursionResolve(header.getFlags())) {
+                    flag = FlagUtil.markRecursionSupported(flag);
+                }
+                header.setFlags(flag);
+                header.setAnswerCount((short)recordList.size());
+                response.setHeader(header);
                 return response;
             }
         }
         return null;
     }
 
-    public static void main(String[] args) throws UnknownHostException {
-        InetAddress.getByName("www.baidu.com");
-        InetAddress.getAllByName("www.baidu.com");
-    }
 }

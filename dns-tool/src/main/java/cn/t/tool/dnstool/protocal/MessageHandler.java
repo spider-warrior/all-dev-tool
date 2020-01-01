@@ -1,10 +1,10 @@
 package cn.t.tool.dnstool.protocal;
 
-import cn.t.tool.dnstool.model.Message;
+import cn.t.tool.dnstool.model.Request;
 
 import java.io.IOException;
 
 public interface MessageHandler {
-    boolean support(Message message);
-    Object handler(Message message) throws IOException;
+    boolean support(Request request);
+    Object handler(Request request) throws IOException;
 }

@@ -6,7 +6,7 @@ import cn.t.tool.dnstool.ForbidServiceException;
 import cn.t.tool.dnstool.RecordClass;
 import cn.t.tool.dnstool.RecordType;
 import cn.t.tool.dnstool.model.Header;
-import cn.t.tool.dnstool.model.Message;
+import cn.t.tool.dnstool.model.Request;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
  **/
 @Slf4j
 public class DnsMessageDecoder {
-    public Message decode(byte[] messageBytes) {
+    public Request decode(byte[] messageBytes) {
         if(messageBytes != null && messageBytes.length > 0) {
             ByteBuffer messageBuffer = ByteBuffer.wrap(messageBytes);
             //解析头部
@@ -62,13 +62,13 @@ public class DnsMessageDecoder {
                 header.setAuthoritativeNameServerCount(authoritativeNameServerCount);
                 header.setAdditionalRecordsCount(additionalRecordsCount);
                 //message
-                Message message = new Message();
-                message.setHeader(header);
-                message.setDomain(domain);
-                message.setLabelCount(labelCount);
-                message.setType(RecordType.getRecordType(type));
-                message.setClazz(RecordClass.getRecordClass(clazz));
-                return message;
+                Request request = new Request();
+                request.setHeader(header);
+                request.setDomain(domain);
+                request.setLabelCount(labelCount);
+                request.setType(RecordType.getRecordType(type));
+                request.setClazz(RecordClass.getRecordClass(clazz));
+                return request;
             } else {
                 log.warn("query domain count is 0");
                 return null;

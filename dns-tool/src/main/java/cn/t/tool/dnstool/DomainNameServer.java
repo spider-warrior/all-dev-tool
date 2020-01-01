@@ -1,11 +1,10 @@
 package cn.t.tool.dnstool;
 
-import cn.t.tool.dnstool.model.Message;
+import cn.t.tool.dnstool.model.Request;
 import cn.t.tool.dnstool.protocal.Context;
 import cn.t.tool.dnstool.protocal.DnsMessageDecoder;
 import cn.t.tool.dnstool.protocal.MessageEncoder;
 import cn.t.tool.dnstool.protocal.MessageHandlerAdapter;
-import cn.t.util.common.digital.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -39,14 +38,14 @@ public class DomainNameServer {
             byte[] messageBytes = new byte[packet.getLength()];
             System.arraycopy(packet.getData(), 0, messageBytes, 0, packet.getLength());
             //解析消息
-            Message message = messageDecoder.decode(messageBytes);
-            if(message != null) {
+            Request request = messageDecoder.decode(messageBytes);
+            if(request != null) {
                 Context context = new Context();
                 context.setSocket(socket);
                 context.setInetAddress(packet.getAddress());
                 context.setPort(packet.getPort());
                 //处理消息
-                Object result = messageHandlerAdapter.handle(context, message);
+                Object result = messageHandlerAdapter.handle(context, request);
                 if(result != null) {
                     //响应客户端
                     messageEncoder.encode(context, result);

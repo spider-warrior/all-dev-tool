@@ -9,7 +9,7 @@ import lombok.Data;
  * @since 2020-01-01 15:05
  **/
 @Data
-public class ResolvedRecord {
+public class Record {
     /**
      * 偏移量
      * */

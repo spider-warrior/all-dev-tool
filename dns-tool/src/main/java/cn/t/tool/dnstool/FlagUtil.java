@@ -121,4 +121,23 @@ public class FlagUtil {
     public static boolean isStrategyForbid(short flag) {
         return (R_CODE__BIT & flag) == 5;
     }
+
+    /**
+     * 标记为响应
+     * @param flag 标志
+     * @return 标志
+     */
+    public static short markResponse(short flag) {
+        return (short)(flag | 0b1000000000000000);
+    }
+
+    /**
+     * 标记为支持递归查询
+     * @param flag 标志
+     * @return 标志
+     */
+    public static short markRecursionSupported(short flag) {
+        return (short)(flag | 0b0000000010000000);
+    }
+
 }
