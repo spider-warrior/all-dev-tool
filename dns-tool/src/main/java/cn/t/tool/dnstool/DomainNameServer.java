@@ -46,7 +46,7 @@ public class DomainNameServer {
                 context.setInetAddress(packet.getAddress());
                 context.setPort(packet.getPort());
                 //处理消息
-                Message result = messageHandlerAdapter.handle(context, message);
+                Object result = messageHandlerAdapter.handle(context, message);
                 if(result != null) {
                     //响应客户端
                     messageEncoder.encode(context, result);

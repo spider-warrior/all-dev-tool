@@ -1,6 +1,6 @@
 package cn.t.tool.dnstool;
 
-public enum QueryType {
+public enum RecordType {
     A((short)1, "A", "由域名获得IPv4地址"),
     NS((short)2, "NS", "查询域名服务器"),
     CNAM((short)5, "CNAM", "查询规范名称"),
@@ -17,16 +17,16 @@ public enum QueryType {
     public final String shortName;
     public final String desc;
 
-    QueryType(short value, String shortName, String desc) {
+    RecordType(short value, String shortName, String desc) {
         this.value = value;
         this.shortName = shortName;
         this.desc = desc;
     }
 
-    public static QueryType getQueryType(short value) {
-        for(QueryType queryType: values()) {
-            if(queryType.value == value) {
-                return queryType;
+    public static RecordType getRecordType(short value) {
+        for(RecordType recordType : values()) {
+            if(recordType.value == value) {
+                return recordType;
             }
         }
         return null;

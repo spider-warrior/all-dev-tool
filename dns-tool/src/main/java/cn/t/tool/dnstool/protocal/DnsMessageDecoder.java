@@ -3,8 +3,8 @@ package cn.t.tool.dnstool.protocal;
 
 import cn.t.tool.dnstool.FlagUtil;
 import cn.t.tool.dnstool.ForbidServiceException;
-import cn.t.tool.dnstool.QueryClass;
-import cn.t.tool.dnstool.QueryType;
+import cn.t.tool.dnstool.RecordClass;
+import cn.t.tool.dnstool.RecordType;
 import cn.t.tool.dnstool.model.Header;
 import cn.t.tool.dnstool.model.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +66,8 @@ public class DnsMessageDecoder {
                 message.setHeader(header);
                 message.setDomain(domain);
                 message.setLabelCount(labelCount);
-                message.setType(QueryType.getQueryType(type));
-                message.setClazz(QueryClass.getQueryClass(clazz));
+                message.setType(RecordType.getRecordType(type));
+                message.setClazz(RecordClass.getRecordClass(clazz));
                 return message;
             } else {
                 log.warn("query domain count is 0");

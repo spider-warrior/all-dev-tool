@@ -39,8 +39,9 @@ public class Context {
         this.port = port;
     }
 
-    public void write(DatagramPacket packet) throws IOException {
-        if(packet != null) {
+    public void write(byte[] data) throws IOException {
+        if(data != null && data.length > 0) {
+            DatagramPacket packet = new DatagramPacket(data, data.length);
             packet.setAddress(inetAddress);
             packet.setPort(port);
             socket.send(packet);

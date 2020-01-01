@@ -4,7 +4,7 @@ import cn.t.tool.dnstool.model.Message;
 import cn.t.tool.dnstool.protocal.handler.in.InternetIpV4DomainQueryHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.UnknownHostException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class MessageHandlerAdapter {
     private final List<MessageHandler> messageHandlerList = new ArrayList<>();
-    public Message handle(Context context, Message message) throws UnknownHostException {
+    public Object handle(Context context, Message message) throws IOException {
         MessageHandler messageHandler = selectMessageHandler(message);
         if(messageHandler != null) {
             log.info("client: {}:{} query detail:\n domain: {}, queryType: {}, clazz: {}", context.getInetAddress(), context.getPort(), message.getDomain(), message.getType(), message.getClazz());

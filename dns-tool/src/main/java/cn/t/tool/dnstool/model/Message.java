@@ -1,7 +1,7 @@
 package cn.t.tool.dnstool.model;
 
-import cn.t.tool.dnstool.QueryClass;
-import cn.t.tool.dnstool.QueryType;
+import cn.t.tool.dnstool.RecordClass;
+import cn.t.tool.dnstool.RecordType;
 import lombok.Data;
 
 /**
@@ -13,6 +13,10 @@ public class Message {
     private Header header;
     private String domain;
     private byte labelCount;
-    private QueryType type;
-    private QueryClass clazz;
+    private RecordType type;
+    private RecordClass clazz;
+
+    public byte[] toBytes() {
+        return new byte[0];
+    }
 }
