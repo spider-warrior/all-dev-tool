@@ -46,6 +46,10 @@ public class Request {
         buffer.putShort(type.value);
         //3.class
         buffer.putShort(clazz.value);
-        return buffer.array();
+        buffer.flip();
+        int len = buffer.limit() - buffer.position();
+        byte[] bytes = new byte[len];
+        buffer.get(bytes);
+        return bytes;
     }
 }

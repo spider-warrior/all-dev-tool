@@ -34,7 +34,7 @@ public class MessageHandlerAdapter {
         return null;
     }
 
-    public void init() {
+    public MessageHandlerAdapter() {
         messageHandlerList.add(new InternetIpV4DomainQueryHandler());
     }
 }

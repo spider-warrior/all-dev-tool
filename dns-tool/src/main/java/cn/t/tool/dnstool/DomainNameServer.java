@@ -29,27 +29,31 @@ public class DomainNameServer {
         SystemPropertiesLoader.loadDefaultProperties();
         DatagramSocket socket = new DatagramSocket(53);
         while (true) {
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-            socket.receive(packet);
-            log.info("==========================================================================================");
-            InetAddress inetAddress = packet.getAddress();
-            int port = packet.getPort();
-            log.info("message from: sourceIpAddr: {}:{}", inetAddress, port);
-            byte[] messageBytes = new byte[packet.getLength()];
-            System.arraycopy(packet.getData(), 0, messageBytes, 0, packet.getLength());
-            //解析消息
-            Request request = messageDecoder.decode(messageBytes);
-            if(request != null) {
-                Context context = new Context();
-                context.setSocket(socket);
-                context.setInetAddress(packet.getAddress());
-                context.setPort(packet.getPort());
-                //处理消息
-                Object result = messageHandlerAdapter.handle(context, request);
-                if(result != null) {
-                    //响应客户端
-                    messageEncoder.encode(context, result);
+            try {
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                socket.receive(packet);
+                log.info("==========================================================================================");
+                InetAddress inetAddress = packet.getAddress();
+                int port = packet.getPort();
+                log.info("message from: sourceIpAddr: {}:{}", inetAddress, port);
+                byte[] messageBytes = new byte[packet.getLength()];
+                System.arraycopy(packet.getData(), 0, messageBytes, 0, packet.getLength());
+                //解析消息
+                Request request = messageDecoder.decode(messageBytes);
+                if(request != null) {
+                    Context context = new Context();
+                    context.setSocket(socket);
+                    context.setInetAddress(packet.getAddress());
+                    context.setPort(packet.getPort());
+                    //处理消息
+                    Object result = messageHandlerAdapter.handle(context, request);
+                    if(result != null) {
+                        //响应客户端
+                        messageEncoder.encode(context, result);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

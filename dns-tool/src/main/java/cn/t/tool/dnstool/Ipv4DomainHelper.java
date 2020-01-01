@@ -23,10 +23,10 @@ public class Ipv4DomainHelper {
     private static Properties tryIpv4DomainMappingConfiguration() {
         Properties properties = new Properties();
         try (
-            InputStream is = FileUtil.getResourceInputStream(Ipv4DomainHelper.class, "/oracle.properties")
+            InputStream is = FileUtil.getResourceInputStream(Ipv4DomainHelper.class, "/ipv4-domain-mapping.properties")
         ) {
             if(is == null) {
-                log.error("oracle数据库配置文件未找: {}", "oracle.properties");
+                log.error("ipv4配置文件未找到: {}", "ipv4-domain-mapping.properties");
             } else {
                 properties.load(is);
             }

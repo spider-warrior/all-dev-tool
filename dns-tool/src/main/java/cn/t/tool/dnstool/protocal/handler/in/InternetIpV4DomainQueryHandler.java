@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,43 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
     @Override
     public Object handler(Request request) throws IOException {
         String domain = request.getDomain();
+        if(domain.endsWith("baidu.com")) {
+            System.out.println();
+        }
         //读取配置域名
         String ip = ipv4DomainHelper.getCustomDomainMapping(domain);
-        if(StringUtil.isEmpty(ip)) {
+        if(!StringUtil.isEmpty(ip)) {
+            Response response = new Response();
+            response.setLabelCount(request.getLabelCount());
+            response.setDomain(domain);
+            response.setType(request.getType());
+            response.setClazz(request.getClazz());
+            List<Record> recordList = new ArrayList<>();
+            response.setRecordList(recordList);
+            //record
+            Record record = new Record();
+            record.setOffset((short)12);
+            record.setRecordType(RecordType.A);
+            record.setRecordClass(RecordClass.IN);
+            record.setTtl(1);
+            record.setValue(ip);
+            recordList.add(record);
+
+            Header header = request.getHeader();
+            short flag = header.getFlags();
+            flag = FlagUtil.markResponse(flag);
+            //如果客户端设置建议递归查询
+            if(FlagUtil.isRecursionResolve(header.getFlags())) {
+                flag = FlagUtil.markRecursionSupported(flag);
+            }
+            header.setFlags(flag);
+            header.setAnswerCount((short)recordList.size());
+            response.setHeader(header);
+            return response;
+        } else {
             log.info("domain: {} is not config in file, use local resolver", domain);
             //加载
-            InetAddress[] addresses = addresses = InetAddress.getAllByName(domain);
+            InetAddress[] addresses = InetAddress.getAllByName(domain);
             if(addresses == null || addresses.length == 0) {
                 log.info("domain: {} cannot be resolved by local resolver, use 114.114.114.114", domain);
                 InetAddress dnsServerAddress = InetAddress.getByName("114.114.114.114");
@@ -56,9 +88,9 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 internetResolveResponse.setData(dataToUse);
                 return internetResolveResponse;
             } else {
+                log.info("domain: {} resolved by local resolver, record size: {}", domain, addresses.length);
                 //因为域名字符的限制(最大为63)所以byte字节的高两位始终为00，所以使用高两位使用11表示使用偏移量来表示对应的域名,10和01两种状态被保留
                 //前面内容都是定长，所以偏移量一定是从12开始算起
-                short offset = 12;
                 Response response = new Response();
                 response.setLabelCount(request.getLabelCount());
                 response.setDomain(domain);
@@ -67,13 +99,15 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 List<Record> recordList = new ArrayList<>();
                 response.setRecordList(recordList);
                 for(InetAddress inetAddress: addresses) {
-                    Record record = new Record();
-                    record.setOffset(offset);
-                    record.setRecordType(RecordType.A);
-                    record.setRecordClass(RecordClass.IN);
-                    record.setTtl(1);
-                    record.setValue(inetAddress.getHostAddress());
-                    recordList.add(record);
+                    if(inetAddress instanceof Inet4Address) {
+                        Record record = new Record();
+                        record.setOffset((short)12);
+                        record.setRecordType(RecordType.A);
+                        record.setRecordClass(RecordClass.IN);
+                        record.setTtl(1);
+                        record.setValue(inetAddress.getHostAddress());
+                        recordList.add(record);
+                    }
                 }
                 Header header = request.getHeader();
                 short flag = header.getFlags();
@@ -88,7 +122,6 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 return response;
             }
         }
-        return null;
     }
 
 }

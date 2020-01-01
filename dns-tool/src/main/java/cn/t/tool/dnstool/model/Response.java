@@ -65,7 +65,11 @@ public class Response extends Request {
                 String ip = record.getValue();
                 String[] ipElements = ip.split("\\.");
                 for(String part : ipElements) {
-                    buffer.put(Byte.parseByte(part));
+                    try {
+                        buffer.put((byte)Short.parseShort(part));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if(RecordType.CNAM == record.getRecordType()) {
                 //值为别名
@@ -80,6 +84,10 @@ public class Response extends Request {
                 buffer.put(cnameBuffer.array());
             }
         }
-        return buffer.array();
+        buffer.flip();
+        int len = buffer.limit() - buffer.position();
+        byte[] bytes = new byte[len];
+        buffer.get(bytes);
+        return bytes;
     }
 }

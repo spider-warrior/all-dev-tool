@@ -6,13 +6,13 @@ package cn.t.tool.dnstool;
  **/
 public class FlagUtil {
 
-    private static final short QR_BIT =          (short)0b1000000000000000;
-    private static final short OP_CODE_BIT =     (short)0b0111100000000000;
-    private static final short AA_BIT =          (short)0b0000010000000000;
-    private static final short TC_BIT =          (short)0b0000001000000000;
-    private static final short RD_BIT =          (short)0b0000000100000000;
-    private static final short RA_BIT =          (short)0b0000000010000000;
-    private static final short R_CODE__BIT =      (short)0b0000000000001111;
+    private static final int QR_BIT =           0b1000000000000000;
+    private static final int OP_CODE_BIT =      0b0111100000000000;
+    private static final int AA_BIT =           0b0000010000000000;
+    private static final int TC_BIT =           0b0000001000000000;
+    private static final int RD_BIT =           0b0000000100000000;
+    private static final int RA_BIT =           0b0000000010000000;
+    private static final int R_CODE__BIT =      0b0000000000001111;
 
     /**
      * 是否未查询
@@ -20,7 +20,7 @@ public class FlagUtil {
      * @return true|false
      */
     public static boolean isQuery(short flag) {
-        return (QR_BIT & flag) == QR_BIT;
+        return (QR_BIT & flag) != QR_BIT;
     }
 
     /**
