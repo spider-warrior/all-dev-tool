@@ -35,7 +35,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
     @Override
     public Object handler(Request request) throws IOException {
         String domain = request.getDomain();
-        if(domain.endsWith("baidu.com")) {
+        if(domain.endsWith("ishansong.com")) {
             System.out.println();
         }
         //读取配置域名
@@ -50,7 +50,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
             response.setRecordList(recordList);
             //record
             Record record = new Record();
-            record.setOffset((short)12);
+            record.setOffset((short)(0xC000 | 12));
             record.setRecordType(RecordType.A);
             record.setRecordClass(RecordClass.IN);
             record.setTtl(1);
@@ -101,7 +101,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 for(InetAddress inetAddress: addresses) {
                     if(inetAddress instanceof Inet4Address) {
                         Record record = new Record();
-                        record.setOffset((short)12);
+                        record.setOffset((short)(0xC000 | 12));
                         record.setRecordType(RecordType.A);
                         record.setRecordClass(RecordClass.IN);
                         record.setTtl(1);
