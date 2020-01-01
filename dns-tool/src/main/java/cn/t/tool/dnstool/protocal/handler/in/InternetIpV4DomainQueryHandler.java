@@ -10,10 +10,7 @@ import cn.t.util.common.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Inet4Address;
-import java.net.InetAddress;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,23 +68,8 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
         } else {
             log.info("domain: {} is not config in file, use local resolver", domain);
             //加载
-            InetAddress[] addresses = InetAddress.getAllByName(domain);
-            if(addresses == null || addresses.length == 0) {
-                log.info("domain: {} cannot be resolved by local resolver, use 114.114.114.114", domain);
-                InetAddress dnsServerAddress = InetAddress.getByName("114.114.114.114");
-                DatagramSocket internetSocket = new DatagramSocket();
-                byte[] data = request.toBytes();
-                DatagramPacket internetSendPacket = new DatagramPacket(data, data.length, dnsServerAddress, 53);
-                internetSocket.send(internetSendPacket);
-                byte[] receivedData = new byte[1024];
-                DatagramPacket internetReceivedPacket = new DatagramPacket(receivedData, receivedData.length);
-                internetSocket.receive(internetReceivedPacket);
-                InternetResolveResponse internetResolveResponse = new InternetResolveResponse();
-                byte[] dataToUse = new byte[internetReceivedPacket.getLength()];
-                System.arraycopy(receivedData, 0, dataToUse, 0, dataToUse.length);
-                internetResolveResponse.setData(dataToUse);
-                return internetResolveResponse;
-            } else {
+            try {
+                InetAddress[] addresses = InetAddress.getAllByName(domain);
                 log.info("domain: {} resolved by local resolver, record size: {}", domain, addresses.length);
                 //因为域名字符的限制(最大为63)所以byte字节的高两位始终为00，所以使用高两位使用11表示使用偏移量来表示对应的域名,10和01两种状态被保留
                 //前面内容都是定长，所以偏移量一定是从12开始算起
@@ -120,6 +102,22 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
                 header.setAnswerCount((short)recordList.size());
                 response.setHeader(header);
                 return response;
+            } catch (UnknownHostException e) {
+                log.warn(String.format("本地路由解析域名失败, domain: %s", domain), e);
+                log.info("domain: {} cannot be resolved by local resolver, use 114.114.114.114", domain);
+                InetAddress dnsServerAddress = InetAddress.getByName("114.114.114.114");
+                DatagramSocket internetSocket = new DatagramSocket();
+                byte[] data = request.toBytes();
+                DatagramPacket internetSendPacket = new DatagramPacket(data, data.length, dnsServerAddress, 53);
+                internetSocket.send(internetSendPacket);
+                byte[] receivedData = new byte[1024];
+                DatagramPacket internetReceivedPacket = new DatagramPacket(receivedData, receivedData.length);
+                internetSocket.receive(internetReceivedPacket);
+                InternetResolveResponse internetResolveResponse = new InternetResolveResponse();
+                byte[] dataToUse = new byte[internetReceivedPacket.getLength()];
+                System.arraycopy(receivedData, 0, dataToUse, 0, dataToUse.length);
+                internetResolveResponse.setData(dataToUse);
+                return internetResolveResponse;
             }
         }
     }
