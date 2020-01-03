@@ -35,6 +35,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
         //读取配置域名
         String ip = ipv4DomainHelper.getCustomDomainMapping(domain);
         if(!StringUtil.isEmpty(ip)) {
+            log.info("===================================== domain : {} use local dns config, response ip: {} =====================================", domain, ip);
             Response response = new Response();
             response.setLabelCount(request.getLabelCount());
             response.setDomain(domain);
@@ -47,7 +48,7 @@ public class InternetIpV4DomainQueryHandler implements MessageHandler {
             record.setOffset((short)(0xC000 | 12));
             record.setRecordType(RecordType.A);
             record.setRecordClass(RecordClass.IN);
-            record.setTtl(1);
+            record.setTtl(20);
             record.setValue(ip);
             recordList.add(record);
 
