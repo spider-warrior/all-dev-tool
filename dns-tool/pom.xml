@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dev-tool</artifactId>
         <groupId>cn.t</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,18 +16,10 @@
         <dependency>
             <groupId>cn.t</groupId>
             <artifactId>common-util</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>cn.t</groupId>
             <artifactId>io-util</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.6</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

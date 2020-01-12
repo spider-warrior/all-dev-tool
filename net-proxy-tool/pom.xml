@@ -9,18 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>netty-tool</artifactId>
-
+    <artifactId>net-proxy-tool</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.34.Final</version>
-        </dependency>
-        <dependency>
             <groupId>cn.t</groupId>
-            <artifactId>common-util</artifactId>
+            <artifactId>netty-tool</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -14,26 +14,35 @@
         <module>netty-tool</module>
         <module>crypto-tool</module>
         <module>dns-tool</module>
+        <module>net-proxy-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
-    <description>util parent</description>
+    <description>util tools</description>
     <url>https://github.com/qq362961910/dev-tool</url>
 
 
     <properties>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <revision>1.0-SNAPSHOT</revision>
+
+        <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -54,6 +63,11 @@
             <dependency>
                 <groupId>cn.t</groupId>
                 <artifactId>redis-tool</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.t</groupId>
+                <artifactId>netty-tool</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -102,7 +116,7 @@
                 <version>1.1.0</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>clean</flattenMode>
+                    <flattenMode>bom</flattenMode>
                     <pomElements>
                         <scm>remove</scm>
                         <developers>remove</developers>
