@@ -15,6 +15,7 @@
         <module>crypto-tool</module>
         <module>dns-tool</module>
         <module>net-proxy-tool</module>
+        <module>dhcp-tool</module>
     </modules>
     <packaging>pom</packaging>
     <name>dev tools</name>
