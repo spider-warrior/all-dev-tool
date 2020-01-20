@@ -26,7 +26,6 @@
         <dependency>
             <groupId>cn.t</groupId>
             <artifactId>io-util</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
