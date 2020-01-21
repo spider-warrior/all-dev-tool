@@ -60,6 +60,8 @@ public class DhcpClient {
         }
         if(clientInfo == null) {
             return null;
+        } else {
+            clientInfo = null;
         }
         //request阶段
         for(int i=1; i<=tryTimes; i++) {
