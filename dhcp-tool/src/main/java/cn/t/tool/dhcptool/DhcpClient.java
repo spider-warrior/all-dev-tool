@@ -47,18 +47,30 @@ public class DhcpClient {
         }
         int tryTimes = 3;
         int timeout = 3000;
+        //discover阶段
         for(int i=1; i<=tryTimes; i++) {
-            logger.info("第{}次尝试获取offer", i);
+            logger.info("第{}次尝试发送discover报文", i);
             dhcpMessageSender.discover(message, this);
             try { wait(timeout); } catch (InterruptedException e) { e.printStackTrace(); }
             if(clientInfo != null) {
                 message.setExpectIp(clientInfo.getIp());
                 message.setDhcpIdentifier(clientInfo.getDhcpServerIp());
-                dhcpMessageSender.request(message, this);
-                return clientInfo;
+                break;
             }
         }
-        return null;
+        if(clientInfo == null) {
+            return null;
+        }
+        //request阶段
+        for(int i=1; i<=tryTimes; i++) {
+            logger.info("第{}次尝试发送request报文", i);
+            dhcpMessageSender.request(message, this);
+            try { wait(timeout); } catch (InterruptedException e) { e.printStackTrace(); }
+            if(clientInfo != null) {
+                break;
+            }
+        }
+        return clientInfo;
     }
 
     public byte[] getMacBytes() {

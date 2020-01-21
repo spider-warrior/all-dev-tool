@@ -5,7 +5,10 @@ import cn.t.tool.dhcptool.constants.OperationType;
 import cn.t.tool.dhcptool.model.DhcpMessage;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,14 +36,16 @@ public class DhcpMessageSender {
 
     public void discover(DhcpMessage message, DhcpClient client) throws IOException {
         message.setOperationType(OperationType.DISCOVER);
-        Integer txId = id.incrementAndGet();
-        message.setTxId(txId);
-        dhcpMessageReceiver.bindClientClient(txId, client);
+        message.setTxId(id.incrementAndGet());
+        dhcpMessageReceiver.bindClientClient(message.getTxId(), client);
         send(encoder.encode(message));
     }
 
     public void request(DhcpMessage message, DhcpClient client) throws IOException {
         message.setOperationType(OperationType.REQUEST);
+        if(message.getTxId() == null) {
+            message.setTxId(id.incrementAndGet());
+        }
         dhcpMessageReceiver.bindClientClient(message.getTxId(), client);
         send(encoder.encode(message));
     }

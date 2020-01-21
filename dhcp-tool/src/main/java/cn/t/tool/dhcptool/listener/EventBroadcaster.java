@@ -11,6 +11,8 @@ import java.util.List;
  **/
 public class EventBroadcaster {
     private final List<DhcpEventListener> dhcpEventListenerList = new ArrayList<>();
+
+    @SuppressWarnings("unchecked")
     public void broadcast(Object event) {
         if(event != null) {
             for(DhcpEventListener listener: dhcpEventListenerList) {

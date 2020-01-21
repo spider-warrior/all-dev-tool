@@ -2,6 +2,7 @@ package cn.t.tool.dhcptool.protocol;
 
 import cn.t.tool.dhcptool.constants.OperationType;
 import cn.t.tool.dhcptool.constants.OptionType;
+import cn.t.tool.dhcptool.model.AckMessage;
 import cn.t.tool.dhcptool.model.NakMessage;
 import cn.t.tool.dhcptool.model.OfferMessage;
 import cn.t.util.common.ArrayUtil;
@@ -107,7 +108,7 @@ public class DhcpMessageDecoder {
                     List<byte[]> dnsServerList = new ArrayList<>(ipCount);
                     for(int i=0; i<ipCount; i++) {
                         byte[] ip = new byte[4];
-                        ip[i] = dnses[i+0];
+                        ip[i] = dnses[i];
                         ip[i] = dnses[i+1];
                         ip[i] = dnses[i+2];
                         ip[i] = dnses[i+3];
@@ -125,6 +126,33 @@ public class DhcpMessageDecoder {
                     message.setMessage(new String(messageBytes));
                 }
                 return message;
+            }  else if(oType == OperationType.ACK) {
+                AckMessage ackMessage = new AckMessage();
+                ackMessage.setTxId(transactionId);
+                ackMessage.setClientIp(yourIp);
+                ackMessage.setClientMac(clientMac);
+                ackMessage.setDhcpServerIp(optionMap.get(OptionType.DHCP_SERVER));
+                ackMessage.setLeaseTime(IntUtil.bytesToInt(optionMap.get(OptionType.ADDRESS_TIME)));
+                ackMessage.setRenewTime(IntUtil.bytesToInt(optionMap.get(OptionType.RENEWAL_TIME)));
+                ackMessage.setRebindingTime(IntUtil.bytesToInt(optionMap.get(OptionType.REBINDING_TIME)));
+                ackMessage.setSubnetMask(optionMap.get(OptionType.SUBNET_MASK));
+                ackMessage.setRouter(optionMap.get(OptionType.ROUTER));
+                byte[] dnses =optionMap.get(OptionType.DOMAIN_NAME_SERVER);
+                if(!ArrayUtil.isEmpty(dnses)) {
+                    int ipCount = dnses.length / 4;
+                    List<byte[]> dnsServerList = new ArrayList<>(ipCount);
+                    for(int i=0; i<ipCount; i++) {
+                        byte[] ip = new byte[4];
+                        ip[i] = dnses[i];
+                        ip[i] = dnses[i+1];
+                        ip[i] = dnses[i+2];
+                        ip[i] = dnses[i+3];
+                        dnsServerList.add(ip);
+                    }
+                    ackMessage.setDnsServerList(dnsServerList);
+                }
+                return ackMessage;
+
             } else {
                 throw new RuntimeException("为实现的option消息解析类型: " + oType);
             }

@@ -4,6 +4,7 @@ import cn.t.tool.dhcptool.ClientInfo;
 import cn.t.tool.dhcptool.DhcpClient;
 import cn.t.tool.dhcptool.listener.DhcpEventListener;
 import cn.t.tool.dhcptool.listener.EventBroadcaster;
+import cn.t.tool.dhcptool.model.AckMessage;
 import cn.t.tool.dhcptool.model.OfferMessage;
 import cn.t.util.common.CollectionUtil;
 import cn.t.util.common.reflect.GenericUtil;
@@ -85,7 +86,23 @@ public class DhcpMessageReceiver implements Runnable {
                 }
             }
         };
+        DhcpEventListener<AckMessage> ackMessageListener = new DhcpEventListener<AckMessage>() {
+            @Override
+            public void onEvent(AckMessage message) {
+                DhcpClient client = txIdClientMapping.get(message.getTxId());
+                if(client != null) {
+                    ClientInfo clientInfo = new ClientInfo();
+                    clientInfo.setIp(message.getClientIp());
+                    clientInfo.setDhcpServerIp(message.getDhcpServerIp());
+                    clientInfo.setRouter(message.getRouter());
+                    clientInfo.setSubnetMask(message.getSubnetMask());
+                    clientInfo.setDnsServerList(message.getDnsServerList());
+                    client.acceptClientInfo(clientInfo);
+                }
+            }
+        };
         eventBroadcaster.addEventListener(offerMessageListener);
+        eventBroadcaster.addEventListener(ackMessageListener);
     }
 
     /**

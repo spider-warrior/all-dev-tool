@@ -4,6 +4,7 @@ import cn.t.tool.dhcptool.listener.EventBroadcaster;
 import cn.t.tool.dhcptool.protocol.DhcpMessageHandler;
 import cn.t.tool.dhcptool.protocol.DhcpMessageReceiver;
 import cn.t.tool.dhcptool.protocol.DhcpMessageSender;
+import cn.t.tool.dhcptool.protocol.handler.AckMessageHandler;
 import cn.t.tool.dhcptool.protocol.handler.NakMessageHandler;
 import cn.t.tool.dhcptool.protocol.handler.OfferMessageHandler;
 import cn.t.util.common.digital.HexUtil;
@@ -75,6 +76,7 @@ public abstract class DhcpClientFactory {
         static {
             //handler
             dhcpClientFactory.handlerList.add(new OfferMessageHandler(dhcpClientFactory.eventBroadcaster));
+            dhcpClientFactory.handlerList.add(new AckMessageHandler(dhcpClientFactory.eventBroadcaster));
             dhcpClientFactory.handlerList.add(new NakMessageHandler());
         }
     }
