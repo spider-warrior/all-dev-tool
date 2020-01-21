@@ -18,8 +18,7 @@ public class DhcpClientFactoryTest {
         InetAddress ia = InetAddress.getLocalHost();
         byte[] macBytes = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
         DhcpClient client = factory.acquireDhcpClient(macBytes);
-//        System.out.println("client info: " + client.requestClientInfo());
-        System.out.println("client info: " + client.requestClientInfo("172.23.9.201"));
+        System.out.println("client info: " + client.requestClientInfo());
         Thread.sleep(100000);
     }
 }

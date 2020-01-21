@@ -5,6 +5,7 @@ import cn.t.tool.dhcptool.DhcpClient;
 import cn.t.tool.dhcptool.listener.DhcpEventListener;
 import cn.t.tool.dhcptool.listener.EventBroadcaster;
 import cn.t.tool.dhcptool.model.AckMessage;
+import cn.t.tool.dhcptool.model.NakMessage;
 import cn.t.tool.dhcptool.model.OfferMessage;
 import cn.t.util.common.CollectionUtil;
 import cn.t.util.common.reflect.GenericUtil;
@@ -101,8 +102,19 @@ public class DhcpMessageReceiver implements Runnable {
                 }
             }
         };
+        DhcpEventListener<NakMessage> nakMessageListener = new DhcpEventListener<NakMessage>() {
+            @Override
+            public void onEvent(NakMessage message) {
+                DhcpClient client = txIdClientMapping.get(message.getTxId());
+                if(client != null) {
+                    logger.info("服务端响应nak, 客户端需要重新发起discover");
+                    //todo 通知客户端重新发起discover
+                }
+            }
+        };
         eventBroadcaster.addEventListener(offerMessageListener);
         eventBroadcaster.addEventListener(ackMessageListener);
+        eventBroadcaster.addEventListener(nakMessageListener);
     }
 
     /**

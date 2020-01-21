@@ -6,6 +6,10 @@ package cn.t.tool.dhcptool.model;
  **/
 public class NakMessage {
     /**
+     * 事务id
+     */
+    private int txId;
+    /**
      * 事务ID
      */
     private int transactionId;
@@ -18,6 +22,14 @@ public class NakMessage {
      * 文字消息
      */
     private String message;
+
+    public int getTxId() {
+        return txId;
+    }
+
+    public void setTxId(int txId) {
+        this.txId = txId;
+    }
 
     public int getTransactionId() {
         return transactionId;

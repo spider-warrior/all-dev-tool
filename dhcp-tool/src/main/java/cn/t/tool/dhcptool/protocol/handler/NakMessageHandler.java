@@ -1,5 +1,6 @@
 package cn.t.tool.dhcptool.protocol.handler;
 
+import cn.t.tool.dhcptool.listener.EventBroadcaster;
 import cn.t.tool.dhcptool.model.NakMessage;
 import cn.t.tool.dhcptool.protocol.DhcpMessageHandler;
 import cn.t.util.common.StringUtil;
@@ -14,6 +15,8 @@ public class NakMessageHandler implements DhcpMessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(NakMessageHandler.class);
 
+    private EventBroadcaster eventBroadcaster;
+
     @Override
     public boolean support(Object message) {
         return message instanceof NakMessage;
@@ -25,5 +28,10 @@ public class NakMessageHandler implements DhcpMessageHandler {
         if(!StringUtil.isEmpty(nakMessage.getMessage())) {
             logger.info("dhcp server response msg: {}", nakMessage.getMessage());
         }
+        eventBroadcaster.broadcast(message);
+    }
+
+    public NakMessageHandler(EventBroadcaster eventBroadcaster) {
+        this.eventBroadcaster = eventBroadcaster;
     }
 }

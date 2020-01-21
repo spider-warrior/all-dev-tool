@@ -77,7 +77,7 @@ public abstract class DhcpClientFactory {
             //handler
             dhcpClientFactory.handlerList.add(new OfferMessageHandler(dhcpClientFactory.eventBroadcaster));
             dhcpClientFactory.handlerList.add(new AckMessageHandler(dhcpClientFactory.eventBroadcaster));
-            dhcpClientFactory.handlerList.add(new NakMessageHandler());
+            dhcpClientFactory.handlerList.add(new NakMessageHandler(dhcpClientFactory.eventBroadcaster));
         }
     }
 }
