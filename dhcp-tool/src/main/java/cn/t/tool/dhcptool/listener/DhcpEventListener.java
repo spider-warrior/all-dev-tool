@@ -6,6 +6,6 @@ package cn.t.tool.dhcptool.listener;
  * @author yj
  * @since 2020-01-15 20:59
  **/
-public interface DhcpEventListener<E> {
-    void onEvent(E e);
+public abstract class DhcpEventListener<E> {
+    public abstract void onEvent(E e);
 }

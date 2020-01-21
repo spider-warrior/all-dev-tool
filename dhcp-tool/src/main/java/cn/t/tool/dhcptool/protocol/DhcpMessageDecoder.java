@@ -92,6 +92,7 @@ public class DhcpMessageDecoder {
             OperationType oType = OperationType.getOperationType(messageType[0]);
             if(oType == OperationType.OFFER) {
                 OfferMessage offerMessage = new OfferMessage();
+                offerMessage.setTxId(transactionId);
                 offerMessage.setClientIp(yourIp);
                 offerMessage.setClientMac(clientMac);
                 offerMessage.setDhcpServerIp(optionMap.get(OptionType.DHCP_SERVER));

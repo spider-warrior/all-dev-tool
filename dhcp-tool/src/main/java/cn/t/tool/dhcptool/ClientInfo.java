@@ -1,5 +1,6 @@
 package cn.t.tool.dhcptool;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -70,5 +71,16 @@ public class ClientInfo {
 
     public void setDnsServerList(List<byte[]> dnsServerList) {
         this.dnsServerList = dnsServerList;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientInfo{" +
+            "ip=" + Arrays.toString(ip) +
+            ", dhcpServerIp=" + Arrays.toString(dhcpServerIp) +
+            ", subnetMask=" + Arrays.toString(subnetMask) +
+            ", router=" + Arrays.toString(router) +
+            ", dnsServerList=" + dnsServerList +
+            '}';
     }
 }

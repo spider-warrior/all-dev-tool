@@ -81,7 +81,7 @@ public class DhcpMessageReceiver implements Runnable {
                     clientInfo.setRouter(message.getRouter());
                     clientInfo.setSubnetMask(message.getSubnetMask());
                     clientInfo.setDnsServerList(message.getDnsServerList());
-                    logger.info("{}", clientInfo);
+                    client.acceptClientInfo(clientInfo);
                 }
             }
         };
