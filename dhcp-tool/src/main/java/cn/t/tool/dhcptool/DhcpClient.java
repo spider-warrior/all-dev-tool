@@ -29,7 +29,7 @@ public class DhcpClient {
         DiscoverMessage discoverMessage = new DiscoverMessage();
         discoverMessage.setMac(macBytes);
         int tryTimes = 3;
-        int timeout = 300000;
+        int timeout = 3000;
         for(int i=1; i<=tryTimes; i++) {
             logger.info("第{}次尝试获取client info", i);
             dhcpMessageSender.discover(discoverMessage, this);

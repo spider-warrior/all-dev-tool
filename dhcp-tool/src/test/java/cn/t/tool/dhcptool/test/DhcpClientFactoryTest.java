@@ -16,7 +16,8 @@ public class DhcpClientFactoryTest {
         DhcpClientFactory factory = DhcpClientFactory.singleton();
         factory.init();
         InetAddress ia = InetAddress.getLocalHost();
-        DhcpClient client = factory.acquireDhcpClient(NetworkInterface.getByInetAddress(ia).getHardwareAddress());
+        byte[] macBytes = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
+        DhcpClient client = factory.acquireDhcpClient(macBytes);
         System.out.println("client info: " + client.requestClientInfo());
     }
 }
