@@ -132,7 +132,9 @@ public class OfferMessage {
     @Override
     public String toString() {
         return "OfferMessage{" +
-            "clientIp=" + Arrays.toString(clientIp) +
+            "txId=" + txId +
+            ", clientIp=" + Arrays.toString(clientIp) +
+            ", clientMac=" + Arrays.toString(clientMac) +
             ", dhcpServerIp=" + Arrays.toString(dhcpServerIp) +
             ", leaseTime=" + leaseTime +
             ", renewTime=" + renewTime +

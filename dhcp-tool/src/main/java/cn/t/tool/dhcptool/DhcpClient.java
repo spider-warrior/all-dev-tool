@@ -2,6 +2,8 @@ package cn.t.tool.dhcptool;
 
 import cn.t.tool.dhcptool.model.DiscoverMessage;
 import cn.t.tool.dhcptool.protocol.DhcpMessageSender;
+import cn.t.util.common.RegexUtil;
+import cn.t.util.common.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +28,23 @@ public class DhcpClient {
      * @return dns分配的ip信息
      */
     public synchronized ClientInfo requestClientInfo() throws IOException {
+        return requestClientInfo(null);
+    }
+
+    public synchronized ClientInfo requestClientInfo(String ip) throws IOException {
         DiscoverMessage discoverMessage = new DiscoverMessage();
         discoverMessage.setMac(macBytes);
+        if(!StringUtil.isEmpty(ip)) {
+            if(!RegexUtil.isIp(ip)) {
+                throw new RuntimeException("指定的ip格式不正确: " + ip);
+            }
+            byte[] ipBytes = new byte[4];
+            String[] elements = ip.split("\\.");
+            for(int i=0; i<ipBytes.length; i++) {
+                ipBytes[i] = (byte)(Integer.parseInt(elements[i]));
+            }
+            discoverMessage.setExpectIp(ipBytes);
+        }
         int tryTimes = 3;
         int timeout = 3000;
         for(int i=1; i<=tryTimes; i++) {
