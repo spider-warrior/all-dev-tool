@@ -1,6 +1,6 @@
 package cn.t.tool.dhcptool;
 
-import cn.t.tool.dhcptool.model.DiscoverMessage;
+import cn.t.tool.dhcptool.model.DhcpMessage;
 import cn.t.tool.dhcptool.protocol.DhcpMessageSender;
 import cn.t.util.common.RegexUtil;
 import cn.t.util.common.StringUtil;
@@ -32,8 +32,8 @@ public class DhcpClient {
     }
 
     public synchronized ClientInfo requestClientInfo(String ip) throws IOException {
-        DiscoverMessage discoverMessage = new DiscoverMessage();
-        discoverMessage.setMac(macBytes);
+        DhcpMessage message = new DhcpMessage();
+        message.setMac(macBytes);
         if(!StringUtil.isEmpty(ip)) {
             if(!RegexUtil.isIp(ip)) {
                 throw new RuntimeException("指定的ip格式不正确: " + ip);
@@ -43,15 +43,18 @@ public class DhcpClient {
             for(int i=0; i<ipBytes.length; i++) {
                 ipBytes[i] = (byte)(Integer.parseInt(elements[i]));
             }
-            discoverMessage.setExpectIp(ipBytes);
+            message.setExpectIp(ipBytes);
         }
         int tryTimes = 3;
         int timeout = 3000;
         for(int i=1; i<=tryTimes; i++) {
-            logger.info("第{}次尝试获取client info", i);
-            dhcpMessageSender.discover(discoverMessage, this);
+            logger.info("第{}次尝试获取offer", i);
+            dhcpMessageSender.discover(message, this);
             try { wait(timeout); } catch (InterruptedException e) { e.printStackTrace(); }
             if(clientInfo != null) {
+                message.setExpectIp(clientInfo.getIp());
+                message.setDhcpIdentifier(clientInfo.getDhcpServerIp());
+                dhcpMessageSender.request(message, this);
                 return clientInfo;
             }
         }

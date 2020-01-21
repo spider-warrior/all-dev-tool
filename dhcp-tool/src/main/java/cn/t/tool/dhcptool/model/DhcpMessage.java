@@ -1,12 +1,19 @@
 package cn.t.tool.dhcptool.model;
 
+import cn.t.tool.dhcptool.constants.OperationType;
+
 /**
  * discover
  *
  * @author yj
  * @since 2020-01-05 15:32
  **/
-public class DiscoverMessage {
+public class DhcpMessage {
+
+    /**
+     * 消息类型
+     */
+    private OperationType operationType;
 
     /**
      * mac地址
@@ -23,8 +30,21 @@ public class DiscoverMessage {
      */
     private Integer txId;
 
-    public static DiscoverMessage newInstance() {
-        return new DiscoverMessage();
+    /**
+     * dhcp identifier
+     */
+    private byte[] dhcpIdentifier;
+
+    public OperationType getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(OperationType operationType) {
+        this.operationType = operationType;
+    }
+
+    public static DhcpMessage newInstance() {
+        return new DhcpMessage();
     }
 
     public byte[] getMac() {
@@ -49,5 +69,13 @@ public class DiscoverMessage {
 
     public void setTxId(Integer txId) {
         this.txId = txId;
+    }
+
+    public byte[] getDhcpIdentifier() {
+        return dhcpIdentifier;
+    }
+
+    public void setDhcpIdentifier(byte[] dhcpIdentifier) {
+        this.dhcpIdentifier = dhcpIdentifier;
     }
 }

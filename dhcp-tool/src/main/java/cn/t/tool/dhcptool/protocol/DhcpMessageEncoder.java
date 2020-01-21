@@ -3,7 +3,7 @@ package cn.t.tool.dhcptool.protocol;
 import cn.t.tool.dhcptool.constants.HardwareType;
 import cn.t.tool.dhcptool.constants.OperationType;
 import cn.t.tool.dhcptool.constants.OptionType;
-import cn.t.tool.dhcptool.model.DiscoverMessage;
+import cn.t.tool.dhcptool.model.DhcpMessage;
 import cn.t.util.common.ArrayUtil;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  **/
 public class DhcpMessageEncoder {
 
-    public byte[] encode(DiscoverMessage message) {
+    public byte[] encode(DhcpMessage message) {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         //OP: 若是客户端送给服务端的封包 设置为1 反方向为2
         buffer.put(OperationType.DISCOVER.value);
@@ -61,7 +61,7 @@ public class DhcpMessageEncoder {
         //1.设置 dhcp message type 为request
         buffer.put(OptionType.DHCP_MSG_TYPE.value);
         buffer.put((byte)1);
-        buffer.put(OperationType.DISCOVER.value);
+        buffer.put(message.getOperationType().value);
         //2.设置request list
         List<Byte> parameterList = new ArrayList<>();
         parameterList.add(OptionType.SUBNET_MASK.value);
@@ -89,12 +89,18 @@ public class DhcpMessageEncoder {
             buffer.put((byte)4);
             buffer.put(message.getExpectIp());
         }
-        //5.设置IP地址租约时间选项
+        //5.如果是request则设置DHCP identifier
+        if(!ArrayUtil.isEmpty(message.getDhcpIdentifier())){
+            buffer.put(OptionType.DHCP_SERVER.value);
+            buffer.put((byte)4);
+            buffer.put(message.getDhcpIdentifier());
+        }
+        //6.设置IP地址租约时间选项
         buffer.put(OptionType.ADDRESS_TIME.value);
         buffer.put((byte)4);
         //单位: 秒
         buffer.putInt((int) TimeUnit.SECONDS.convert(90, TimeUnit.DAYS));
-        //6.end
+        //7.end
         buffer.put(OptionType.END.value);
         buffer.flip();
         byte[] bytes = new byte[buffer.limit() - buffer.position()];

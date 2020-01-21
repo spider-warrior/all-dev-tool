@@ -1,7 +1,8 @@
 package cn.t.tool.dhcptool.protocol;
 
 import cn.t.tool.dhcptool.DhcpClient;
-import cn.t.tool.dhcptool.model.DiscoverMessage;
+import cn.t.tool.dhcptool.constants.OperationType;
+import cn.t.tool.dhcptool.model.DhcpMessage;
 
 import java.io.IOException;
 import java.net.*;
@@ -30,10 +31,18 @@ public class DhcpMessageSender {
         datagramSocket.send(dp);
     }
 
-    public void discover(DiscoverMessage discoverMessage, DhcpClient client) throws IOException {
+    public void discover(DhcpMessage message, DhcpClient client) throws IOException {
+        message.setOperationType(OperationType.DISCOVER);
         Integer txId = id.incrementAndGet();
-        discoverMessage.setTxId(txId);
+        message.setTxId(txId);
         dhcpMessageReceiver.bindClientClient(txId, client);
-        send(encoder.encode(discoverMessage));
+        send(encoder.encode(message));
     }
+
+    public void request(DhcpMessage message, DhcpClient client) throws IOException {
+        message.setOperationType(OperationType.REQUEST);
+        dhcpMessageReceiver.bindClientClient(message.getTxId(), client);
+        send(encoder.encode(message));
+    }
+
 }
