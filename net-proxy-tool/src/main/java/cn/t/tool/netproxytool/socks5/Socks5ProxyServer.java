@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * socks5代理服务器简单实现
+ * <a>https://www.cnblogs.com/cc11001100/p/9949729.html</a>
  * <a>https://www.ietf.org/rfc/rfc1928.txt</a>
  *
  * 使用socks5代理的坑，域名在本地解析还是在代理服务器端解析，有些比如google.com就必须在代理服务器端解析
