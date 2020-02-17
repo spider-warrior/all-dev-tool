@@ -14,7 +14,8 @@
 
     <properties>
         <main-class>cn.t.tool.redistool.JedisUserInterface</main-class>
-        <output-dir>${project.build.directory}/libs</output-dir>
+        <lib-dir>libs/</lib-dir>
+        <output-dir>${project.build.directory}/${lib-dir}</output-dir>
     </properties>
 
     <dependencies>
@@ -50,7 +51,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>${output-dir}</classpathPrefix>
+                            <classpathPrefix>${lib-dir}</classpathPrefix>
                             <mainClass>${main-class}</mainClass>
                         </manifest>
                     </archive>

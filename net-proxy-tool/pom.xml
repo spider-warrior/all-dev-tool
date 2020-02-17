@@ -12,10 +12,52 @@
     <artifactId>net-proxy-tool</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <main-class>cn.t.tool.netproxytool.socks5.Socks5ProxyServerDaemon</main-class>
+        <lib-dir>libs/</lib-dir>
+        <output-dir>${project.build.directory}/${lib-dir}</output-dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.t</groupId>
             <artifactId>netty-tool</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>net-proxy</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>${lib-dir}</classpathPrefix>
+                            <mainClass>${main-class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${output-dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
