@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.t</groupId>
-    <artifactId>dev-tool</artifactId>
+    <artifactId>all-dev-tool</artifactId>
     <version>${revision}</version>
     <modules>
         <module>rmdb-tool</module>

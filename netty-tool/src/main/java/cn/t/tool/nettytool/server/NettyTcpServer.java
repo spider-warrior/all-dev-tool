@@ -6,6 +6,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyTcpServer.class);
 
-    private ChannelInitializer channelInitializer;
+    private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DemonListener> demonListenerList;
     private Channel serverChannel;
 
@@ -83,13 +84,13 @@ public class NettyTcpServer extends AbstractDaemonServer {
         }
     }
 
-    public NettyTcpServer(String name, int port, ChannelInitializer channelInitializer) {
+    public NettyTcpServer(String name, int port, ChannelInitializer<SocketChannel> channelInitializer) {
         super(name, port);
         this.channelInitializer = channelInitializer;
     }
 
 
-    public NettyTcpServer setChannelInitializer(ChannelInitializer channelInitializer) {
+    public NettyTcpServer setChannelInitializer(ChannelInitializer<SocketChannel> channelInitializer) {
         this.channelInitializer = channelInitializer;
         return this;
     }
