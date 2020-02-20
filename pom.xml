@@ -18,9 +18,9 @@
         <module>dhcp-tool</module>
     </modules>
     <packaging>pom</packaging>
-    <name>dev tools</name>
+    <name>all-dev-tool</name>
     <description>util tools</description>
-    <url>https://github.com/qq362961910/dev-tool</url>
+    <url>https://github.com/qq362961910/all-dev-tool</url>
 
 
     <properties>
