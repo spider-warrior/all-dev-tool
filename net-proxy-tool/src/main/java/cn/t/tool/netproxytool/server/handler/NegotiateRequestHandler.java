@@ -38,7 +38,7 @@ public class NegotiateRequestHandler {
                 lifeCycle.next(Step.COMMAND_EXECUTION);
             } else {
                 //下一步骤
-                lifeCycle.next();
+                lifeCycle.next(Step.AUTHENTICATION);
             }
             return negotiateResponse;
         }

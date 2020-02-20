@@ -5,6 +5,7 @@ import cn.t.tool.nettytool.server.listener.DemonListener;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyTcpClient.class);
 
-    private ChannelInitializer channelInitializer;
+    private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DemonListener> demonListenerList;
     private Channel clientChannel;
 
@@ -74,7 +75,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
         }
     }
 
-    public NettyTcpClient(String name, String host, int port, ChannelInitializer channelInitializer) {
+    public NettyTcpClient(String name, String host, int port, ChannelInitializer<SocketChannel> channelInitializer) {
         super(name, host, port);
         this.channelInitializer = channelInitializer;
     }

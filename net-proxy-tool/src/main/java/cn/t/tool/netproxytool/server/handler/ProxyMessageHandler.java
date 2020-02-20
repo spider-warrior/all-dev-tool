@@ -1,5 +1,6 @@
 package cn.t.tool.netproxytool.server.handler;
 
+import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.NegotiateRequest;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycledMessage;
@@ -23,7 +24,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
         switch (lifeCycle.getCurrentStep()) {
             case NEGOTIATE: message = negotiateRequestHandler.handle((NegotiateRequest)lifeCycledMessage.getMessage(), lifeCycle); break;
             case AUTHENTICATION: message = authenticationRequestHandler.handle(lifeCycledMessage.getMessage(), lifeCycle); break;
-            case COMMAND_EXECUTION: message = cmdRequestHandler.handle(lifeCycledMessage.getMessage(), lifeCycle); break;
+            case COMMAND_EXECUTION: message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, channelHandlerContext); break;
             default: message = null;
         }
         if(message != null) {
