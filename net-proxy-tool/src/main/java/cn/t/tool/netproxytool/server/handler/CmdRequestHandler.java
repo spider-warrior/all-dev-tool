@@ -38,6 +38,7 @@ public class CmdRequestHandler {
 
                 @Override
                 public void channelActive(ChannelHandlerContext ctx) {
+                    lifeCycle.next(Step.TRANSFERRING_DATA);
                     CmdResponse cmdResponse = new CmdResponse();
                     cmdResponse.setVersion(message.getVersion());
                     cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
@@ -49,7 +50,6 @@ public class CmdRequestHandler {
                 }
             });
             nettyTcpClient.start(null);
-            lifeCycle.next(Step.TRANSFERRING_DATA);
             channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                 @Override
                 public void channelRead(ChannelHandlerContext ctx, Object msg) {

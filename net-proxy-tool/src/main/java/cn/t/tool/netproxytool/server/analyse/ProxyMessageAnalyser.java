@@ -28,8 +28,11 @@ public class ProxyMessageAnalyser extends ByteBufAnalyser {
             case NEGOTIATE: message = negotiateRequestAnalyse.analyse(byteBuf); break;
             case AUTHENTICATION: message = authenticationRequestAnalyse.analyse(lifeCycle.getSelectedMethod(), byteBuf); break;
             case COMMAND_EXECUTION: message = cmdRequestAnalyse.analyse(byteBuf); break;
-            case TRANSFERRING_DATA: message = byteBuf;
+            case TRANSFERRING_DATA: message = byteBuf; break;
             default: message = null;
+        }
+        if(message instanceof ByteBuf) {
+            System.out.println();
         }
         if(message != null && !(message instanceof ByteBuf)) {
             logger.info("成功解析消息，类型为: {}", message.getClass());
