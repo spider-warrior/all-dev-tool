@@ -82,7 +82,7 @@ public class ClientHandler implements Runnable {
         int rsv = buff[2];
         AddressType addressType = AddressType.convertToAddressType(buff[3]);
         if (rsv != Socks5Constants.RSV) {
-            throw new RuntimeException("RSV must 0X05");
+            throw new RuntimeException("RSV must 0X00");
         } else if (version != Socks5Constants.VERSION) {
             throw new RuntimeException("VERSION must 0X05");
         } else if (command == null) {
