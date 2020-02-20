@@ -20,4 +20,5 @@ public abstract class NettyTcpEncoder<Msg> extends MessageToByteEncoder<Msg> {
     }
 
     protected abstract void doEncode(ChannelHandlerContext ctx, Msg msg, ByteBuf out);
+
 }

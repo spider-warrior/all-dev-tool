@@ -20,8 +20,8 @@ public class NettyChannelInitializerBuilder {
     private InternalLoggerFactory internalLoggerFactory;
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
-    private List<Supplier<NettyTcpEncoder>> nettyTcpEncoderSupplierList = new ArrayList<>();
-    private List<Supplier<SimpleChannelInboundHandler>> simpleChannelInboundHandlerSupplierList = new ArrayList<>();
+    private List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList = new ArrayList<>();
+    private List<Supplier<SimpleChannelInboundHandler<?>>> simpleChannelInboundHandlerSupplierList = new ArrayList<>();
 
     public NettyChannelInitializer build() {
         return new NettyChannelInitializer(
@@ -30,14 +30,14 @@ public class NettyChannelInitializerBuilder {
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
             () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
             () -> {
-                List<NettyTcpEncoder> nettyTcpEncoderList = new ArrayList<>();
+                List<NettyTcpEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {
                     nettyTcpEncoderSupplierList.forEach(supplier -> nettyTcpEncoderList.add(supplier.get()));
                 }
                 return nettyTcpEncoderList;
             },
             () -> {
-                List<SimpleChannelInboundHandler> simpleChannelInboundHandlerList = new ArrayList<>();
+                List<SimpleChannelInboundHandler<?>> simpleChannelInboundHandlerList = new ArrayList<>();
                 if(!CollectionUtil.isEmpty(simpleChannelInboundHandlerSupplierList)) {
                     simpleChannelInboundHandlerSupplierList.forEach(supplier -> simpleChannelInboundHandlerList.add(supplier.get()));
                 }
@@ -54,25 +54,25 @@ public class NettyChannelInitializerBuilder {
         this.byteBufAnalyserSupplier = byteBufAnalyserSupplier;
     }
 
-    public void addEncoderListsSupplier(List<Supplier<NettyTcpEncoder>> nettyTcpEncoderSupplierList) {
+    public void addEncoderListsSupplier(List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList) {
         if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {
             this.nettyTcpEncoderSupplierList.addAll(nettyTcpEncoderSupplierList);
         }
     }
 
-    public void addEncoderListsSupplier(Supplier<NettyTcpEncoder> nettyTcpEncoderSupplier) {
+    public void addEncoderListsSupplier(Supplier<NettyTcpEncoder<?>> nettyTcpEncoderSupplier) {
         if(nettyTcpEncoderSupplier != null) {
             this.nettyTcpEncoderSupplierList.add(nettyTcpEncoderSupplier);
         }
     }
 
-    public void addSimpleChannelInboundHandlerListSupplier(List<Supplier<SimpleChannelInboundHandler>> simpleChannelInboundHandlerSupplierList) {
+    public void addSimpleChannelInboundHandlerListSupplier(List<Supplier<SimpleChannelInboundHandler<?>>> simpleChannelInboundHandlerSupplierList) {
         if(!CollectionUtil.isEmpty(simpleChannelInboundHandlerSupplierList)) {
             this.simpleChannelInboundHandlerSupplierList.addAll(simpleChannelInboundHandlerSupplierList);
         }
     }
 
-    public void addSimpleChannelInboundHandlerListSupplier(Supplier<SimpleChannelInboundHandler> simpleChannelInboundHandlerSupplier) {
+    public void addSimpleChannelInboundHandlerListSupplier(Supplier<SimpleChannelInboundHandler<?>> simpleChannelInboundHandlerSupplier) {
         if(simpleChannelInboundHandlerSupplier != null) {
             this.simpleChannelInboundHandlerSupplierList.add(simpleChannelInboundHandlerSupplier);
         }
