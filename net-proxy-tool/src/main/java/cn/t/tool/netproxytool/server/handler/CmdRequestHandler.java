@@ -8,6 +8,7 @@ import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.CmdResponse;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
+import cn.t.tool.netproxytool.promise.PromiseMessage;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -28,30 +29,36 @@ public class CmdRequestHandler {
             byte[] targetAddress = message.getTargetAddress();
             short targetPort = message.getTargetPort();
             Channel channel = channelHandlerContext.channel();
+            PromiseMessage promiseMessage = new PromiseMessage();
             NettyTcpClient nettyTcpClient = new NettyTcpClient("proxy-for: " + channel.remoteAddress(), new String(targetAddress), targetPort, new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new ChannelInboundHandlerAdapter() {
+                    pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
                         @Override
-                        public void channelRead(ChannelHandlerContext ctx, Object msg) {
-                            channelHandlerContext.writeAndFlush(msg);
+                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+                            //将远端消息发往客户端
+                            channelHandlerContext.writeAndFlush(msg.retainedDuplicate());
+                            msg.skipBytes(msg.readableBytes());
                         }
                         @Override
-                        public void channelActive(ChannelHandlerContext ctx) {
+                        public void channelActive(ChannelHandlerContext outerContext) {
+                            ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
+                            channel.pipeline().replace(proxyMessageHandler, "real-transfer-handle", new SimpleChannelInboundHandler<ByteBuf>() {
+                                @Override
+                                protected void channelRead0(ChannelHandlerContext innerContext, ByteBuf msg) {
+                                    //将客户端消息发往远端
+                                    outerContext.writeAndFlush(msg.retainedDuplicate());
+                                    msg.skipBytes(msg.readableBytes());
+                                }
+                            });
                             lifeCycle.next(Step.TRANSFERRING_DATA);
+                            promiseMessage.send();
                         }
                     });
                 }
             });
             new Thread(() -> nettyTcpClient.start(null)).start();
-            ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
-            channel.pipeline().replace(proxyMessageHandler, "real-transfer-handle", new SimpleChannelInboundHandler<ByteBuf>() {
-                @Override
-                protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-                    System.out.println();
-                }
-            });
             CmdResponse cmdResponse = new CmdResponse();
             cmdResponse.setVersion(message.getVersion());
             cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
@@ -59,7 +66,8 @@ public class CmdRequestHandler {
             cmdResponse.setAddressType(AddressType.IPV4);
             cmdResponse.setTargetAddress(new byte[]{(byte)192, (byte)168, 1, 103});
             cmdResponse.setTargetPort((short)8888);
-            return cmdResponse;
+            promiseMessage.setMessage(cmdResponse);
+            return promiseMessage;
         } else {
             throw new ConnectionException("未实现的命令处理: " + message.getRequestCmd());
         }
