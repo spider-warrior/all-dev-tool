@@ -38,8 +38,9 @@ public class CmdRequestHandler {
                         @Override
                         protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
                             //将远端消息发往客户端
-                            channelHandlerContext.writeAndFlush(msg.retainedDuplicate());
-                            msg.skipBytes(msg.readableBytes());
+                            byte[] bytes = new byte[msg.readableBytes()];
+                            msg.readBytes(bytes);
+                            channelHandlerContext.writeAndFlush(bytes);
                         }
                         @Override
                         public void channelActive(ChannelHandlerContext outerContext) {
@@ -48,8 +49,9 @@ public class CmdRequestHandler {
                                 @Override
                                 protected void channelRead0(ChannelHandlerContext innerContext, ByteBuf msg) {
                                     //将客户端消息发往远端
-                                    outerContext.writeAndFlush(msg.retainedDuplicate());
-                                    msg.skipBytes(msg.readableBytes());
+                                    byte[] bytes = new byte[msg.readableBytes()];
+                                    msg.readBytes(bytes);
+                                    outerContext.writeAndFlush(bytes);
                                 }
                             });
                             lifeCycle.next(Step.TRANSFERRING_DATA);
