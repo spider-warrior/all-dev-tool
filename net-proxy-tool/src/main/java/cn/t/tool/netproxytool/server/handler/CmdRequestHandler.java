@@ -9,8 +9,10 @@ import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.CmdResponse;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
 import cn.t.tool.nettytool.client.NettyTcpClient;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 命令请求处理器
@@ -18,9 +20,11 @@ import io.netty.channel.socket.SocketChannel;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
+@Slf4j
 public class CmdRequestHandler {
     public Object handle(CmdRequest message, ConnectionLifeCycle lifeCycle, ChannelHandlerContext channelHandlerContext) {
         if(message.getRequestCmd() == Cmd.CONNECT) {
+            log.info("处理【{}】消息， 地址类型: {}, 地址: {}， 目标端口: {}", Cmd.CONNECT, message.getAddressType(), new String(message.getTargetAddress()), message.getTargetPort());
             byte[] targetAddress = message.getTargetAddress();
             short targetPort = message.getTargetPort();
             Channel channel = channelHandlerContext.channel();
@@ -28,35 +32,34 @@ public class CmdRequestHandler {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new ChannelDuplexHandler() {
+                    pipeline.addLast(new ChannelInboundHandlerAdapter() {
                         @Override
                         public void channelRead(ChannelHandlerContext ctx, Object msg) {
                             channelHandlerContext.writeAndFlush(msg);
                         }
+                        @Override
+                        public void channelActive(ChannelHandlerContext ctx) {
+                            lifeCycle.next(Step.TRANSFERRING_DATA);
+                        }
                     });
                 }
-
+            });
+            new Thread(() -> nettyTcpClient.start(null)).start();
+            ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
+            channel.pipeline().replace(proxyMessageHandler, "real-transfer-handle", new SimpleChannelInboundHandler<ByteBuf>() {
                 @Override
-                public void channelActive(ChannelHandlerContext ctx) {
-                    lifeCycle.next(Step.TRANSFERRING_DATA);
-                    CmdResponse cmdResponse = new CmdResponse();
-                    cmdResponse.setVersion(message.getVersion());
-                    cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
-                    cmdResponse.setRsv((byte)0);
-                    cmdResponse.setAddressType(AddressType.IPV4);
-                    cmdResponse.setTargetAddress(new byte[]{127, 0, 0, 1});
-                    cmdResponse.setTargetPort((short)8888);
-                    channelHandlerContext.writeAndFlush(cmdResponse);
+                protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+                    System.out.println();
                 }
             });
-            nettyTcpClient.start(null);
-            channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
-                @Override
-                public void channelRead(ChannelHandlerContext ctx, Object msg) {
-                    nettyTcpClient.sendMsg(msg);
-                }
-            });
-            return null;
+            CmdResponse cmdResponse = new CmdResponse();
+            cmdResponse.setVersion(message.getVersion());
+            cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
+            cmdResponse.setRsv((byte)0);
+            cmdResponse.setAddressType(AddressType.IPV4);
+            cmdResponse.setTargetAddress(new byte[]{(byte)192, (byte)168, 1, 103});
+            cmdResponse.setTargetPort((short)8888);
+            return cmdResponse;
         } else {
             throw new ConnectionException("未实现的命令处理: " + message.getRequestCmd());
         }

@@ -16,7 +16,7 @@ public class ConnectionLifeCycle {
     /**
      * 阶段
      */
-    private Step currentStep;
+    private volatile Step currentStep;
 
     /**
      * 认证方式

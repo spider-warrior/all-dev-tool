@@ -31,5 +31,4 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
             channelHandlerContext.writeAndFlush(message);
         }
     }
-
 }

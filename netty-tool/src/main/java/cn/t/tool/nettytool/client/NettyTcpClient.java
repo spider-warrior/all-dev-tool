@@ -29,16 +29,16 @@ public class NettyTcpClient extends AbstractDaemonClient {
             .option(ChannelOption.SO_KEEPALIVE, true)
             .handler(channelInitializer);
         try {
-            if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                for (DemonListener listener: demonListenerList) {
-                    listener.startup(this);
-                }
-            }
             logger.info(String.format("TCP Client: %s has been started successfully,host: %s port: %d", name, host, port));
             if(launcher != null) {
                 launcher.serverStartSuccess(this);
             }
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+            if (demonListenerList != null && !demonListenerList.isEmpty()) {
+                for (DemonListener listener: demonListenerList) {
+                    listener.startup(this);
+                }
+            }
             clientChannel = channelFuture.channel();
             clientChannel.closeFuture().sync().addListener(f ->  {
                     if (demonListenerList != null && !demonListenerList.isEmpty()) {

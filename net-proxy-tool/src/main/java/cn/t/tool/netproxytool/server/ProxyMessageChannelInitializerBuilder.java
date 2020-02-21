@@ -1,6 +1,7 @@
 package cn.t.tool.netproxytool.server;
 
 import cn.t.tool.netproxytool.server.analyse.ProxyMessageAnalyser;
+import cn.t.tool.netproxytool.server.encoder.ServerCmdResponseEncoder;
 import cn.t.tool.netproxytool.server.encoder.ServerNegotiateResponseEncoder;
 import cn.t.tool.netproxytool.server.handler.ProxyMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
@@ -17,6 +18,7 @@ public class ProxyMessageChannelInitializerBuilder extends NettyChannelInitializ
         setIdleState(180, 180, 180);
         setByteBufAnalyserSupplier(ProxyMessageAnalyser::new);
         addEncoderListsSupplier(ServerNegotiateResponseEncoder::new);
+        addEncoderListsSupplier(ServerCmdResponseEncoder::new);
         addSimpleChannelInboundHandlerListSupplier(ProxyMessageHandler::new);
     }
 }
