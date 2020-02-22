@@ -47,7 +47,7 @@ public class CmdRequestHandler {
                         forwardingMessageHandler.setMessageSender(sender);
                     } else {
                         //偶该会执行该逻辑，猜测是因为shutdown导致的handler被清理掉
-                        throw new ConnectionException("未发现ForwardingMessageHandler实例");
+                        throw new ConnectionException(String.format("未发现ForwardingMessageHandler实例, local-address: %s, remote-address: %s", clientHost + ":" + clientPort, targetHost + ":" + targetPort));
                     }
                     channelHandlerContext.writeAndFlush(cmdResponse);
                 } else {
