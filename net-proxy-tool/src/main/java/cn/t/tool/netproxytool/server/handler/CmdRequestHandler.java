@@ -9,9 +9,14 @@ import cn.t.tool.netproxytool.promise.ConnectionResultListener;
 import cn.t.tool.netproxytool.server.initializer.ProxyToRemoteChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.nettytool.server.DaemonServer;
+import cn.t.tool.nettytool.server.listener.DemonListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 命令请求处理器
@@ -49,6 +54,17 @@ public class CmdRequestHandler {
                 }
             };
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientHost + ":" + clientPort + " -> " + targetHost + ":" + targetPort, targetHost, targetPort, new ProxyToRemoteChannelInitializerBuilder(channelHandlerContext::writeAndFlush, connectionResultListener).build());
+            List<DemonListener> demonListenerList = new ArrayList<>(1);
+            demonListenerList.add(new  DemonListener() {
+                @Override
+                public void startup(DaemonServer server) {}
+                @Override
+                public void close(DaemonServer server) {
+                    log.info("远程连接已断开， 即将关闭本地连接, local: {}, remote: {}", clientHost + ":" + clientPort, targetHost + ":" + targetPort);
+                    channelHandlerContext.close();
+                }
+            });
+            nettyTcpClient.setDemonListenerList(demonListenerList);
             ThreadUtil.submitTask(() -> nettyTcpClient.start(null));
             return null;
         } else {

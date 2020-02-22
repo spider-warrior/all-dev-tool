@@ -40,14 +40,14 @@ public class NettyTcpClient extends AbstractDaemonClient {
                 }
             }
             clientChannel = channelFuture.channel();
-            clientChannel.closeFuture().sync().addListener(f ->  {
+            clientChannel.closeFuture().addListener(f ->  {
                     if (demonListenerList != null && !demonListenerList.isEmpty()) {
                         for (DemonListener listener: demonListenerList) {
                             listener.close(NettyTcpClient.this);
                         }
                     }
                 }
-            );
+            ).sync();
             clientChannel.closeFuture().sync().addListener(
                 future -> {
                     if (demonListenerList != null && !demonListenerList.isEmpty()) {
@@ -59,7 +59,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
             );
         } catch (Exception e) {
             logger.error(String.format("TCP Client: %s Down,host: %s port: %d ", name, host, port), e);
-        }finally {
+        } finally {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpClient.this);
             }

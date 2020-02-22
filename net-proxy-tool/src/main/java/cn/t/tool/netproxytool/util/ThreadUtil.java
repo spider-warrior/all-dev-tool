@@ -1,8 +1,9 @@
 package cn.t.tool.netproxytool.util;
 
+import cn.t.tool.netproxytool.constants.ServerConfig;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 线程工具
@@ -14,14 +15,14 @@ import java.util.concurrent.TimeUnit;
 public class ThreadUtil {
 
     private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(),
-        Runtime.getRuntime().availableProcessors() * 2,
-        10,
-        TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(Runtime.getRuntime().availableProcessors() * 2)
+        ServerConfig.CORE_THREAD_COUNT,
+        ServerConfig.MAX_THREAD_COUNT,
+        ServerConfig.THREAD_TT,
+        ServerConfig.THREAD_TT_TIME_UNIT,
+        new ArrayBlockingQueue<>(ServerConfig.BLOCKING_THREAD_COUNT)
     );
 
-    public static final void submitTask(Runnable runnable) {
+    public static void submitTask(Runnable runnable) {
         THREAD_POOL_EXECUTOR.submit(runnable);
     }
 
