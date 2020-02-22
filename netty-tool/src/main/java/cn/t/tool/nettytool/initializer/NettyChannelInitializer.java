@@ -32,26 +32,26 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         InternalLoggerFactory originalInternalLoggerFactory = InternalLoggerFactory.getDefaultFactory();
         InternalLoggerFactory.setDefaultFactory(internalLoggerFactory);
         try {
-            channelPipeline.addLast("logging",new LoggingHandler(logLevel));
+            channelPipeline.addLast("logging-handler",new LoggingHandler(logLevel));
             if(idleStateHandlerSupplier != null) {
-                channelPipeline.addLast(idleStateHandlerSupplier.get());
+                channelPipeline.addLast("idle-handler", idleStateHandlerSupplier.get());
             }
             if(nettyTcpDecoderSupplier != null) {
-                channelPipeline.addLast(nettyTcpDecoderSupplier.get());
+                channelPipeline.addLast("msg-decoder", nettyTcpDecoderSupplier.get());
             }
             if(NettyTcpEncoderListSupplier != null) {
                 List<NettyTcpEncoder<?>>nettyTcpEncoderList = NettyTcpEncoderListSupplier.get();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderList)) {
-                    nettyTcpEncoderList.forEach(channelPipeline::addLast);
+                    nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast("encoder#" + encoder.getClass().getName(), encoder));
                 }
             }
             if(channelInboundHandlerListSupplier != null) {
                 List<SimpleChannelInboundHandler<?>> channelInboundHandlerList = channelInboundHandlerListSupplier.get();
                 if(!CollectionUtil.isEmpty(channelInboundHandlerList)) {
-                    channelInboundHandlerList.forEach(channelPipeline::addLast);
+                    channelInboundHandlerList.forEach(handler -> channelPipeline.addLast("handler#" + handler.getClass().getName(), handler));
                 }
             }
-            channelPipeline.addLast(new NettyExceptionHandler());
+            channelPipeline.addLast("exception-handler", new NettyExceptionHandler());
         } finally {
             InternalLoggerFactory.setDefaultFactory(originalInternalLoggerFactory);
         }
