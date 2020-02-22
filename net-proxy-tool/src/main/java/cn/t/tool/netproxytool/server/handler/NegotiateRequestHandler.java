@@ -1,12 +1,12 @@
 package cn.t.tool.netproxytool.server.handler;
 
 import cn.t.tool.netproxytool.constants.Method;
+import cn.t.tool.netproxytool.constants.Socks5Constants;
 import cn.t.tool.netproxytool.constants.Step;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.model.NegotiateRequest;
 import cn.t.tool.netproxytool.model.NegotiateResponse;
-import cn.t.tool.netproxytool.socks5.Socks5Constants;
 import cn.t.util.common.CollectionUtil;
 
 import java.util.List;

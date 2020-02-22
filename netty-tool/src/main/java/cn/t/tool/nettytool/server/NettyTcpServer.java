@@ -47,7 +47,17 @@ public class NettyTcpServer extends AbstractDaemonServer {
                 .childOption(ChannelOption.SO_KEEPALIVE,true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(channelInitializer);
-            ChannelFuture future = bootstrap.bind(getPort()).sync();
+            ChannelFuture openFuture = bootstrap.bind(getPort());
+            serverChannel = openFuture.channel();
+            ChannelFuture closeFuture = serverChannel.closeFuture();
+            closeFuture.addListener(f -> {
+                if (demonListenerList != null && !demonListenerList.isEmpty()) {
+                    for (DemonListener listener: demonListenerList) {
+                        listener.close(NettyTcpServer.this);
+                    }
+                }
+            });
+            openFuture.sync();
             logger.info("TCP Server: {} has been started successfully, port: {}", name, port);
             if (demonListenerList != null && !demonListenerList.isEmpty()) {
                 for (DemonListener listener: demonListenerList) {
@@ -57,14 +67,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
             if(launcher != null) {
                 launcher.serverStartSuccess(this);
             }
-            serverChannel = future.channel();
-            serverChannel.closeFuture().sync().addListener(f -> {
-                if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                    for (DemonListener listener: demonListenerList) {
-                        listener.close(NettyTcpServer.this);
-                    }
-                }
-            });
+            closeFuture.sync();
         } catch (Exception e) {
             logger.error(String.format("TCP Server: %s Down, port: %d ", name, port), e);
         } finally {

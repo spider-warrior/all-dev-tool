@@ -33,23 +33,10 @@ public class NettyTcpClient extends AbstractDaemonClient {
             if(launcher != null) {
                 launcher.serverStartSuccess(this);
             }
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                for (DemonListener listener: demonListenerList) {
-                    listener.startup(this);
-                }
-            }
-            clientChannel = channelFuture.channel();
-            clientChannel.closeFuture().addListener(f ->  {
-                    if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                        for (DemonListener listener: demonListenerList) {
-                            listener.close(NettyTcpClient.this);
-                        }
-                    }
-                }
-            ).sync();
-            clientChannel.closeFuture().sync().addListener(
-                future -> {
+            ChannelFuture openFuture = bootstrap.connect(host, port);
+            clientChannel = openFuture.channel();
+            ChannelFuture closeFuture = clientChannel.closeFuture();
+            closeFuture.addListener(f ->  {
                     if (demonListenerList != null && !demonListenerList.isEmpty()) {
                         for (DemonListener listener: demonListenerList) {
                             listener.close(NettyTcpClient.this);
@@ -57,6 +44,13 @@ public class NettyTcpClient extends AbstractDaemonClient {
                     }
                 }
             );
+            openFuture.sync();
+            if (demonListenerList != null && !demonListenerList.isEmpty()) {
+                for (DemonListener listener: demonListenerList) {
+                    listener.startup(this);
+                }
+            }
+            closeFuture.sync();
         } catch (Exception e) {
             logger.error(String.format("TCP Client: %s Down,host: %s port: %d ", name, host, port), e);
         } finally {
