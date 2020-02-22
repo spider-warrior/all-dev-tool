@@ -1,7 +1,5 @@
 package cn.t.tool.netproxytool.constants;
 
-import cn.t.tool.netproxytool.socks5.METHOD;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -3,7 +3,6 @@ package cn.t.tool.netproxytool.server.handler;
 import cn.t.tool.netproxytool.promise.MessageSender;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 
 /**
  * 转发消息处理器
@@ -20,7 +19,6 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if(messageSender != null) {
             messageSender.send(msg);
-            ReferenceCountUtil.release(msg);
         }
     }
 

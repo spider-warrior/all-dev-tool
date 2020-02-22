@@ -4,7 +4,6 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.HostAndPort;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 

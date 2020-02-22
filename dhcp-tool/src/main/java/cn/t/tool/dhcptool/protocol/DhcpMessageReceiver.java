@@ -8,7 +8,6 @@ import cn.t.tool.dhcptool.model.AckMessage;
 import cn.t.tool.dhcptool.model.NakMessage;
 import cn.t.tool.dhcptool.model.OfferMessage;
 import cn.t.util.common.CollectionUtil;
-import cn.t.util.common.reflect.GenericUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,14 +2,12 @@ package cn.t.tool.nettytool.decoder;
 
 import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.util.NullMessage;
-import cn.t.util.common.digital.HexUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class NettyTcpDecoder extends ByteToMessageDecoder {

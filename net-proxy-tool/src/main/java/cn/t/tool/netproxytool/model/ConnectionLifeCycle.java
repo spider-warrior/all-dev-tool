@@ -4,8 +4,6 @@ import cn.t.tool.netproxytool.constants.Method;
 import cn.t.tool.netproxytool.constants.Step;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 
-import static cn.t.tool.netproxytool.constants.Step.*;
-
 /**
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
  * @version V1.0

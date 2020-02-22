@@ -29,7 +29,7 @@ public class ProxyMessageAnalyser extends ByteBufAnalyser {
             case AUTHENTICATION: message = authenticationRequestAnalyse.analyse(lifeCycle.getSelectedMethod(), byteBuf); break;
             case COMMAND_EXECUTION: message = cmdRequestAnalyse.analyse(byteBuf); break;
             case FORWARDING_DATA: {
-                message = byteBuf.copy();
+                message = byteBuf.retainedDuplicate();
                 byteBuf.skipBytes(byteBuf.readableBytes());
                 break;
             }
