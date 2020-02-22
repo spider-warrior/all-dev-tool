@@ -34,20 +34,11 @@ public class CmdRequestHandler {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new SimpleChannelInboundHandler<Object>() {
-
+                    pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
                         @Override
-                        protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-                            System.out.println();
+                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+                            channelHandlerContext.writeAndFlush(msg.retainedDuplicate());
                         }
-
-//                        @Override
-//                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-//                            //将远端消息发往客户端
-//                            byte[] bytes = new byte[msg.readableBytes()];
-//                            msg.readBytes(bytes);
-//                            channelHandlerContext.writeAndFlush(bytes);
-//                        }
                         @Override
                         public void channelActive(ChannelHandlerContext outerContext) {
                             ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
@@ -55,9 +46,7 @@ public class CmdRequestHandler {
                                 @Override
                                 protected void channelRead0(ChannelHandlerContext innerContext, ByteBuf msg) {
                                     //将客户端消息发往远端
-                                    byte[] bytes = new byte[msg.readableBytes()];
-                                    msg.readBytes(bytes);
-                                    outerContext.writeAndFlush(bytes);
+                                    outerContext.writeAndFlush(msg.retainedDuplicate());
                                 }
                             });
                             lifeCycle.next(Step.TRANSFERRING_DATA);
