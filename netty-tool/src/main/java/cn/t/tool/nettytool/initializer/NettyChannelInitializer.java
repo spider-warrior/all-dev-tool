@@ -4,9 +4,9 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.tool.nettytool.handler.NettyExceptionHandler;
 import cn.t.util.common.CollectionUtil;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -24,7 +24,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     private Supplier<IdleStateHandler> idleStateHandlerSupplier;
     private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
     private Supplier<List<NettyTcpEncoder<?>>> NettyTcpEncoderListSupplier;
-    private Supplier<List<SimpleChannelInboundHandler<?>>> channelInboundHandlerListSupplier;
+    private Supplier<List<ChannelInboundHandler>> channelInboundHandlerListSupplier;
 
     @Override
     protected void initChannel(SocketChannel ch) {
@@ -46,7 +46,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
                 }
             }
             if(channelInboundHandlerListSupplier != null) {
-                List<SimpleChannelInboundHandler<?>> channelInboundHandlerList = channelInboundHandlerListSupplier.get();
+                List<ChannelInboundHandler> channelInboundHandlerList = channelInboundHandlerListSupplier.get();
                 if(!CollectionUtil.isEmpty(channelInboundHandlerList)) {
                     channelInboundHandlerList.forEach(handler -> channelPipeline.addLast("handler#" + handler.getClass().getName(), handler));
                 }
@@ -57,7 +57,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
     }
 
-    public NettyChannelInitializer(LogLevel logLevel, InternalLoggerFactory internalLoggerFactory, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder<?>>> nettyTcpEncoderListSupplier, Supplier<List<SimpleChannelInboundHandler<?>>> channelInboundHandlerListSupplier) {
+    public NettyChannelInitializer(LogLevel logLevel, InternalLoggerFactory internalLoggerFactory, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<NettyTcpEncoder<?>>> nettyTcpEncoderListSupplier, Supplier<List<ChannelInboundHandler>> channelInboundHandlerListSupplier) {
         if(logLevel != null) {
             this.logLevel = logLevel;
         }

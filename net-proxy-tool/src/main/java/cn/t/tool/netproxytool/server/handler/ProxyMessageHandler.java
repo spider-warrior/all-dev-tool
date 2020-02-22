@@ -1,12 +1,15 @@
 package cn.t.tool.netproxytool.server.handler;
 
+import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycledMessage;
 import cn.t.tool.netproxytool.model.NegotiateRequest;
-import cn.t.tool.netproxytool.promise.PromiseMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * @author yj
@@ -25,15 +28,22 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
         switch (lifeCycle.getCurrentStep()) {
             case NEGOTIATE: message = negotiateRequestHandler.handle((NegotiateRequest)lifeCycledMessage.getMessage(), lifeCycle); break;
             case AUTHENTICATION: message = authenticationRequestHandler.handle(lifeCycledMessage.getMessage(), lifeCycle); break;
-            case COMMAND_EXECUTION: message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, channelHandlerContext); break;
-            default: message = null;
+            case COMMAND_EXECUTION: {
+                SocketAddress socketAddress = channelHandlerContext.channel().remoteAddress();
+                if(socketAddress instanceof InetSocketAddress) {
+                    InetSocketAddress inetSocketAddress = (InetSocketAddress)socketAddress;
+                    String clientHost = inetSocketAddress.getHostName();
+                    int clientPort = inetSocketAddress.getPort();
+                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, clientHost, clientPort, channelHandlerContext);
+                } else {
+                    throw new ConnectionException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
+                }
+                break;
+            }
+            default: throw new ConnectionException(String.format("未处理的解析步骤: %s", lifeCycle.getCurrentStep()));
         }
         if(message != null) {
-            if(message instanceof PromiseMessage) {
-                ((PromiseMessage) message).setMessageSender(channelHandlerContext::writeAndFlush);
-            } else {
-                channelHandlerContext.writeAndFlush(message);
-            }
+            channelHandlerContext.writeAndFlush(message);
         }
     }
 }

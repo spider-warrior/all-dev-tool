@@ -1,8 +1,9 @@
-package cn.t.tool.netproxytool.server;
+package cn.t.tool.netproxytool.server.initializer;
 
 import cn.t.tool.netproxytool.server.analyse.ProxyMessageAnalyser;
 import cn.t.tool.netproxytool.server.encoder.ServerCmdResponseEncoder;
 import cn.t.tool.netproxytool.server.encoder.ServerNegotiateResponseEncoder;
+import cn.t.tool.netproxytool.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.server.handler.ProxyMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 import io.netty.handler.logging.LogLevel;
@@ -11,14 +12,15 @@ import io.netty.handler.logging.LogLevel;
  * @author yj
  * @since 2020-01-12 16:31
  **/
-public class ProxyMessageChannelInitializerBuilder extends NettyChannelInitializerBuilder {
+public class LocalToProxyChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
-    public ProxyMessageChannelInitializerBuilder() {
+    public LocalToProxyChannelInitializerBuilder() {
         setLogLevel(LogLevel.INFO);
         setIdleState(180, 180, 180);
         setByteBufAnalyserSupplier(ProxyMessageAnalyser::new);
         addEncoderListsSupplier(ServerNegotiateResponseEncoder::new);
         addEncoderListsSupplier(ServerCmdResponseEncoder::new);
-        addSimpleChannelInboundHandlerListSupplier(ProxyMessageHandler::new);
+        addChannelInboundHandlerSupplier(ProxyMessageHandler::new);
+        addChannelInboundHandlerSupplier(ForwardingMessageHandler::new);
     }
 }

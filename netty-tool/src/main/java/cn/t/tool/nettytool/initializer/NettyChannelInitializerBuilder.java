@@ -4,7 +4,7 @@ import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.util.common.CollectionUtil;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -21,27 +21,27 @@ public class NettyChannelInitializerBuilder {
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
     private List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList = new ArrayList<>();
-    private List<Supplier<SimpleChannelInboundHandler<?>>> simpleChannelInboundHandlerSupplierList = new ArrayList<>();
+    private List<Supplier<ChannelInboundHandler>> channelInboundHandlerSupplierList = new ArrayList<>();
 
     public NettyChannelInitializer build() {
         return new NettyChannelInitializer(
             logLevel,
             internalLoggerFactory,
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
-            () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
-            () -> {
+            byteBufAnalyserSupplier == null ? null : () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
+            CollectionUtil.isEmpty(nettyTcpEncoderSupplierList) ? null : () -> {
                 List<NettyTcpEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {
                     nettyTcpEncoderSupplierList.forEach(supplier -> nettyTcpEncoderList.add(supplier.get()));
                 }
                 return nettyTcpEncoderList;
             },
-            () -> {
-                List<SimpleChannelInboundHandler<?>> simpleChannelInboundHandlerList = new ArrayList<>();
-                if(!CollectionUtil.isEmpty(simpleChannelInboundHandlerSupplierList)) {
-                    simpleChannelInboundHandlerSupplierList.forEach(supplier -> simpleChannelInboundHandlerList.add(supplier.get()));
+            channelInboundHandlerSupplierList == null ? null : () -> {
+                List<ChannelInboundHandler> channelInboundHandlerList = new ArrayList<>();
+                if(!CollectionUtil.isEmpty(channelInboundHandlerSupplierList)) {
+                    channelInboundHandlerSupplierList.forEach(supplier -> channelInboundHandlerList.add(supplier.get()));
                 }
-                return simpleChannelInboundHandlerList;
+                return channelInboundHandlerList;
             }
         );
     }
@@ -66,15 +66,15 @@ public class NettyChannelInitializerBuilder {
         }
     }
 
-    public void addSimpleChannelInboundHandlerListSupplier(List<Supplier<SimpleChannelInboundHandler<?>>> simpleChannelInboundHandlerSupplierList) {
-        if(!CollectionUtil.isEmpty(simpleChannelInboundHandlerSupplierList)) {
-            this.simpleChannelInboundHandlerSupplierList.addAll(simpleChannelInboundHandlerSupplierList);
+    public void addChannelInboundHandlerListSupplier(List<Supplier<ChannelInboundHandler>> channelInboundHandlerSupplierList) {
+        if(!CollectionUtil.isEmpty(channelInboundHandlerSupplierList)) {
+            this.channelInboundHandlerSupplierList.addAll(channelInboundHandlerSupplierList);
         }
     }
 
-    public void addSimpleChannelInboundHandlerListSupplier(Supplier<SimpleChannelInboundHandler<?>> simpleChannelInboundHandlerSupplier) {
-        if(simpleChannelInboundHandlerSupplier != null) {
-            this.simpleChannelInboundHandlerSupplierList.add(simpleChannelInboundHandlerSupplier);
+    public void addChannelInboundHandlerSupplier(Supplier<ChannelInboundHandler> channelInboundHandlerSupplier) {
+        if(channelInboundHandlerSupplier != null) {
+            this.channelInboundHandlerSupplierList.add(channelInboundHandlerSupplier);
         }
     }
 

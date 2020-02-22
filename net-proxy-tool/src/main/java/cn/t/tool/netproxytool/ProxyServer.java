@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool;
 
-import cn.t.tool.netproxytool.server.ProxyMessageChannelInitializerBuilder;
+import cn.t.tool.netproxytool.server.initializer.LocalToProxyChannelInitializerBuilder;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;
@@ -22,7 +22,7 @@ public class ProxyServer {
 
         }
         List<DaemonServer> daemonServerList = new ArrayList<>();
-        daemonServerList.add(new NettyTcpServer("tcp-proxy-server", 1080, new ProxyMessageChannelInitializerBuilder().build()));
+        daemonServerList.add(new NettyTcpServer("tcp-proxy-server", 1080, new LocalToProxyChannelInitializerBuilder().build()));
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServerList(daemonServerList);
         defaultLauncher.startup();

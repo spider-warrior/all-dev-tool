@@ -1,18 +1,16 @@
 package cn.t.tool.netproxytool.server.handler;
 
-import cn.t.tool.netproxytool.constants.AddressType;
-import cn.t.tool.netproxytool.constants.Cmd;
-import cn.t.tool.netproxytool.constants.CmdExecutionStatus;
-import cn.t.tool.netproxytool.constants.Step;
+import cn.t.tool.netproxytool.constants.*;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.CmdResponse;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
-import cn.t.tool.netproxytool.promise.PromiseMessage;
+import cn.t.tool.netproxytool.promise.ConnectionResultListener;
+import cn.t.tool.netproxytool.server.initializer.ProxyToRemoteChannelInitializerBuilder;
+import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,48 +21,36 @@ import lombok.extern.slf4j.Slf4j;
  **/
 @Slf4j
 public class CmdRequestHandler {
-    public Object handle(CmdRequest message, ConnectionLifeCycle lifeCycle, ChannelHandlerContext channelHandlerContext) {
+    public Object handle(CmdRequest message, ConnectionLifeCycle lifeCycle, String clientHost, int clientPort, ChannelHandlerContext channelHandlerContext) {
         if(message.getRequestCmd() == Cmd.CONNECT) {
-            log.info("处理【{}】消息， 地址类型: {}, 地址: {}， 目标端口: {}", Cmd.CONNECT, message.getAddressType(), new String(message.getTargetAddress()), message.getTargetPort());
-            byte[] targetAddress = message.getTargetAddress();
-            short targetPort = message.getTargetPort();
-            Channel channel = channelHandlerContext.channel();
-            PromiseMessage promiseMessage = new PromiseMessage();
-            NettyTcpClient nettyTcpClient = new NettyTcpClient("proxy-for: " + channel.remoteAddress(), new String(targetAddress), targetPort, new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel ch) {
-                    ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-                        @Override
-                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-                            channelHandlerContext.writeAndFlush(msg.retainedDuplicate());
-                        }
-                        @Override
-                        public void channelActive(ChannelHandlerContext outerContext) {
-                            ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
-                            channel.pipeline().replace(proxyMessageHandler, "real-transfer-handle", new SimpleChannelInboundHandler<ByteBuf>() {
-                                @Override
-                                protected void channelRead0(ChannelHandlerContext innerContext, ByteBuf msg) {
-                                    //将客户端消息发往远端
-                                    outerContext.writeAndFlush(msg.retainedDuplicate());
-                                }
-                            });
-                            lifeCycle.next(Step.TRANSFERRING_DATA);
-                            promiseMessage.send();
-                        }
-                    });
+            String targetHost = new String(message.getTargetAddress());
+            int targetPort = message.getTargetPort();
+            log.info("处理【{}】消息， 地址类型: {}, 地址: {}， 目标端口: {}", Cmd.CONNECT, message.getAddressType(), targetHost, targetPort);
+            ConnectionResultListener connectionResultListener = (status, sender) -> {
+                CmdResponse cmdResponse = new CmdResponse();
+                cmdResponse.setVersion(message.getVersion());
+                cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
+                cmdResponse.setRsv((byte)0);
+                cmdResponse.setAddressType(AddressType.IPV4);
+                cmdResponse.setTargetAddress(ServerConfig.SERVER_HOST_BYTES);
+                cmdResponse.setTargetPort(ServerConfig.PORT);
+                if(CmdExecutionStatus.SUCCEEDED == status) {
+                    lifeCycle.next(Step.FORWARDING_DATA);
+                    ChannelPipeline pipeline = channelHandlerContext.pipeline();
+                    ForwardingMessageHandler forwardingMessageHandler = pipeline.get(ForwardingMessageHandler.class);
+                    if(forwardingMessageHandler != null) {
+                        forwardingMessageHandler.setMessageSender(sender);
+                    } else {
+                        throw new ConnectionException("未发现ForwardingMessageHandler实例");
+                    }
+                    channelHandlerContext.writeAndFlush(cmdResponse);
+                } else {
+                    throw new ConnectionException(String.format("连接建立失败, remote address: %s", targetHost + ":" + targetPort));
                 }
-            });
-            new Thread(() -> nettyTcpClient.start(null)).start();
-            CmdResponse cmdResponse = new CmdResponse();
-            cmdResponse.setVersion(message.getVersion());
-            cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
-            cmdResponse.setRsv((byte)0);
-            cmdResponse.setAddressType(AddressType.IPV4);
-            cmdResponse.setTargetAddress(new byte[]{(byte)192, (byte)168, 1, 103});
-            cmdResponse.setTargetPort((short)8888);
-            promiseMessage.setMessage(cmdResponse);
-            return promiseMessage;
+            };
+            NettyTcpClient nettyTcpClient = new NettyTcpClient(clientHost + ":" + clientPort + " -> " + targetHost + ":" + targetPort, targetHost, targetPort, new ProxyToRemoteChannelInitializerBuilder(channelHandlerContext::writeAndFlush, connectionResultListener).build());
+            ThreadUtil.submitTask(() -> nettyTcpClient.start(null));
+            return null;
         } else {
             throw new ConnectionException("未实现的命令处理: " + message.getRequestCmd());
         }

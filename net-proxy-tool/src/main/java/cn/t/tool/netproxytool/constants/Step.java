@@ -18,8 +18,8 @@ public enum Step {
     COMMAND_EXECUTION,
 
     /**
-     * 数据传输
+     * 数据转发
      */
-    TRANSFERRING_DATA
+    FORWARDING_DATA
 
 }

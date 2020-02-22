@@ -8,7 +8,7 @@ public class WaterSystemNettyChannelBuilder extends NettyChannelInitializerBuild
         setIdleState(180, 180, 180);
         setByteBufAnalyserSupplier(WaterSystemMessageAnalyser::new);
         addEncoderListsSupplier(WaterSystemMessageEncoder::new);
-        addSimpleChannelInboundHandlerListSupplier(WaterSystemReadRegisterCommandResponseHandler::new);
+        addChannelInboundHandlerSupplier(WaterSystemReadRegisterCommandResponseHandler::new);
     }
 
 }

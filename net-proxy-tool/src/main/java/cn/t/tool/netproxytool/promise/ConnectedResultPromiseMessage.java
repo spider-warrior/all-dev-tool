@@ -10,7 +10,7 @@ import lombok.Setter;
  **/
 @Setter
 @Getter
-public class PromiseMessage {
+public class ConnectedResultPromiseMessage {
     private Object message;
     private MessageSender messageSender;
     public void send() {
