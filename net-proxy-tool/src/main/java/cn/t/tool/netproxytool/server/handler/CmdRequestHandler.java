@@ -34,14 +34,20 @@ public class CmdRequestHandler {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                     ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+                    pipeline.addLast(new SimpleChannelInboundHandler<Object>() {
+
                         @Override
-                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-                            //将远端消息发往客户端
-                            byte[] bytes = new byte[msg.readableBytes()];
-                            msg.readBytes(bytes);
-                            channelHandlerContext.writeAndFlush(bytes);
+                        protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+                            System.out.println();
                         }
+
+//                        @Override
+//                        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+//                            //将远端消息发往客户端
+//                            byte[] bytes = new byte[msg.readableBytes()];
+//                            msg.readBytes(bytes);
+//                            channelHandlerContext.writeAndFlush(bytes);
+//                        }
                         @Override
                         public void channelActive(ChannelHandlerContext outerContext) {
                             ProxyMessageHandler proxyMessageHandler = channel.pipeline().get(ProxyMessageHandler.class);
