@@ -5,6 +5,7 @@ import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycledMessage;
 import cn.t.tool.netproxytool.model.NegotiateRequest;
+import cn.t.tool.netproxytool.promise.ChannelContextMessageSender;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -34,7 +35,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
                     InetSocketAddress inetSocketAddress = (InetSocketAddress)socketAddress;
                     String clientHost = inetSocketAddress.getHostName();
                     int clientPort = inetSocketAddress.getPort();
-                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, clientHost, clientPort, channelHandlerContext);
+                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, clientHost, clientPort, channelHandlerContext.pipeline().get(ForwardingMessageHandler.class), new ChannelContextMessageSender(channelHandlerContext));
                 } else {
                     throw new ConnectionException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
                 }

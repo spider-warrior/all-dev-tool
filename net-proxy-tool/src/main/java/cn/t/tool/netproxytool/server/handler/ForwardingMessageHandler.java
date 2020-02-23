@@ -1,8 +1,6 @@
 package cn.t.tool.netproxytool.server.handler;
 
 import cn.t.tool.netproxytool.promise.MessageSender;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -19,27 +17,23 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private ByteBuf preCache = UnpooledByteBufAllocator.DEFAULT.buffer(1024 * 256);
     protected MessageSender messageSender;
+    private volatile boolean closed = false;
 
     @Override
-    public synchronized void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if(messageSender == null) {
-            //缓存消息
-            preCache.writeBytes((ByteBuf)msg);
-        } else {
-            messageSender.send(msg);
-        }
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        messageSender.send(msg);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public synchronized void channelInactive(ChannelHandlerContext ctx) {
         if(messageSender != null) {
-            log.info("与远端断开连接，即将释放对端资源");
+            log.info("与远端断开连接， remote: {}", ctx.channel().remoteAddress());
             messageSender.close();
         } else {
             log.info("客户端与代理断开连接，尚未获取对端句柄无法进行关闭");
         }
+        closed = true;
     }
 
     @Override
@@ -53,10 +47,10 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     }
 
     public synchronized void setMessageSender(MessageSender messageSender) {
-        this.messageSender = messageSender;
-        if(preCache.readableBytes() > 0) {
-            messageSender.send(preCache);
+        if(closed) {
+            messageSender.close();
+        } else {
+            this.messageSender = messageSender;
         }
-        preCache = null;
     }
 }
