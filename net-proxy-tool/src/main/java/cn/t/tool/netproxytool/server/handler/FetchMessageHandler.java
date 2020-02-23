@@ -27,6 +27,10 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
         connectionResultListener.handle(CmdExecutionStatus.SUCCEEDED, new ChannelContextMessageSender(ctx));
     }
 
+    @Override
+    public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) {
+       messageSender.close();
+    }
 
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {
