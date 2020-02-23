@@ -5,6 +5,8 @@ import cn.t.tool.netproxytool.server.initializer.LocalToProxyChannelInitializerB
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;
+import cn.t.util.common.LoggerUtil;
+import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
  **/
 public class Socks5ProxyServer {
     public static void main(String[] args) {
+        //设置logback输出级别
+        LoggerUtil.setSlf4jRootLoggerLevel(Level.DEBUG);
         List<DaemonServer> daemonServerList = new ArrayList<>();
         NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy", ServerConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
         daemonServerList.add(proxyServer);

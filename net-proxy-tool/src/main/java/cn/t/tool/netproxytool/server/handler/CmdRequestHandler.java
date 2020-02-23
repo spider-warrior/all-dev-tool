@@ -37,15 +37,16 @@ public class CmdRequestHandler {
                 cmdResponse.setTargetAddress(ServerConfig.SERVER_HOST_BYTES);
                 cmdResponse.setTargetPort(ServerConfig.SERVER_PORT);
                 if(CmdExecutionStatus.SUCCEEDED == status) {
+                    log.info("代理客户端成功, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
                     lifeCycle.next(Step.FORWARDING_DATA);
                     ChannelPipeline pipeline = channelHandlerContext.pipeline();
                     ForwardingMessageHandler forwardingMessageHandler = pipeline.get(ForwardingMessageHandler.class);
                     if(forwardingMessageHandler != null) {
-                        log.info("代理客户端成功, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
+                        log.info("forwardingMessageHandler != null");
                         forwardingMessageHandler.setMessageSender(sender);
                     } else {
-                        //偶该会执行该逻辑，猜测是因为shutdown导致的handler被清理掉
-                        throw new ConnectionException(String.format("未发现ForwardingMessageHandler实例, local-address: %s, remote-address: %s", clientHost + ":" + clientPort, targetHost + ":" + targetPort));
+                        log.info("远程连接资源即将关闭，原因为ForwardingMessageHandler实例不存在,或客户端代理已关闭, local-address: {}, remote-address: {}", clientHost + ":" + clientPort, targetHost + ":" + targetPort);
+                        sender.close();
                     }
                 } else {
                     log.error("代理客户端失败, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);

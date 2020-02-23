@@ -18,7 +18,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Uncaught exceptions from inbound handlers will propagate up to this handler
         SocketAddress socketAddress = ctx.channel().remoteAddress();
-        logger.error(String.format("%s读取消息异常", socketAddress), cause);
+        logger.error(String.format("%s: 读取消息异常", socketAddress));
     }
 
     @Override
@@ -26,7 +26,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
         ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
                 // Handle connect exception here...
-                logger.error("cannot connect to: {}", future.channel().remoteAddress());
+                logger.error("cannot connect to: {}", remoteAddress);
             }
         }));
     }

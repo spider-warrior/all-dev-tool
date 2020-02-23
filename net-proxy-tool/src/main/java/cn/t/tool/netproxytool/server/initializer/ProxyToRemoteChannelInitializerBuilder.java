@@ -13,8 +13,9 @@ import io.netty.handler.logging.LogLevel;
 public class ProxyToRemoteChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
     public ProxyToRemoteChannelInitializerBuilder(MessageSender messageSender, ConnectionResultListener connectionResultListener) {
-        setLogLevel(LogLevel.INFO);
-        setIdleState(30, 30, 30);
+        //设置logging handler的输出级别
+        setLogLevel(LogLevel.DEBUG);
+        setIdleState(300, 300, 300);
         addChannelInboundHandlerSupplier(() -> new FetchMessageHandler(messageSender, connectionResultListener));
     }
 }

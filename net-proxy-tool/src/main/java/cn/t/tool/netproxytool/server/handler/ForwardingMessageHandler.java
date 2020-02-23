@@ -1,8 +1,8 @@
 package cn.t.tool.netproxytool.server.handler;
 
 import cn.t.tool.netproxytool.promise.MessageSender;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-22 23:46
  **/
 @Slf4j
-public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
+public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     protected MessageSender messageSender;
     private boolean closed = false;
@@ -25,11 +25,13 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        log.info("客户端与代理断开连接，即将释放远程连接资源");
         if(messageSender != null) {
+            log.info("客户端与代理断开连接，即将释放远程连接资源");
             messageSender.close();
+        } else {
+            log.info("客户端与代理断开连接，尚未获取远程连接句柄无法进行关闭");
+            closed = true;
         }
-        closed = true;
     }
 
     public MessageSender getMessageSender() {
@@ -38,8 +40,5 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
 
     public void setMessageSender(MessageSender messageSender) {
         this.messageSender = messageSender;
-        if(closed) {
-            messageSender.close();
-        }
     }
 }

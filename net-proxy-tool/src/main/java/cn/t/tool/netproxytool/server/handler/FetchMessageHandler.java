@@ -1,15 +1,15 @@
 package cn.t.tool.netproxytool.server.handler;
 
 import cn.t.tool.netproxytool.constants.CmdExecutionStatus;
-import cn.t.tool.netproxytool.constants.ServerConfig;
 import cn.t.tool.netproxytool.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.promise.ConnectionResultListener;
 import cn.t.tool.netproxytool.promise.MessageSender;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.timeout.TimeoutException;
+import io.netty.channel.ChannelPromise;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.UnknownHostException;
+import java.net.SocketAddress;
 
 /**
  * 抓取消息处理器处理器
@@ -24,26 +24,32 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        log.info("FetchMessageHandler.active");
         connectionResultListener.handle(CmdExecutionStatus.SUCCEEDED, new ChannelContextMessageSender(ctx));
     }
 
-    /**
-     * 覆盖父类方法，不关闭被代理的客户端连接
-     */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        log.info("远程连接关闭:[{}:{}] <--->[{}]", ServerConfig.SERVER_HOST, ServerConfig.SERVER_PORT, ctx.channel().remoteAddress());
+        //远程服务器已经关闭连接
+        log.info("远程服务器断开连接: {}", ctx.channel().remoteAddress());
+        messageSender.close();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if(cause instanceof UnknownHostException) {
-            connectionResultListener.handle(CmdExecutionStatus.HOST_UNREACHABLE, new ChannelContextMessageSender(ctx));
-        } else if(cause instanceof TimeoutException) {
-            connectionResultListener.handle(CmdExecutionStatus.CONNECTION_REFUSED, new ChannelContextMessageSender(ctx));
-        } else {
-            connectionResultListener.handle(CmdExecutionStatus.GENERAL_SOCKS_SERVER_FAILURE, new ChannelContextMessageSender(ctx));
-        }
+        //消息读取失败不能实现消息转发，断开客户端代理
+        log.info("从远端抓取消息异常", cause);
+        ctx.close();
+    }
+
+    @Override
+    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {
+        ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
+            if (!future.isSuccess()) {
+                //连接失败处理
+                connectionResultListener.handle(CmdExecutionStatus.CONNECTION_REFUSED, new ChannelContextMessageSender(ctx));
+            }
+        }));
     }
 
     public FetchMessageHandler(MessageSender messageSender, ConnectionResultListener connectionResultListener) {
