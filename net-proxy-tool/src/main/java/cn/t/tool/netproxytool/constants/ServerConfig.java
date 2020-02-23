@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-02-22 23:00
  **/
 public class ServerConfig {
-    public static final String SERVER_HOST = SystemUtil.getLocalIp();
+    public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
     public static final byte[] SERVER_HOST_BYTES = SystemUtil.convertHostToBytes(SERVER_HOST);
     public static final short PORT = 10086;
     public static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
