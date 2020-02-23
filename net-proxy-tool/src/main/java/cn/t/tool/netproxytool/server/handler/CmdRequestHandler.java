@@ -42,7 +42,6 @@ public class CmdRequestHandler {
                     ChannelPipeline pipeline = channelHandlerContext.pipeline();
                     ForwardingMessageHandler forwardingMessageHandler = pipeline.get(ForwardingMessageHandler.class);
                     if(forwardingMessageHandler != null) {
-                        log.info("forwardingMessageHandler != null");
                         forwardingMessageHandler.setMessageSender(sender);
                     } else {
                         log.info("远程连接资源即将关闭，原因为ForwardingMessageHandler实例不存在,或客户端代理已关闭, local-address: {}, remote-address: {}", clientHost + ":" + clientPort, targetHost + ":" + targetPort);

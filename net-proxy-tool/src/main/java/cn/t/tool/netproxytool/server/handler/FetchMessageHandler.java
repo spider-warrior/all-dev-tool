@@ -24,23 +24,9 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("FetchMessageHandler.active");
         connectionResultListener.handle(CmdExecutionStatus.SUCCEEDED, new ChannelContextMessageSender(ctx));
     }
 
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        //远程服务器已经关闭连接
-        log.info("远程服务器断开连接: {}", ctx.channel().remoteAddress());
-        messageSender.close();
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        //消息读取失败不能实现消息转发，断开客户端代理
-        log.info("从远端抓取消息异常", cause);
-        ctx.close();
-    }
 
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {

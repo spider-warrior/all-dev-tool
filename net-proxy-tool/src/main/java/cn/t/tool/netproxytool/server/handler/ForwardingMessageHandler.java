@@ -3,7 +3,8 @@ package cn.t.tool.netproxytool.server.handler;
 import cn.t.tool.netproxytool.promise.MessageSender;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 转发消息处理器
@@ -12,11 +13,11 @@ import lombok.extern.slf4j.Slf4j;
  * @version V1.0
  * @since 2020-02-22 23:46
  **/
-@Slf4j
 public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     protected MessageSender messageSender;
-    private boolean closed = false;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -24,14 +25,19 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if(messageSender != null) {
-            log.info("客户端与代理断开连接，即将释放远程连接资源");
+            log.info("与远端断开连接，即将释放对端资源");
             messageSender.close();
         } else {
-            log.info("客户端与代理断开连接，尚未获取远程连接句柄无法进行关闭");
-            closed = true;
+            log.info("客户端与代理断开连接，尚未获取对端句柄无法进行关闭");
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        //消息读取失败不能实现消息转发，断开客户端代理
+        ctx.close();
     }
 
     public MessageSender getMessageSender() {

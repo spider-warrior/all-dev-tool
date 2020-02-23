@@ -19,6 +19,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
         // Uncaught exceptions from inbound handlers will propagate up to this handler
         SocketAddress socketAddress = ctx.channel().remoteAddress();
         logger.error(String.format("%s: 读取消息异常", socketAddress));
+        ctx.fireExceptionCaught(cause);
     }
 
     @Override

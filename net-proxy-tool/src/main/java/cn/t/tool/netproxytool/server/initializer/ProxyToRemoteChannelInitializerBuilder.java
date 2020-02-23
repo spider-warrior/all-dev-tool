@@ -15,7 +15,7 @@ public class ProxyToRemoteChannelInitializerBuilder extends NettyChannelInitiali
     public ProxyToRemoteChannelInitializerBuilder(MessageSender messageSender, ConnectionResultListener connectionResultListener) {
         //设置logging handler的输出级别
         setLogLevel(LogLevel.DEBUG);
-        setIdleState(300, 300, 300);
+        setIdleState(30, 30, 30);
         addChannelInboundHandlerSupplier(() -> new FetchMessageHandler(messageSender, connectionResultListener));
     }
 }
