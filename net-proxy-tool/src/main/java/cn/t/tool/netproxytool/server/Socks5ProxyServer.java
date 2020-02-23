@@ -25,9 +25,9 @@ import java.util.List;
 public class Socks5ProxyServer {
     public static void main(String[] args) {
         //设置logback输出级别
-        LoggerUtil.setSlf4jRootLoggerLevel(Level.DEBUG);
+        LoggerUtil.setSlf4jRootLoggerLevel(Level.WARN);
         List<DaemonServer> daemonServerList = new ArrayList<>();
-        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy", ServerConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
+        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", ServerConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServerList(daemonServerList);

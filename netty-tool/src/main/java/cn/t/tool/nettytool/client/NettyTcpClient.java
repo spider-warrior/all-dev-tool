@@ -22,7 +22,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
 
     @Override
     public void doStart(Launcher launcher) {
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(1);
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup)
             .channel(NioSocketChannel.class)

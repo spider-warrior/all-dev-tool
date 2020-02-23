@@ -17,7 +17,7 @@ public class ServerConfig {
     public static final short SERVER_PORT = 10086;
     public static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
     public static final int CORE_THREAD_COUNT = (PROCESSOR_COUNT < 4 ? 2 : PROCESSOR_COUNT) * 5;
-    public static final int MAX_THREAD_COUNT = CORE_THREAD_COUNT * 5;
+    public static final int MAX_THREAD_COUNT = CORE_THREAD_COUNT * 10;
     public static final int BLOCKING_THREAD_COUNT = MAX_THREAD_COUNT;
     public static final int THREAD_TT = 10;
     public static final TimeUnit THREAD_TT_TIME_UNIT = TimeUnit.SECONDS;

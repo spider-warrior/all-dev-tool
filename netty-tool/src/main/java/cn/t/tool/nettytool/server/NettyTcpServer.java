@@ -24,7 +24,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
 
     public void doStart(Launcher launcher) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));
-        EventLoopGroup workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors(), new DefaultThreadFactory("NettyServerWorker", true));
+        EventLoopGroup workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() + 1, new DefaultThreadFactory("NettyServerWorker", true));
         ServerBootstrap bootstrap = new ServerBootstrap();
         try {
             //ChannelOption.TCP_NODELAY
@@ -41,7 +41,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
             //当server检测到超过一定时间(/proc/sys/net/ipv4/tcp_keepalive_time 7200 即2小时)没有数据传输,那么会向client端发送一个keepalive packet
             bootstrap.group(bossGroup,workerGroup)
                 .channel(NioServerSocketChannel.class)
-//                .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
+                .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .option(ChannelOption.SO_BACKLOG,1024)
                 .childOption(ChannelOption.SO_KEEPALIVE,true)
@@ -69,12 +69,12 @@ public class NettyTcpServer extends AbstractDaemonServer {
             }
             closeFuture.sync();
         } catch (Exception e) {
-            logger.error(String.format("TCP Server: %s Down, port: %d ", name, port), e);
+            logger.error(String.format("TCP Server: [%s] is Down, port: %d ", name, port), e);
         } finally {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpServer.this);
             }
-            logger.info(String.format("[TCP Server]: %s closed, port: %d ", name, port));
+            logger.info(String.format("TCP Server: [%s] is closed, port: %d ", name, port));
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }

@@ -29,16 +29,8 @@ public class CmdRequestHandler {
             int targetPort = message.getTargetPort();
             log.info("处理【{}】消息， 地址类型: {}, 地址: {}， 目标端口: {}", Cmd.CONNECT, message.getAddressType(), targetHost, targetPort);
             ConnectionResultListener connectionResultListener = (status, sender) -> {
-                CmdResponse cmdResponse = new CmdResponse();
-                cmdResponse.setVersion(message.getVersion());
-                cmdResponse.setExecutionStatus(status);
-                cmdResponse.setRsv((byte)0);
-                cmdResponse.setAddressType(AddressType.IPV4);
-                cmdResponse.setTargetAddress(ServerConfig.SERVER_HOST_BYTES);
-                cmdResponse.setTargetPort(ServerConfig.SERVER_PORT);
                 if(CmdExecutionStatus.SUCCEEDED == status) {
                     log.info("代理客户端成功, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
-                    lifeCycle.next(Step.FORWARDING_DATA);
                     ChannelPipeline pipeline = channelHandlerContext.pipeline();
                     ForwardingMessageHandler forwardingMessageHandler = pipeline.get(ForwardingMessageHandler.class);
                     if(forwardingMessageHandler != null) {
@@ -50,13 +42,22 @@ public class CmdRequestHandler {
                 } else {
                     log.error("代理客户端失败, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
                 }
-                channelHandlerContext.writeAndFlush(cmdResponse);
             };
             String clientName = clientHost + ":" + clientPort + " -> " + targetHost + ":" + targetPort;
             NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(new ChannelContextMessageSender(channelHandlerContext), connectionResultListener).build();
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitTask(() -> nettyTcpClient.start(null));
-            return null;
+
+            //切换步骤
+            lifeCycle.next(Step.FORWARDING_DATA);
+            CmdResponse cmdResponse = new CmdResponse();
+            cmdResponse.setVersion(message.getVersion());
+            cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
+            cmdResponse.setRsv((byte)0);
+            cmdResponse.setAddressType(AddressType.IPV4);
+            cmdResponse.setTargetAddress(ServerConfig.SERVER_HOST_BYTES);
+            cmdResponse.setTargetPort(ServerConfig.SERVER_PORT);
+            return cmdResponse;
         } else {
             throw new ConnectionException("未实现的命令处理: " + message.getRequestCmd());
         }

@@ -16,11 +16,6 @@ import java.util.List;
  **/
 public class ProxyServer {
     public static void main(String[] args) throws IOException {
-        try(
-            InputStream is = null;
-        ) {
-
-        }
         List<DaemonServer> daemonServerList = new ArrayList<>();
         daemonServerList.add(new NettyTcpServer("tcp-proxy-server", 1080, new LocalToProxyChannelInitializerBuilder().build()));
         DefaultLauncher defaultLauncher = new DefaultLauncher();

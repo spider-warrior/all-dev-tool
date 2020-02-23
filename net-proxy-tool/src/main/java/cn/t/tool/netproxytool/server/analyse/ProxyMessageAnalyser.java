@@ -18,7 +18,7 @@ public class ProxyMessageAnalyser extends ByteBufAnalyser {
     private final NegotiateRequestAnalyse negotiateRequestAnalyse = new NegotiateRequestAnalyse();
     private final AuthenticationRequestAnalyse authenticationRequestAnalyse = new AuthenticationRequestAnalyse();
     private final CmdRequestAnalyse cmdRequestAnalyse = new CmdRequestAnalyse();
-    private final ConnectionLifeCycle lifeCycle = new ConnectionLifeCycle();
+    private final  ConnectionLifeCycle lifeCycle = new ConnectionLifeCycle();
     private final ConnectionLifeCycledMessage connectionLifeCycledMessage = new ConnectionLifeCycledMessage();
 
     @Override
