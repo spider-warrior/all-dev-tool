@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerConfig {
     public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
     public static final byte[] SERVER_HOST_BYTES = SystemUtil.convertHostToBytes(SERVER_HOST);
-    public static final short PORT = 10086;
+    public static final short SERVER_PORT = 10086;
     public static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
     public static final int CORE_THREAD_COUNT = PROCESSOR_COUNT < 4 ? 2 : PROCESSOR_COUNT;
     public static final int MAX_THREAD_COUNT = CORE_THREAD_COUNT * 5;

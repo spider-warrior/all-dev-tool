@@ -5,18 +5,15 @@ import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.model.CmdRequest;
 import cn.t.tool.netproxytool.model.CmdResponse;
 import cn.t.tool.netproxytool.model.ConnectionLifeCycle;
+import cn.t.tool.netproxytool.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.promise.ConnectionResultListener;
 import cn.t.tool.netproxytool.server.initializer.ProxyToRemoteChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
-import cn.t.tool.nettytool.server.DaemonServer;
-import cn.t.tool.nettytool.server.listener.DemonListener;
+import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 命令请求处理器
@@ -34,38 +31,30 @@ public class CmdRequestHandler {
             ConnectionResultListener connectionResultListener = (status, sender) -> {
                 CmdResponse cmdResponse = new CmdResponse();
                 cmdResponse.setVersion(message.getVersion());
-                cmdResponse.setExecutionStatus(CmdExecutionStatus.SUCCEEDED);
+                cmdResponse.setExecutionStatus(status);
                 cmdResponse.setRsv((byte)0);
                 cmdResponse.setAddressType(AddressType.IPV4);
                 cmdResponse.setTargetAddress(ServerConfig.SERVER_HOST_BYTES);
-                cmdResponse.setTargetPort(ServerConfig.PORT);
+                cmdResponse.setTargetPort(ServerConfig.SERVER_PORT);
                 if(CmdExecutionStatus.SUCCEEDED == status) {
                     lifeCycle.next(Step.FORWARDING_DATA);
                     ChannelPipeline pipeline = channelHandlerContext.pipeline();
                     ForwardingMessageHandler forwardingMessageHandler = pipeline.get(ForwardingMessageHandler.class);
                     if(forwardingMessageHandler != null) {
+                        log.info("代理客户端成功, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
                         forwardingMessageHandler.setMessageSender(sender);
                     } else {
                         //偶该会执行该逻辑，猜测是因为shutdown导致的handler被清理掉
                         throw new ConnectionException(String.format("未发现ForwardingMessageHandler实例, local-address: %s, remote-address: %s", clientHost + ":" + clientPort, targetHost + ":" + targetPort));
                     }
-                    channelHandlerContext.writeAndFlush(cmdResponse);
                 } else {
-                    throw new ConnectionException(String.format("连接建立失败, remote address: %s", targetHost + ":" + targetPort));
+                    log.error("代理客户端失败, client: {}:{}, remote: {}:{}", clientHost, clientPort, targetHost, targetPort);
                 }
+                channelHandlerContext.writeAndFlush(cmdResponse);
             };
-            NettyTcpClient nettyTcpClient = new NettyTcpClient(clientHost + ":" + clientPort + " -> " + targetHost + ":" + targetPort, targetHost, targetPort, new ProxyToRemoteChannelInitializerBuilder(channelHandlerContext::writeAndFlush, connectionResultListener).build());
-            List<DemonListener> demonListenerList = new ArrayList<>(1);
-            demonListenerList.add(new  DemonListener() {
-                @Override
-                public void startup(DaemonServer server) {}
-                @Override
-                public void close(DaemonServer server) {
-                    log.info("远程连接已断开， 即将关闭本地连接, local: {}, remote: {}", clientHost + ":" + clientPort, targetHost + ":" + targetPort);
-                    channelHandlerContext.close();
-                }
-            });
-            nettyTcpClient.setDemonListenerList(demonListenerList);
+            String clientName = clientHost + ":" + clientPort + " -> " + targetHost + ":" + targetPort;
+            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(new ChannelContextMessageSender(channelHandlerContext), connectionResultListener).build();
+            NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitTask(() -> nettyTcpClient.start(null));
             return null;
         } else {
