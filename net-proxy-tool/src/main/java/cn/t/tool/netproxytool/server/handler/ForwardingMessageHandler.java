@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.server.handler;
 
 import cn.t.tool.netproxytool.promise.MessageSender;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private ByteBuf preCache = PooledByteBufAllocator.DEFAULT.buffer(1024 * 256);
+    private ByteBuf preCache = UnpooledByteBufAllocator.DEFAULT.buffer(1024 * 256);
     protected MessageSender messageSender;
 
     @Override

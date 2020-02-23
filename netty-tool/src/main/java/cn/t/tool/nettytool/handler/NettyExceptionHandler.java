@@ -73,7 +73,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
     }
 
     protected void handleAllIdle(ChannelHandlerContext ctx) {
-        logger.error("读取和写出全部超时,断开连接: {}", ctx.channel().remoteAddress());
+        logger.error("读取或写出超时,断开连接: {}", ctx.channel().remoteAddress());
         ctx.close();
     }
 

@@ -31,7 +31,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
             //延时要求较高时开启此选项，用来禁用Nagle算法
 
             //ChannelOption.SO_REUSEADDR
-            //kill掉进程后端口会进入短暂的TIME_WAIT状态, 开启下面选项果此端口正在使用的话，bind就会把端口“抢”过来
+            //kill掉进程后端口会进入短暂的TIME_WAIT状态, 开启此选项果此端口正在使用的话，bind就会把端口“抢”过来
 
             //ChannelOption.SO_BACKLOG
             //TCP下分为syns queue（半连接队列）与accept queue（全连接队列），backlog的定义是已连接但未进行accept处理的socket队列大小，如果这个队列满了，将会发送一个ECONNREFUSED错误信息给到客户端
@@ -44,7 +44,8 @@ public class NettyTcpServer extends AbstractDaemonServer {
                 .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .option(ChannelOption.SO_BACKLOG,1024)
-                .childOption(ChannelOption.SO_KEEPALIVE,true)
+                //该选项依赖系统内核，不容易修改，不推荐使用，使用IdleHandler代替即可
+//                .childOption(ChannelOption.SO_KEEPALIVE,true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(channelInitializer);
             ChannelFuture openFuture = bootstrap.bind(getPort());

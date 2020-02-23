@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.server;
+package cn.t.tool.netproxytool;
 
 import cn.t.tool.netproxytool.constants.ServerConfig;
 import cn.t.tool.netproxytool.server.initializer.LocalToProxyChannelInitializerBuilder;
