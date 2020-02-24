@@ -29,6 +29,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline channelPipeline = ch.pipeline();
+        //切换日志实现，防止有人篡改LoggerFactory，强制使用Slf4JLoggerFactory
         InternalLoggerFactory originalInternalLoggerFactory = InternalLoggerFactory.getDefaultFactory();
         InternalLoggerFactory.setDefaultFactory(internalLoggerFactory);
         try {
