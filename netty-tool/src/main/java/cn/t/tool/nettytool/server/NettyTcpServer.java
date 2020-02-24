@@ -27,6 +27,8 @@ public class NettyTcpServer extends AbstractDaemonServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() + 1, new DefaultThreadFactory("NettyServerWorker", true));
         ServerBootstrap bootstrap = new ServerBootstrap();
         try {
+            //具体配置参考io.netty.channel.ChannelConfig(for SocketChannel)和io.netty.channel.socket.ServerSocketChannelConfig(for ServerSocketChannel)说明。
+
             //ChannelOption.TCP_NODELAY
             //延时要求较高时开启此选项，用来禁用Nagle算法
 
@@ -44,7 +46,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
                 .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .option(ChannelOption.SO_BACKLOG,1024)
-                //该选项依赖系统内核，不容易修改，不推荐使用，使用IdleHandler代替即可
+                //鸡肋，该选项依赖系统内核，不容易修改，不推荐使用，使用IdleHandler代替即可
 //                .childOption(ChannelOption.SO_KEEPALIVE,true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(channelInitializer);
