@@ -26,6 +26,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     }
 
     @Override
+    //selector线程会执行该逻辑messageSender为共享资源
     public synchronized void channelInactive(ChannelHandlerContext ctx) {
         if(messageSender != null) {
             log.info("与远端断开连接， remote: {}", ctx.channel().remoteAddress());
@@ -46,6 +47,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
         return messageSender;
     }
 
+    //远程连接线程成功后会回调执行该逻辑
     public synchronized void setMessageSender(MessageSender messageSender) {
         if(closed) {
             messageSender.close();

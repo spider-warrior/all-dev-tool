@@ -8,7 +8,7 @@ import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.socks5.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.socks5.promise.ConnectionResultListener;
 import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInitializerBuilder;
-import cn.t.tool.netproxytool.socks5.util.ThreadUtil;
+import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import lombok.extern.slf4j.Slf4j;

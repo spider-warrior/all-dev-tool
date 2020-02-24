@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5.util;
+package cn.t.tool.netproxytool.util;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
 
@@ -14,12 +14,14 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 public class ThreadUtil {
 
-    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(
+    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new MonitoredThreadPool(
         Socks5ServerConfig.CORE_THREAD_COUNT,
         Socks5ServerConfig.MAX_THREAD_COUNT,
         Socks5ServerConfig.THREAD_TT,
         Socks5ServerConfig.THREAD_TT_TIME_UNIT,
-        new ArrayBlockingQueue<>(Socks5ServerConfig.BLOCKING_THREAD_COUNT)
+        new ArrayBlockingQueue<>(Socks5ServerConfig.BLOCKING_THREAD_COUNT),
+        new MonitoredThreadFactory(Socks5ServerConfig.THREAD_POOL_NAME),
+        Socks5ServerConfig.THREAD_POOL_NAME
     );
 
     public static void submitTask(Runnable runnable) {
