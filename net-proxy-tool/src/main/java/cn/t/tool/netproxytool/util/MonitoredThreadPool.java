@@ -1,5 +1,6 @@
 package cn.t.tool.netproxytool.util;
 
+import cn.t.tool.netproxytool.constants.MonitorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.*;
  **/
 public class MonitoredThreadPool extends ThreadPoolExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MonitoredThreadPool.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonitorConstants.THREAD_MONITOR_LOG_NAME);
 
     /**
      * 保存任务开始执行的时间，当任务结束时，用任务结束时间减去开始时间计算任务执行时间
@@ -104,15 +105,7 @@ public class MonitoredThreadPool extends ThreadPoolExecutor {
     protected void afterExecute(Runnable r, Throwable t) {
         Long startDate = startTimes.remove(String.valueOf(r.hashCode()));
         long finishDate = System.currentTimeMillis();
-        long takeTimeInSeconds = (finishDate - startDate) / 1000;
-        LOGGER.info("{}-monitor: " +
-                "任务耗时: {}秒, 当前线程数量: {}, 核心线程数量: {}, 正在执行任务的线程数量: {}, " +
-                "已完成任务数量: {}, 任务总数: {}, 队列里缓存的任务数量: {}, 池中存在的最大线程数: {}, " +
-                "最大允许的线程数: {},  线程空闲时间: {}, 线程池是否关闭: {}, 线程池是否终止: {}",
-            this.poolName,
-            takeTimeInSeconds, this.getPoolSize(), this.getCorePoolSize(), this.getActiveCount(),
-            this.getCompletedTaskCount(), this.getTaskCount(), this.getQueue().size(), this.getLargestPoolSize(),
-            this.getMaximumPoolSize(), this.getKeepAliveTime(TimeUnit.MILLISECONDS), this.isShutdown(), this.isTerminated());
+        LOGGER.info("{}-monitor: 任务耗时: {}秒", this.poolName, (finishDate - startDate) / 1000);
     }
 
     /**

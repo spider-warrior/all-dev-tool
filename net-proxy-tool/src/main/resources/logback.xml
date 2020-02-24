@@ -1,7 +1,7 @@
 <configuration>
     <property name="logHome" value="${user.home}/logs/proxy"/>
     <!--<property name="pattern" value="===========%d{yyyy-MM-dd HH:mm:ss} %level %c:%L - %msg%n"/>-->
-    <property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n"/>
+    <property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M \\(%line\\) - %msg%n"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${pattern}</pattern>
@@ -34,10 +34,23 @@
             <charset>UTF-8</charset>
         </encoder>
     </appender>
+    <appender name="ThreadMonitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logHome}/thread-monitor.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>thread-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <!-- keep 10 days worth of history -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
     <appender name="ThreadPoolMonitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/thread-pool-monitor.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>thread-pool-monitorr.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>thread-pool-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>10</maxHistory>
@@ -50,7 +63,10 @@
     <logger name="io.netty.handler.logging.LoggingHandler" level="DEBUG" additivity="false">
         <appender-ref ref="LoggingHandler"/>
     </logger>
-    <logger name="cn.t.tool.netproxytool.util.MonitoredThreadPool" level="DEBUG" additivity="false">
+    <logger name="ThreadMonitor" level="INFO" additivity="false">
+        <appender-ref ref="ThreadMonitor"/>
+    </logger>
+    <logger name="ThreadPoolMonitor" level="INFO" additivity="false">
         <appender-ref ref="ThreadPoolMonitor"/>
     </logger>
     <root level="INFO">
