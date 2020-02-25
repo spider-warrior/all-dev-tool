@@ -11,6 +11,11 @@ import java.util.concurrent.*;
  * 可监控的线程池
  * 继承ThreadPoolExecutor类，覆盖了shutdown(), shutdownNow(), beforeExecute() 和 afterExecute()方法来统计线程池的执行情况
  *
+ * corePoolSize：
+ * 线程池的基本大小，即在没有任务需要执行的时候线程池的大小，并且只有在工作队列满了并且数量小于MAX POOL SIZE的情况下才会创建超出这个数量的线程。
+ * maximumPoolSize：
+ * 线程池中允许的最大线程数，线程池中的当前线程数目不会超过该值。
+ *
  * isShutDown: isShutDown当调用shutdown()或shutdownNow()方法后返回为true。
  * isTerminated: 当调用shutdown()方法后，并且所有提交的任务完成后返回为true; 当调用当调用shutdown()方法前调用isTerminated()永远返回false
  *

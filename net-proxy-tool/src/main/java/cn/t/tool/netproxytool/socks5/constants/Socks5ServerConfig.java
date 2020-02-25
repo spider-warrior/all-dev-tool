@@ -18,12 +18,12 @@ public class Socks5ServerConfig {
     public static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
     public static final String THREAD_POOL_NAME = "socks5-proxy";
     public static final int CORE_THREAD_COUNT = (PROCESSOR_COUNT < 4 ? 2 : PROCESSOR_COUNT) * 5;
-    public static final int MAX_THREAD_COUNT = CORE_THREAD_COUNT * 10;
-    public static final int BLOCKING_THREAD_COUNT = MAX_THREAD_COUNT;
+    public static final int BLOCKING_THREAD_COUNT = 5;
+    public static final int MAX_THREAD_COUNT = (CORE_THREAD_COUNT + BLOCKING_THREAD_COUNT) * 2;
     public static final int THREAD_TT = 10;
     public static final TimeUnit THREAD_TT_TIME_UNIT = TimeUnit.SECONDS;
 
     public static final int SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
     public static final int SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
-    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 0;
+    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 10;
 }
