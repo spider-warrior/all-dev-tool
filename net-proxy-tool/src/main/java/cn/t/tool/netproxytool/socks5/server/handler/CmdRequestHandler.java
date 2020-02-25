@@ -49,7 +49,7 @@ public class CmdRequestHandler {
             String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
             NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(messageSender, connectionResultListener).build();
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
-            ThreadUtil.submitTask(() -> nettyTcpClient.start(null));
+            ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
             return null;
         } else {
             throw new ConnectionException("未实现的命令处理: " + message.getRequestCmd());
