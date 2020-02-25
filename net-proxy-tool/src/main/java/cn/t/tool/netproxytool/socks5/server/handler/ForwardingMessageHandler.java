@@ -1,6 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.socks5.promise.MessageSender;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -21,8 +22,13 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     private volatile boolean closed = false;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        messageSender.send(msg);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(msg instanceof ByteBuf) {
+            log.info("[{}]: 转发消息: {} B", ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
+            messageSender.send(msg);
+        } else {
+            super.channelRead(ctx, msg);
+        }
     }
 
     @Override
