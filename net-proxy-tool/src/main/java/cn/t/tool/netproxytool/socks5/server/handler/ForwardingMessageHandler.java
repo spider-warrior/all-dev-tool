@@ -29,10 +29,10 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     //selector线程会执行该逻辑messageSender为共享资源
     public synchronized void channelInactive(ChannelHandlerContext ctx) {
         if(messageSender != null) {
-            log.info("与远端断开连接， remote: {}", ctx.channel().remoteAddress());
+            log.info("[{}]: 断开连接", ctx.channel().remoteAddress());
             messageSender.close();
         } else {
-            log.info("客户端与代理断开连接，尚未获取对端句柄无法进行关闭");
+            log.warn("[{}]: 断开连接，尚未获取对端句柄无法进行关闭", ctx.channel().remoteAddress());
         }
         closed = true;
     }

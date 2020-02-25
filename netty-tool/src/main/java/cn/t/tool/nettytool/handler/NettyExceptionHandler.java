@@ -18,7 +18,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Uncaught exceptions from inbound handlers will propagate up to this handler
         SocketAddress socketAddress = ctx.channel().remoteAddress();
-        logger.error(String.format("%s: 读取消息异常", socketAddress));
+        logger.error("[{}]: 读取消息异常", socketAddress);
         ctx.fireExceptionCaught(cause);
     }
 
@@ -27,7 +27,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
         ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
                 // Handle connect exception here...
-                logger.error("cannot connect to: {}", remoteAddress);
+                logger.error("[{}]: 连接失败", remoteAddress);
             }
         }));
     }
@@ -37,7 +37,7 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
         ctx.write(msg, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
                 // Handle write exception here...
-                logger.error("{}写出消息异常", future.channel().remoteAddress());
+                logger.error("[{}]: 写出消息异常", future.channel().remoteAddress());
             }
         }));
     }
@@ -63,17 +63,17 @@ public class NettyExceptionHandler extends ChannelDuplexHandler {
     }
 
     protected void handleReaderIdle(ChannelHandlerContext ctx) {
-        logger.error("读取超时,断开连接: {}", ctx.channel().remoteAddress());
+        logger.error("[{}]: 读取超时,断开连接", ctx.channel().remoteAddress());
         ctx.close();
     }
 
     protected void handleWriterIdle(ChannelHandlerContext ctx) {
-        logger.error("写出超时,断开连接: {}", ctx.channel().remoteAddress());
+        logger.error("[{}]: 写出超时,断开连接", ctx.channel().remoteAddress());
         ctx.close();
     }
 
     protected void handleAllIdle(ChannelHandlerContext ctx) {
-        logger.error("读取或写出超时,断开连接: {}", ctx.channel().remoteAddress());
+        logger.error("[{}]: 读取或写出超时,断开连接", ctx.channel().remoteAddress());
         ctx.close();
     }
 

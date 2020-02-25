@@ -29,7 +29,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
             .option(ChannelOption.SO_KEEPALIVE, true)
             .handler(channelInitializer);
         try {
-            logger.info(String.format("TCP Client: %s has been started successfully,host: %s port: %d", name, host, port));
+            logger.info("TCP Client: [{}] has been started successfully", name);
             if(launcher != null) {
                 launcher.serverStartSuccess(this);
             }
@@ -52,12 +52,12 @@ public class NettyTcpClient extends AbstractDaemonClient {
             }
             closeFuture.sync();
         } catch (Exception e) {
-            logger.error(String.format("TCP Client: %s Down,host: %s port: %d ", name, host, port), e);
+            logger.error("TCP Client: [{}] has been crashed", name);
         } finally {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpClient.this);
             }
-            logger.info(String.format("[TCP Client]: %s closed, host: %s, port: %d ", name, host, port));
+            logger.info("TCP Client: [{}] is closed", name);
             workerGroup.shutdownGracefully();
         }
     }
@@ -82,7 +82,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
         if(clientChannel != null && clientChannel.isOpen()) {
             clientChannel.writeAndFlush(msg);
         } else {
-            logger.warn("channel not available, msg ignored, detail: {}", msg);
+            logger.warn("[{}], channel is not available, msg ignored, detail: {}", name, msg);
         }
     }
 }

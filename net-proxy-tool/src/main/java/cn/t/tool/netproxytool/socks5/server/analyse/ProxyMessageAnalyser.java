@@ -36,7 +36,7 @@ public class ProxyMessageAnalyser extends ByteBufAnalyser {
             default: message = null;
         }
         if(message != null && !(message instanceof ByteBuf)) {
-            logger.info("成功解析消息，类型为: {}", message.getClass());
+            logger.info("[{}]: 成功解析消息: {}", channelHandlerContext.channel().remoteAddress(), message.getClass().getSimpleName());
             connectionLifeCycledMessage.setLifeCycle(lifeCycle);
             connectionLifeCycledMessage.setMessage(message);
             message = connectionLifeCycledMessage;

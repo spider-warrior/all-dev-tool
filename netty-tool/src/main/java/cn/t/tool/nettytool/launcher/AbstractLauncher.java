@@ -16,7 +16,7 @@ public abstract class AbstractLauncher implements Launcher {
 
     protected volatile boolean stop = false;
     protected AtomicInteger serverSuccessCount = new AtomicInteger(0);
-    private static final Logger logger = LoggerFactory.getLogger(AbstractLauncher.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private List<DaemonServer> daemonServerList;
     protected List<DaemonServer> downDaemonServer = new Vector<>();
     private List<LauncherListener> launcherListenerList;

@@ -32,10 +32,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
             case COMMAND_EXECUTION: {
                 SocketAddress socketAddress = channelHandlerContext.channel().remoteAddress();
                 if(socketAddress instanceof InetSocketAddress) {
-                    InetSocketAddress inetSocketAddress = (InetSocketAddress)socketAddress;
-                    String clientHost = inetSocketAddress.getHostName();
-                    int clientPort = inetSocketAddress.getPort();
-                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, clientHost, clientPort, channelHandlerContext.pipeline().get(ForwardingMessageHandler.class), new ChannelContextMessageSender(channelHandlerContext));
+                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, (InetSocketAddress)socketAddress, channelHandlerContext.pipeline().get(ForwardingMessageHandler.class), new ChannelContextMessageSender(channelHandlerContext));
                 } else {
                     throw new ConnectionException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
                 }
