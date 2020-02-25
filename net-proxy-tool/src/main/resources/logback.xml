@@ -60,7 +60,7 @@
             <charset>UTF-8</charset>
         </encoder>
     </appender>
-    <logger name="io.netty.handler.logging.LoggingHandler" level="DEBUG" additivity="false">
+    <logger name="cn.t.tool.nettytool.handler.EventLoggingHandler" level="DEBUG" additivity="false">
         <appender-ref ref="LoggingHandler"/>
     </logger>
     <logger name="ThreadMonitor" level="INFO" additivity="false">

@@ -38,16 +38,4 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
     public NettyTcpDecoder(ByteBufAnalyser byteBufAnalyser) {
         this.byteBufAnalyser = byteBufAnalyser;
     }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        logger.info("build connection success: {}", ctx.channel().remoteAddress());
-        ctx.fireChannelActive();
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        logger.info("connection disconnect: {}", ctx.channel().remoteAddress());
-        ctx.fireChannelInactive();
-    }
 }

@@ -2,6 +2,7 @@ package cn.t.tool.nettytool.initializer;
 
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.handler.EventLoggingHandler;
 import cn.t.tool.nettytool.handler.NettyExceptionHandler;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelInboundHandler;
@@ -33,7 +34,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         InternalLoggerFactory originalInternalLoggerFactory = InternalLoggerFactory.getDefaultFactory();
         InternalLoggerFactory.setDefaultFactory(internalLoggerFactory);
         try {
-            channelPipeline.addLast("logging-handler",new LoggingHandler(logLevel));
+            channelPipeline.addLast("logging-handler",new EventLoggingHandler(logLevel));
             if(idleStateHandlerSupplier != null) {
                 channelPipeline.addLast("idle-handler", idleStateHandlerSupplier.get());
             }
