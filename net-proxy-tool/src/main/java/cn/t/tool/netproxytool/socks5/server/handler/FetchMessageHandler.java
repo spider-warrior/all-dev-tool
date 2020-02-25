@@ -24,11 +24,13 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        log.info("[{}]: 连接成功, 回调代客户端听器", ctx.channel().remoteAddress());
         connectionResultListener.handle(CmdExecutionStatus.SUCCEEDED, new ChannelContextMessageSender(ctx));
     }
 
     @Override
     public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) {
+        log.info("[{}]: 断开连接, 关闭代理客户端", ctx.channel().remoteAddress());
        messageSender.close();
     }
 
@@ -37,6 +39,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
         ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
                 //连接失败处理
+                log.info("[{}]: 连接失败, 回调客户端监听器", ctx.channel().remoteAddress());
                 connectionResultListener.handle(CmdExecutionStatus.CONNECTION_REFUSED, new ChannelContextMessageSender(ctx));
             }
         }));

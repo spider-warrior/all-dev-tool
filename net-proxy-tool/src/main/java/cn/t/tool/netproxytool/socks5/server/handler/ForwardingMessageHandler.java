@@ -35,10 +35,14 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     //selector线程会执行该逻辑messageSender为共享资源
     public synchronized void channelInactive(ChannelHandlerContext ctx) {
         if(messageSender != null) {
-            log.info("[{}]: 断开连接", ctx.channel().remoteAddress());
+            if(this.getClass().equals(ForwardingMessageHandler.class)) {
+                log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
+            } else {
+                log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
+            }
             messageSender.close();
         } else {
-            log.warn("[{}]: 断开连接，尚未获取对端句柄无法进行关闭", ctx.channel().remoteAddress());
+            log.warn("[{}]: 断开连接，没有获取代理句柄无法释放代理资源", ctx.channel().remoteAddress());
         }
         closed = true;
     }
@@ -47,10 +51,6 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         //消息读取失败不能实现消息转发，断开客户端代理
         ctx.close();
-    }
-
-    public MessageSender getMessageSender() {
-        return messageSender;
     }
 
     //远程连接线程成功后会回调执行该逻辑
