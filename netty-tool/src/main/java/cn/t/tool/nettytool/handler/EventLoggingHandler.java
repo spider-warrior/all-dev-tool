@@ -18,27 +18,26 @@ public class EventLoggingHandler extends LoggingHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (logger.isEnabled(internalLevel)) {
-            if(msg instanceof ByteBuf) {
+        if(msg instanceof ByteBuf) {
+            if (logger.isEnabled(internalLevel)) {
                 logger.log(internalLevel, formatByteBuf(ctx, "READ", (ByteBuf)msg));
-                ctx.fireChannelRead(msg);
-            } else {
-                super.channelRead(ctx, msg);
             }
+            ctx.fireChannelRead(msg);
+        } else {
+            super.channelRead(ctx, msg);
         }
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (logger.isEnabled(internalLevel)) {
             if(msg instanceof ByteBuf) {
-                logger.log(internalLevel, formatByteBuf(ctx, "WRITE", (ByteBuf)msg));
+                if (logger.isEnabled(internalLevel)) {
+                    logger.log(internalLevel, formatByteBuf(ctx, "WRITE", (ByteBuf)msg));
+                }
                 ctx.write(msg, promise);
             } else {
                 super.write(ctx, msg, promise);
             }
-        }
-
     }
 
     private static String formatByteBuf(ChannelHandlerContext ctx, String eventName, ByteBuf msg) {
