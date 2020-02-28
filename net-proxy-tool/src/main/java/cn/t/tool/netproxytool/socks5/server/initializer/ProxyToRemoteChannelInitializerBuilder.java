@@ -1,11 +1,10 @@
 package cn.t.tool.netproxytool.socks5.server.initializer;
 
-import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
-import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.common.promise.MessageSender;
+import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
 import cn.t.tool.netproxytool.socks5.server.handler.FetchMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
-import io.netty.handler.logging.LogLevel;
 
 /**
  * @author yj
@@ -15,7 +14,7 @@ public class ProxyToRemoteChannelInitializerBuilder extends NettyChannelInitiali
 
     public ProxyToRemoteChannelInitializerBuilder(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {
         //设置logging handler的输出级别
-        setLoggingHandlerLogLevel(LogLevel.DEBUG);
+        setLoggingHandlerLogLevel(Socks5ProxyConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(Socks5ProxyConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ProxyConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ProxyConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         addChannelHandlerSupplier(() -> new FetchMessageHandler(messageSender, proxyBuildResultListener));
     }

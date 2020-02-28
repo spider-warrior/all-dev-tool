@@ -16,7 +16,7 @@ import io.netty.handler.logging.LogLevel;
 public class LocalToProxyChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
     public LocalToProxyChannelInitializerBuilder() {
-        setLoggingHandlerLogLevel(LogLevel.DEBUG);
+        setLoggingHandlerLogLevel(Socks5ServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(Socks5ServerConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(ProxyMessageAnalyser::new);
         addEncoderListsSupplier(ServerNegotiateResponseEncoder::new);

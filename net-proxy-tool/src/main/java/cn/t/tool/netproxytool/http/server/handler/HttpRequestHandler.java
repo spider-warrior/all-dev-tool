@@ -13,7 +13,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -35,26 +34,22 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
-        try {
-            HttpMethod httpMethod = msg.method();
-            if(httpMethod == HttpMethod.CONNECT) {
-                String host = msg.headers().get(HttpHeaderNames.HOST);
-                String[] elements = host.split(":");
-                String targetHost = elements[0];
-                int targetPort;
-                if(elements.length == 1) {
-                    targetPort = 80;
-                } else {
-                    targetPort= Integer.parseInt(elements[1]);
-                }
-                HttpVersion httpVersion = msg.protocolVersion();
-                buildProxy(ctx, targetHost, targetPort, httpVersion);
+        HttpMethod httpMethod = msg.method();
+        if(httpMethod == HttpMethod.CONNECT) {
+            String host = msg.headers().get(HttpHeaderNames.HOST);
+            String[] elements = host.split(":");
+            String targetHost = elements[0];
+            int targetPort;
+            if(elements.length == 1) {
+                targetPort = 80;
             } else {
-                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.METHOD_NOT_ALLOWED, Unpooled.wrappedBuffer("not support request method".getBytes(StandardCharsets.UTF_8)));
-                ctx.writeAndFlush(response);
+                targetPort= Integer.parseInt(elements[1]);
             }
-        } finally {
-            ReferenceCountUtil.release(msg);
+            HttpVersion httpVersion = msg.protocolVersion();
+            buildProxy(ctx, targetHost, targetPort, httpVersion);
+        } else {
+            FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.METHOD_NOT_ALLOWED, Unpooled.wrappedBuffer("not support request method".getBytes(StandardCharsets.UTF_8)));
+            ctx.writeAndFlush(response);
         }
     }
 

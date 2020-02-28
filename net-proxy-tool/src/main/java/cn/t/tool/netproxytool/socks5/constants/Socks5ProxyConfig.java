@@ -1,5 +1,7 @@
 package cn.t.tool.netproxytool.socks5.constants;
 
+import io.netty.handler.logging.LogLevel;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,6 +20,8 @@ public class Socks5ProxyConfig {
     public static final int PROXY_MAX_THREAD_COUNT = (PROXY_CORE_THREAD_COUNT + PROXY_BLOCKING_THREAD_COUNT) * 2;
     public static final int PROXY_THREAD_TT = 10;
     public static final TimeUnit PROXY_THREAD_TT_TIME_UNIT = TimeUnit.SECONDS;
+
+    public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.INFO;
 
     public static final int SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS = 5;
     public static final int SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
