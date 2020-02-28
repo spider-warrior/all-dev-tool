@@ -1,5 +1,6 @@
 package cn.t.tool.nettytool.handler;
 
+import cn.t.tool.nettytool.constants.LogConstants;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -51,6 +52,6 @@ public class EventLoggingHandler extends LoggingHandler {
     }
 
     public EventLoggingHandler(LogLevel level) {
-        super(level);
+        super(LogConstants.EVENT_LOGGING_HANDLER_NAME, level);
     }
 }
