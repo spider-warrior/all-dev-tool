@@ -4,10 +4,8 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
 import cn.t.tool.netproxytool.socks5.server.analyse.ProxyMessageAnalyser;
 import cn.t.tool.netproxytool.socks5.server.encoder.ServerCmdResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.encoder.ServerNegotiateResponseEncoder;
-import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
-import cn.t.tool.netproxytool.socks5.server.handler.ProxyMessageHandler;
+import cn.t.tool.netproxytool.socks5.server.handler.Socks5MessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
-import io.netty.handler.logging.LogLevel;
 
 /**
  * @author yj
@@ -21,7 +19,6 @@ public class LocalToProxyChannelInitializerBuilder extends NettyChannelInitializ
         setByteBufAnalyserSupplier(ProxyMessageAnalyser::new);
         addEncoderListsSupplier(ServerNegotiateResponseEncoder::new);
         addEncoderListsSupplier(ServerCmdResponseEncoder::new);
-        addChannelHandlerSupplier(ProxyMessageHandler::new);
-        addChannelHandlerSupplier(ForwardingMessageHandler::new);
+        addChannelHandlerSupplier(Socks5MessageHandler::new);
     }
 }

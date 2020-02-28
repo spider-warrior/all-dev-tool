@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
@@ -16,7 +15,7 @@ import java.net.SocketAddress;
  * @author yj
  * @since 2020-01-12 16:28
  **/
-public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionLifeCycledMessage> {
+public class Socks5MessageHandler extends SimpleChannelInboundHandler<ConnectionLifeCycledMessage> {
 
     private final NegotiateRequestHandler negotiateRequestHandler = new NegotiateRequestHandler();
     private final AuthenticationRequestHandler authenticationRequestHandler = new AuthenticationRequestHandler();
@@ -32,7 +31,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
             case COMMAND_EXECUTION: {
                 SocketAddress socketAddress = channelHandlerContext.channel().remoteAddress();
                 if(socketAddress instanceof InetSocketAddress) {
-                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), lifeCycle, (InetSocketAddress)socketAddress, channelHandlerContext.pipeline().get(ForwardingMessageHandler.class), new ChannelContextMessageSender(channelHandlerContext));
+                    message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), channelHandlerContext);
                 } else {
                     throw new ConnectionException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
                 }

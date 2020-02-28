@@ -19,7 +19,6 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected MessageSender messageSender;
-    private volatile boolean closed = false;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -32,8 +31,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    //selector线程会执行该逻辑messageSender为共享资源
-    public synchronized void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) {
         if(messageSender != null) {
             if(this.getClass().equals(ForwardingMessageHandler.class)) {
                 log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
@@ -44,7 +42,6 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
         } else {
             log.warn("[{}]: 断开连接，没有获取代理句柄无法释放代理资源", ctx.channel().remoteAddress());
         }
-        closed = true;
     }
 
     @Override
@@ -53,12 +50,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
         ctx.close();
     }
 
-    //远程连接线程成功后会回调执行该逻辑
-    public synchronized void setMessageSender(MessageSender messageSender) {
-        if(closed) {
-            messageSender.close();
-        } else {
-            this.messageSender = messageSender;
-        }
+    public ForwardingMessageHandler(MessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 }

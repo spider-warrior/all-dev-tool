@@ -40,7 +40,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
     }
 
     public FetchMessageHandler(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {
-        setMessageSender((messageSender));
+        super(messageSender);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }
 }

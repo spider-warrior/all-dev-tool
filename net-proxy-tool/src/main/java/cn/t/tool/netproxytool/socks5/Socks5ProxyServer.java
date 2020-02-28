@@ -24,7 +24,6 @@ import java.util.List;
  **/
 public class Socks5ProxyServer {
     public static void main(String[] args) {
-        //设置logback输出级别
         List<DaemonServer> daemonServerList = new ArrayList<>();
         NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", Socks5ServerConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
         daemonServerList.add(proxyServer);
