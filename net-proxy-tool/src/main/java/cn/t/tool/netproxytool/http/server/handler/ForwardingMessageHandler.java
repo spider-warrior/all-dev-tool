@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5.server.handler;
+package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.common.promise.MessageSender;
 import io.netty.buffer.ByteBuf;
@@ -19,7 +19,6 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected MessageSender messageSender;
-    private volatile boolean closed = false;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -33,32 +32,23 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     @Override
     //selector线程会执行该逻辑messageSender为共享资源
-    public synchronized void channelInactive(ChannelHandlerContext ctx) {
-        if(messageSender != null) {
-            if(this.getClass().equals(ForwardingMessageHandler.class)) {
-                log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
-            } else {
-                log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
-            }
-            messageSender.close();
+    public void channelInactive(ChannelHandlerContext ctx) {
+        if(ForwardingMessageHandler.class.equals(this.getClass())) {
+            log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
         } else {
-            log.warn("[{}]: 断开连接，没有获取代理句柄无法释放代理资源", ctx.channel().remoteAddress());
+            log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
         }
-        closed = true;
+        messageSender.close();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         //消息读取失败不能实现消息转发，断开客户端代理
+        log.error("读取消息异常, 即将关闭连接: [{}], 原因: {}", ctx.channel().remoteAddress(), cause);
         ctx.close();
     }
 
-    //远程连接线程成功后会回调执行该逻辑
-    public synchronized void setMessageSender(MessageSender messageSender) {
-        if(closed) {
-            messageSender.close();
-        } else {
-            this.messageSender = messageSender;
-        }
+    public ForwardingMessageHandler(MessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 }

@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5.promise;
+package cn.t.tool.netproxytool.common.promise;
 
 import lombok.Getter;
 import lombok.Setter;

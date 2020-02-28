@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.analyse;
 
-import cn.t.tool.netproxytool.socks5.constants.Method;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
 import io.netty.buffer.ByteBuf;
 
@@ -21,7 +21,7 @@ public class NegotiateRequestAnalyse {
         byte methodLength = byteBuf.readByte();
         byte[] methodBytes = new byte[methodLength];
         byteBuf.readBytes(methodBytes);
-        negotiateRequest.setSupportMethodList(Method.convertToMethod(methodBytes));
+        negotiateRequest.setSupportSocks5MethodList(Socks5Method.convertToMethod(methodBytes));
         return negotiateRequest;
     }
 }

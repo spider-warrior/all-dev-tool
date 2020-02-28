@@ -6,7 +6,7 @@ package cn.t.tool.netproxytool.socks5.constants;
  * @version V1.0
  * @since 2020-02-20 23:14
  **/
-public enum Cmd {
+public enum Socks5Cmd {
 
     CONNECT((byte) 0X01),
     BIND((byte) 0X02),
@@ -14,14 +14,14 @@ public enum Cmd {
 
     public final byte value;
 
-    Cmd(byte value) {
+    Socks5Cmd(byte value) {
         this.value = value;
     }
 
-    public static Cmd getCmd(byte value) {
-        for(Cmd cmd: values()) {
-            if(cmd.value == value) {
-                return cmd;
+    public static Socks5Cmd getCmd(byte value) {
+        for(Socks5Cmd socks5Cmd : values()) {
+            if(socks5Cmd.value == value) {
+                return socks5Cmd;
             }
         }
         return null;

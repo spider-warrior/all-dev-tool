@@ -12,16 +12,16 @@ import java.util.concurrent.TimeUnit;
  * @version V1.0
  * @since 2020-02-22 23:00
  **/
-public class HttpServerConfig {
+public class HttpProxyServerConfig {
     public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
     public static final byte[] SERVER_HOST_BYTES = SystemUtil.convertHostToBytes(SERVER_HOST);
     public static final short SERVER_PORT = 1080;
 
-    public static final int HTTP_PROXY_READ_TIME_OUT_IN_SECONDS = 10;
-    public static final int HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS = 1;
-    public static final int HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 0;
+    public static final int HTTP_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
+    public static final int HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
+    public static final int HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 300;
 
-    public static final LogLevel LOGGER_LEVEL = LogLevel.INFO;
+    public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.INFO;
 
 
 }

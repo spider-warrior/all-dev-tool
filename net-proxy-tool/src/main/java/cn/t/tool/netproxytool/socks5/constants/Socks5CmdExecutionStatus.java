@@ -3,7 +3,7 @@ package cn.t.tool.netproxytool.socks5.constants;
 /**
  * CMD响应
  */
-public enum CmdExecutionStatus {
+public enum Socks5CmdExecutionStatus {
     SUCCEEDED((byte) 0X00),
     GENERAL_SOCKS_SERVER_FAILURE((byte) 0X01),
     CONNECTION_NOT_ALLOWED_BY_RULESET((byte) 0X02),
@@ -15,8 +15,8 @@ public enum CmdExecutionStatus {
     ADDRESS_TYPE_NOT_SUPPORTED((byte) 0X08),
     UNASSIGNED((byte) 0X09);
 
-    public static CmdExecutionStatus getCmdExecutionStatus(byte value) {
-        for(CmdExecutionStatus status: values()) {
+    public static Socks5CmdExecutionStatus getSocks5CmdExecutionStatus(byte value) {
+        for(Socks5CmdExecutionStatus status: values()) {
             if(status.value == value) {
                 return status;
             }
@@ -26,7 +26,7 @@ public enum CmdExecutionStatus {
 
     public final byte value;
 
-    CmdExecutionStatus(byte value) {
+    Socks5CmdExecutionStatus(byte value) {
         this.value = value;
     }
 }

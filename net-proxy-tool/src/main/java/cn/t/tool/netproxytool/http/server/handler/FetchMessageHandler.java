@@ -1,9 +1,9 @@
-package cn.t.tool.netproxytool.socks5.server.handler;
+package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.common.promise.MessageSender;
 import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
-import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -24,23 +24,22 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("[{}]: 连接成功, 回调代客户端听器", ctx.channel().remoteAddress());
-        proxyBuildResultListener.handle(Socks5CmdExecutionStatus.SUCCEEDED.value, new ChannelContextMessageSender(ctx));
+        log.info("[{}]: 连接成功, 回调监听器", ctx.channel().remoteAddress());
+        proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, new ChannelContextMessageSender(ctx));
     }
 
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {
         ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
-                //连接失败处理
-                log.info("[{}]: 连接失败, 回调客户端监听器", ctx.channel().remoteAddress());
-                proxyBuildResultListener.handle(Socks5CmdExecutionStatus.CONNECTION_REFUSED.value, new ChannelContextMessageSender(ctx));
+                log.info("[{}]: 连接失败, 回调监听器", ctx.channel().remoteAddress());
+                proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.FAILED.value, new ChannelContextMessageSender(ctx));
             }
         }));
     }
 
     public FetchMessageHandler(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {
-        setMessageSender((messageSender));
+        super(messageSender);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }
 }

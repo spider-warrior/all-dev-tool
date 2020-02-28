@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.constants;
 
-public enum Step {
+public enum Socks5Step {
 
     /**
      * 协商

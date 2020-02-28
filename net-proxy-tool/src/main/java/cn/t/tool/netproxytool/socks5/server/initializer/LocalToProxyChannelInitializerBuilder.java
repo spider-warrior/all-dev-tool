@@ -16,13 +16,12 @@ import io.netty.handler.logging.LogLevel;
 public class LocalToProxyChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
     public LocalToProxyChannelInitializerBuilder() {
-        //设置logging handler的输出级别
-        setLogLevel(LogLevel.DEBUG);
+        setLoggingHandlerLogLevel(LogLevel.DEBUG);
         setIdleState(Socks5ServerConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(ProxyMessageAnalyser::new);
         addEncoderListsSupplier(ServerNegotiateResponseEncoder::new);
         addEncoderListsSupplier(ServerCmdResponseEncoder::new);
-        addChannelInboundHandlerSupplier(ProxyMessageHandler::new);
-        addChannelInboundHandlerSupplier(ForwardingMessageHandler::new);
+        addChannelHandlerSupplier(ProxyMessageHandler::new);
+        addChannelHandlerSupplier(ForwardingMessageHandler::new);
     }
 }

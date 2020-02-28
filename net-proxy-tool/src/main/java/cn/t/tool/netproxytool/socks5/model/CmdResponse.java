@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.model;
 
-import cn.t.tool.netproxytool.socks5.constants.AddressType;
-import cn.t.tool.netproxytool.socks5.constants.CmdExecutionStatus;
+import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
+import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import lombok.Data;
 
 /**
@@ -14,9 +14,9 @@ import lombok.Data;
 @Data
 public class CmdResponse {
     private byte version;
-    private CmdExecutionStatus executionStatus;
+    private Socks5CmdExecutionStatus executionStatus;
     private byte rsv;
-    private AddressType addressType;
+    private Socks5AddressType socks5AddressType;
     private byte[] targetAddress;
     private short targetPort;
 }

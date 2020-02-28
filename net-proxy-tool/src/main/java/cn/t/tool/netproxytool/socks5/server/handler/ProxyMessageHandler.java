@@ -1,11 +1,11 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
+import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycledMessage;
 import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
-import cn.t.tool.netproxytool.socks5.promise.ChannelContextMessageSender;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -26,7 +26,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ConnectionLifeCycledMessage lifeCycledMessage) {
         ConnectionLifeCycle lifeCycle = lifeCycledMessage.getLifeCycle();
         Object message;
-        switch (lifeCycle.getCurrentStep()) {
+        switch (lifeCycle.getCurrentSocks5Step()) {
             case NEGOTIATE: message = negotiateRequestHandler.handle((NegotiateRequest)lifeCycledMessage.getMessage(), lifeCycle); break;
             case AUTHENTICATION: message = authenticationRequestHandler.handle(lifeCycledMessage.getMessage(), lifeCycle); break;
             case COMMAND_EXECUTION: {
@@ -38,7 +38,7 @@ public class ProxyMessageHandler extends SimpleChannelInboundHandler<ConnectionL
                 }
                 break;
             }
-            default: throw new ConnectionException(String.format("未处理的解析步骤: %s", lifeCycle.getCurrentStep()));
+            default: throw new ConnectionException(String.format("未处理的解析步骤: %s", lifeCycle.getCurrentSocks5Step()));
         }
         if(message != null) {
             channelHandlerContext.writeAndFlush(message);

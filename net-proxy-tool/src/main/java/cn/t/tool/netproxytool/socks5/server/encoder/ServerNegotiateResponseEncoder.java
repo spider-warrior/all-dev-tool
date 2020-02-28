@@ -13,6 +13,6 @@ public class ServerNegotiateResponseEncoder extends NettyTcpEncoder<NegotiateRes
     @Override
     protected void doEncode(ChannelHandlerContext ctx, NegotiateResponse negotiateResponse, ByteBuf out) {
         out.writeByte(negotiateResponse.getVersion());
-        out.writeByte(negotiateResponse.getMethod().rangeStart);
+        out.writeByte(negotiateResponse.getSocks5Method().rangeStart);
     }
 }

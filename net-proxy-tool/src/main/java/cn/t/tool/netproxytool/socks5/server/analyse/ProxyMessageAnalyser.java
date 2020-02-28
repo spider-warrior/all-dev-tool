@@ -24,9 +24,9 @@ public class ProxyMessageAnalyser extends ByteBufAnalyser {
     @Override
     public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
         Object message;
-        switch (lifeCycle.getCurrentStep()) {
+        switch (lifeCycle.getCurrentSocks5Step()) {
             case NEGOTIATE: message = negotiateRequestAnalyse.analyse(byteBuf); break;
-            case AUTHENTICATION: message = authenticationRequestAnalyse.analyse(lifeCycle.getSelectedMethod(), byteBuf); break;
+            case AUTHENTICATION: message = authenticationRequestAnalyse.analyse(lifeCycle.getSelectedSocks5Method(), byteBuf); break;
             case COMMAND_EXECUTION: message = cmdRequestAnalyse.analyse(byteBuf); break;
             case FORWARDING_DATA: {
                 message = byteBuf.retainedDuplicate();

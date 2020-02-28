@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.model;
 
-import cn.t.tool.netproxytool.socks5.constants.Method;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import lombok.Data;
 
 /**
@@ -12,5 +12,5 @@ import lombok.Data;
 @Data
 public class NegotiateResponse {
     private byte version;
-    private Method method;
+    private Socks5Method socks5Method;
 }

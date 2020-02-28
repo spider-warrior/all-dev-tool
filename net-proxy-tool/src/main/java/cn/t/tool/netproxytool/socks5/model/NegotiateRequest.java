@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.model;
 
-import cn.t.tool.netproxytool.socks5.constants.Method;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import lombok.Data;
 
 import java.util.List;
@@ -14,5 +14,5 @@ import java.util.List;
 @Data
 public class NegotiateRequest {
     private byte version;
-    private List<Method> supportMethodList;
+    private List<Socks5Method> supportSocks5MethodList;
 }

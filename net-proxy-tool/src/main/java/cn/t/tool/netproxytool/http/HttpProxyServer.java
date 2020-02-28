@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http;
 
-import cn.t.tool.netproxytool.http.constants.HttpServerConfig;
-import cn.t.tool.netproxytool.http.server.initializer.HttpProxyChannelInitializer;
+import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
+import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerChannelInitializerBuilder;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;
@@ -23,7 +23,7 @@ public class HttpProxyServer {
         //设置logback输出级别
         LoggerUtil.setSlf4jRootLoggerLevel(Level.INFO);
         List<DaemonServer> daemonServerList = new ArrayList<>();
-        NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server", HttpServerConfig.SERVER_PORT, new HttpProxyChannelInitializer());
+        NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server", HttpProxyServerConfig.SERVER_PORT, new HttpProxyServerChannelInitializerBuilder().build());
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServerList(daemonServerList);

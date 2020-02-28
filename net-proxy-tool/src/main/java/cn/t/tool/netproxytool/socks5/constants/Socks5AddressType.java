@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.constants;
 
-public enum AddressType {
+public enum Socks5AddressType {
 
     IPV4((byte) 0X01),
     DOMAIN((byte) 0X03),
@@ -9,12 +9,12 @@ public enum AddressType {
 
     public final byte value;
 
-    AddressType(byte value) {
+    Socks5AddressType(byte value) {
         this.value = value;
     }
 
-    public static AddressType getAddressType(byte value) {
-        for(AddressType type: values()) {
+    public static Socks5AddressType getAddressType(byte value) {
+        for(Socks5AddressType type: values()) {
             if(type.value == value) {
                 return type;
             }

@@ -1,8 +1,8 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.socks5.constants.Method;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Constants;
-import cn.t.tool.netproxytool.socks5.constants.Step;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Step;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
@@ -23,31 +23,31 @@ public class NegotiateRequestHandler {
         if(version != Socks5Constants.VERSION) {
             throw new ConnectionException(String.format("不支持的协议版本: %d", version));
         }
-        List<Method> methodList =  negotiateRequest.getSupportMethodList();
-        if(CollectionUtil.isEmpty(methodList)) {
+        List<Socks5Method> socks5MethodList =  negotiateRequest.getSupportSocks5MethodList();
+        if(CollectionUtil.isEmpty(socks5MethodList)) {
             throw new ConnectionException("客户端未提供支持的认证方法");
         } else {
-            Method selectedMethod = negotiateMethod(methodList);
-            if(selectedMethod == null) {
-                throw new ConnectionException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", methodList));
+            Socks5Method selectedSocks5Method = negotiateMethod(socks5MethodList);
+            if(selectedSocks5Method == null) {
+                throw new ConnectionException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", socks5MethodList));
             }
             NegotiateResponse negotiateResponse = new NegotiateResponse();
             negotiateResponse.setVersion(version);
-            negotiateResponse.setMethod(selectedMethod);
-            if(selectedMethod == Method.NO_AUTHENTICATION_REQUIRED) {
-                lifeCycle.next(Step.COMMAND_EXECUTION);
+            negotiateResponse.setSocks5Method(selectedSocks5Method);
+            if(selectedSocks5Method == Socks5Method.NO_AUTHENTICATION_REQUIRED) {
+                lifeCycle.next(Socks5Step.COMMAND_EXECUTION);
             } else {
                 //下一步骤
-                lifeCycle.next(Step.AUTHENTICATION);
+                lifeCycle.next(Socks5Step.AUTHENTICATION);
             }
             return negotiateResponse;
         }
     }
-    private Method negotiateMethod(List<Method> methodList) {
-        if(methodList.contains(Method.USERNAME_PASSWORD)) {
-            return Method.USERNAME_PASSWORD;
-        } else if (methodList.contains(Method.NO_AUTHENTICATION_REQUIRED)) {
-            return Method.NO_AUTHENTICATION_REQUIRED;
+    private Socks5Method negotiateMethod(List<Socks5Method> socks5MethodList) {
+        if(socks5MethodList.contains(Socks5Method.USERNAME_PASSWORD)) {
+            return Socks5Method.USERNAME_PASSWORD;
+        } else if (socks5MethodList.contains(Socks5Method.NO_AUTHENTICATION_REQUIRED)) {
+            return Socks5Method.NO_AUTHENTICATION_REQUIRED;
         } else {
             return null;
         }

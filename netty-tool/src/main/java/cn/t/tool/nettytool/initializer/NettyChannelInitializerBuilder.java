@@ -4,7 +4,7 @@ import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.util.common.CollectionUtil;
-import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -16,16 +16,16 @@ import java.util.function.Supplier;
 
 public class NettyChannelInitializerBuilder {
 
-    private LogLevel logLevel;
+    private LogLevel loggingHandlerLogLevel;
     private InternalLoggerFactory internalLoggerFactory;
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
     private List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList = new ArrayList<>();
-    private List<Supplier<ChannelInboundHandler>> channelInboundHandlerSupplierList = new ArrayList<>();
+    private List<Supplier<ChannelHandler>> channelHandlerSupplierList = new ArrayList<>();
 
     public NettyChannelInitializer build() {
         return new NettyChannelInitializer(
-            logLevel,
+            loggingHandlerLogLevel,
             internalLoggerFactory,
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
             byteBufAnalyserSupplier == null ? null : () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
@@ -36,12 +36,12 @@ public class NettyChannelInitializerBuilder {
                 }
                 return nettyTcpEncoderList;
             },
-            channelInboundHandlerSupplierList == null ? null : () -> {
-                List<ChannelInboundHandler> channelInboundHandlerList = new ArrayList<>();
-                if(!CollectionUtil.isEmpty(channelInboundHandlerSupplierList)) {
-                    channelInboundHandlerSupplierList.forEach(supplier -> channelInboundHandlerList.add(supplier.get()));
+            channelHandlerSupplierList == null ? null : () -> {
+                List<ChannelHandler> channelHandlerList = new ArrayList<>();
+                if(!CollectionUtil.isEmpty(channelHandlerSupplierList)) {
+                    channelHandlerSupplierList.forEach(supplier -> channelHandlerList.add(supplier.get()));
                 }
-                return channelInboundHandlerList;
+                return channelHandlerList;
             }
         );
     }
@@ -66,20 +66,20 @@ public class NettyChannelInitializerBuilder {
         }
     }
 
-    public void addChannelInboundHandlerListSupplier(List<Supplier<ChannelInboundHandler>> channelInboundHandlerSupplierList) {
-        if(!CollectionUtil.isEmpty(channelInboundHandlerSupplierList)) {
-            this.channelInboundHandlerSupplierList.addAll(channelInboundHandlerSupplierList);
+    public void addChannelHandlerListSupplier(List<Supplier<ChannelHandler>> channelHandlerSupplierList) {
+        if(!CollectionUtil.isEmpty(channelHandlerSupplierList)) {
+            this.channelHandlerSupplierList.addAll(channelHandlerSupplierList);
         }
     }
 
-    public void addChannelInboundHandlerSupplier(Supplier<ChannelInboundHandler> channelInboundHandlerSupplier) {
-        if(channelInboundHandlerSupplier != null) {
-            this.channelInboundHandlerSupplierList.add(channelInboundHandlerSupplier);
+    public void addChannelHandlerSupplier(Supplier<ChannelHandler> channelHandlerSupplier) {
+        if(channelHandlerSupplier != null) {
+            this.channelHandlerSupplierList.add(channelHandlerSupplier);
         }
     }
 
-    public void setLogLevel(LogLevel logLevel) {
-        this.logLevel = logLevel;
+    public void setLoggingHandlerLogLevel(LogLevel loggingHandlerLogLevel) {
+        this.loggingHandlerLogLevel = loggingHandlerLogLevel;
     }
 
     public void setInternalLoggerFactory(InternalLoggerFactory internalLoggerFactory) {

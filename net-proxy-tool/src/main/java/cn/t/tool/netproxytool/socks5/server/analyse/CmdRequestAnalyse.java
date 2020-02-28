@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.analyse;
 
-import cn.t.tool.netproxytool.socks5.constants.AddressType;
-import cn.t.tool.netproxytool.socks5.constants.Cmd;
+import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Constants;
 import cn.t.tool.netproxytool.exception.ConnectionException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
@@ -23,8 +23,8 @@ public class CmdRequestAnalyse {
             throw new ConnectionException(String.format("不支持的协议版本: %d", version));
         }
         byte cmdByte = byteBuf.readByte();
-        Cmd cmd = Cmd.getCmd(cmdByte);
-        if(cmd == null) {
+        Socks5Cmd socks5Cmd = Socks5Cmd.getCmd(cmdByte);
+        if(socks5Cmd == null) {
             throw new ConnectionException(String.format("不支持的命令: %d", cmdByte));
         }
         byte rsv = byteBuf.readByte();
@@ -32,32 +32,32 @@ public class CmdRequestAnalyse {
             throw new ConnectionException(String.format("rsv必须为0, 实际传输值为: %d", rsv));
         }
         byte addressTypeByte = byteBuf.readByte();
-        AddressType addressType = AddressType.getAddressType(addressTypeByte);
-        if(addressType == null) {
+        Socks5AddressType socks5AddressType = Socks5AddressType.getAddressType(addressTypeByte);
+        if(socks5AddressType == null) {
             throw new ConnectionException(String.format("不支持的地址类型: %d", addressTypeByte));
         }
-        byte[] addressBytes = getAddressBytes(byteBuf, addressType);
+        byte[] addressBytes = getAddressBytes(byteBuf, socks5AddressType);
         short port = byteBuf.readShort();
         CmdRequest cmdRequest = new CmdRequest();
         cmdRequest.setVersion(version);
-        cmdRequest.setRequestCmd(cmd);
+        cmdRequest.setRequestSocks5Cmd(socks5Cmd);
         cmdRequest.setRsv(rsv);
-        cmdRequest.setAddressType(addressType);
+        cmdRequest.setSocks5AddressType(socks5AddressType);
         cmdRequest.setTargetAddress(addressBytes);
         cmdRequest.setTargetPort(port);
         return cmdRequest;
     }
 
-    private byte[] getAddressBytes(ByteBuf byteBuf, AddressType addressType) {
-        if(addressType == AddressType.IPV4) {
+    private byte[] getAddressBytes(ByteBuf byteBuf, Socks5AddressType socks5AddressType) {
+        if(socks5AddressType == Socks5AddressType.IPV4) {
             byte[] bytes = new byte[4];
             byteBuf.readBytes(bytes);
             return bytes;
-        } else if(addressType == AddressType.IPV6) {
+        } else if(socks5AddressType == Socks5AddressType.IPV6) {
             byte[] bytes = new byte[16];
             byteBuf.readBytes(bytes);
             return bytes;
-        } else if(addressType == AddressType.DOMAIN) {
+        } else if(socks5AddressType == Socks5AddressType.DOMAIN) {
             byte[] bytes = new byte[byteBuf.readByte()];
             byteBuf.readBytes(bytes);
             return bytes;

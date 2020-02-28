@@ -1,8 +1,7 @@
 package cn.t.tool.netproxytool.socks5.model;
 
-import cn.t.tool.netproxytool.socks5.constants.Method;
-import cn.t.tool.netproxytool.socks5.constants.Step;
-import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
+import cn.t.tool.netproxytool.socks5.constants.Socks5Step;
 
 /**
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
@@ -14,66 +13,41 @@ public class ConnectionLifeCycle {
     /**
      * 阶段
      */
-    private volatile Step currentStep;
+    private volatile Socks5Step currentSocks5Step;
 
     /**
      * 认证方式
      */
-    private Method selectedMethod;
+    private Socks5Method selectedSocks5Method;
 
-    /**
-     * 远程客户端
-     */
-    private NettyTcpClient nettyTcpClient;
-
-    public Step getCurrentStep() {
-        return currentStep;
+    public Socks5Step getCurrentSocks5Step() {
+        return currentSocks5Step;
     }
 
-    public Method getSelectedMethod() {
-        return selectedMethod;
+    public Socks5Method getSelectedSocks5Method() {
+        return selectedSocks5Method;
     }
 
-    public void setSelectedMethod(Method selectedMethod) {
-        this.selectedMethod = selectedMethod;
+    public void setSelectedSocks5Method(Socks5Method selectedSocks5Method) {
+        this.selectedSocks5Method = selectedSocks5Method;
     }
 
     public ConnectionLifeCycle() {
-        currentStep = Step.NEGOTIATE;
+        currentSocks5Step = Socks5Step.NEGOTIATE;
     }
 
-    public ConnectionLifeCycle(Step step) {
-        if(step == null) {
+    public ConnectionLifeCycle(Socks5Step socks5Step) {
+        if(socks5Step == null) {
             throw new NullPointerException("step cannot be null");
         }
-        currentStep = step;
+        currentSocks5Step = socks5Step;
     }
 
-    public NettyTcpClient getNettyTcpClient() {
-        return nettyTcpClient;
-    }
 
-    public void setNettyTcpClient(NettyTcpClient nettyTcpClient) {
-        this.nettyTcpClient = nettyTcpClient;
-    }
-
-    //    /**
-//     * 下一步
-//     */
-//    public void next() {
-//        switch (currentStep) {
-//            case NEGOTIATE: this.currentStep = AUTHENTICATION; break;
-//            case AUTHENTICATION: this.currentStep = COMMAND_EXECUTION; break;
-//            case COMMAND_EXECUTION: this.currentStep = TRANSFERRING_DATA; break;
-//            case TRANSFERRING_DATA:
-//            default:
-//        }
-//    }
-
-    public void next(Step step) {
-        if(step == null) {
+    public void next(Socks5Step socks5Step) {
+        if(socks5Step == null) {
             throw new NullPointerException();
         }
-        this.currentStep = step;
+        this.currentSocks5Step = socks5Step;
     }
 }

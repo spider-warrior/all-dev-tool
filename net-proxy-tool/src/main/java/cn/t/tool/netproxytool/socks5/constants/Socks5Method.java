@@ -9,7 +9,7 @@ import java.util.List;
  * @version V1.0
  * @since 2020-02-20 20:18
  **/
-public enum  Method {
+public enum Socks5Method {
     /**
      * 不需要认证
      * */
@@ -38,7 +38,7 @@ public enum  Method {
     public final byte rangeStart;
     public final byte rangeEnd;
 
-    Method(byte rangeStart, byte rangeEnd) {
+    Socks5Method(byte rangeStart, byte rangeEnd) {
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
     }
@@ -47,23 +47,23 @@ public enum  Method {
         return value >= rangeStart && value <= rangeEnd;
     }
 
-    public static Method getMethod(byte value) {
-        for(Method method: values()) {
-            if(method.isMe(value)) {
-                return method;
+    public static Socks5Method getSocks5Method(byte value) {
+        for(Socks5Method socks5Method : values()) {
+            if(socks5Method.isMe(value)) {
+                return socks5Method;
             }
         }
         return null;
     }
 
-    public static List<Method> convertToMethod(byte[] methodValues) {
-        List<Method> methodList = new ArrayList<>(methodValues.length);
+    public static List<Socks5Method> convertToMethod(byte[] methodValues) {
+        List<Socks5Method> socks5MethodList = new ArrayList<>(methodValues.length);
         for (byte b : methodValues) {
-            Method method = getMethod(b);
-            if(method != null) {
-                methodList.add(method);
+            Socks5Method socks5Method = getSocks5Method(b);
+            if(socks5Method != null) {
+                socks5MethodList.add(socks5Method);
             }
         }
-        return methodList;
+        return socks5MethodList;
     }
 }
