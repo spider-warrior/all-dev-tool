@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.http.server.promise;
 
-import cn.t.tool.netproxytool.http.server.handler.ForwardingMessageHandler;
+import cn.t.tool.netproxytool.http.server.handler.HttpsForwardingMessageHandler;
 import cn.t.tool.netproxytool.http.server.handler.HttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpProxyForwardingResultListener implements ChannelFutureListener {
+public class HttpsProxyForwardingResultListener implements ChannelFutureListener {
 
     private ChannelHandlerContext localChannelHandlerContext;
     private ChannelHandlerContext remoteChannelHandlerContext;
@@ -36,14 +36,14 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
             channelPipeline.remove(HttpServerCodec.class);
             channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.remove(HttpRequestHandler.class);
-            channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.addLast("proxy-fording-handler", new HttpsForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
             localChannelHandlerContext.close();
         }
     }
 
-    public HttpProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
+    public HttpsProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;
