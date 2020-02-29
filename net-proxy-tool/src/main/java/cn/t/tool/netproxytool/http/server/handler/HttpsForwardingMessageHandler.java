@@ -1,8 +1,7 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class HttpsForwardingMessageHandler extends ChannelInboundHandlerAdapter 
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private ChannelHandlerContext remoteChannelHandlerContext;
+    private final ChannelHandlerContext remoteChannelHandlerContext;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
