@@ -1,7 +1,9 @@
-package cn.t.tool.netproxytool.common.promise;
+package cn.t.tool.netproxytool.event;
+
+import cn.t.tool.netproxytool.component.MessageSender;
 
 /**
- * 连接结果通知
+ * 代理构建结果通知
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
  * @version V1.0
  * @since 2020-02-22 21:48

@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.analyse;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
-import cn.t.tool.netproxytool.exception.ConnectionException;
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.server.analyse.authenticationanalyse.AuthenticationAnalyse;
 import cn.t.tool.netproxytool.socks5.server.analyse.authenticationanalyse.UsernamePasswordAuthenticationAnalyse;
 import io.netty.buffer.ByteBuf;
@@ -22,7 +22,7 @@ public class AuthenticationRequestAnalyse {
     public Object analyse(Socks5Method socks5Method, ByteBuf byteBuf) {
         AuthenticationAnalyse authenticationAnalyse = authenticationAnalyseMap.get(socks5Method);
         if(authenticationAnalyse == null) {
-            throw new ConnectionException(String.format("未找到认证解析器，认证方法为%s", socks5Method));
+            throw new ProxyException(String.format("未找到认证解析器，认证方法为%s", socks5Method));
         } else {
             return authenticationAnalyse.analyse(byteBuf);
         }

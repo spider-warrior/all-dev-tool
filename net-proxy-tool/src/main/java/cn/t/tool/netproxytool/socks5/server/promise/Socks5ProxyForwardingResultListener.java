@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.promise;
 
-import cn.t.tool.netproxytool.common.promise.MessageSender;
+import cn.t.tool.netproxytool.component.MessageSender;
 import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.Socks5MessageHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;

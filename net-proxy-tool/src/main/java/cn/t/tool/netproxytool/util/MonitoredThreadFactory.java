@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public class MonitoredThreadFactory implements ThreadFactory {
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
-    private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final ThreadGroup group;
     private final String namePrefix;
 
     /**

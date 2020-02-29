@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.exception.ConnectionException;
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycledMessage;
@@ -33,11 +33,11 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<Connection
                 if(socketAddress instanceof InetSocketAddress) {
                     message = cmdRequestHandler.handle((CmdRequest)lifeCycledMessage.getMessage(), channelHandlerContext);
                 } else {
-                    throw new ConnectionException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
+                    throw new ProxyException(String.format("不支持的socket地址类型: %s", socketAddress.getClass().getName()));
                 }
                 break;
             }
-            default: throw new ConnectionException(String.format("未处理的解析步骤: %s", lifeCycle.getCurrentSocks5Step()));
+            default: throw new ProxyException(String.format("未处理的解析步骤: %s", lifeCycle.getCurrentSocks5Step()));
         }
         if(message != null) {
             channelHandlerContext.writeAndFlush(message);

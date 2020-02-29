@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
-import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
-import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
+import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.server.promise.HttpProxyForwardingResultListener;
@@ -50,6 +50,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         } else {
             FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.METHOD_NOT_ALLOWED, Unpooled.wrappedBuffer("not support request method".getBytes(StandardCharsets.UTF_8)));
             ctx.writeAndFlush(response);
+            ctx.close();
         }
     }
 
@@ -58,7 +59,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
-                log.info("[{}]: 代理创建成功, remote: {}:{}", clientAddress, targetHost, targetPort);
+                log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.channel().newPromise();
                 promise.addListener(new HttpProxyForwardingResultListener(ctx, sender, targetHost, targetPort));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);

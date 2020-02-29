@@ -2,8 +2,8 @@ package cn.t.tool.netproxytool.socks5.server.analyse;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
-import cn.t.tool.netproxytool.socks5.constants.Socks5Constants;
-import cn.t.tool.netproxytool.exception.ConnectionException;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import io.netty.buffer.ByteBuf;
 
@@ -19,22 +19,22 @@ public class CmdRequestAnalyse {
             return null;
         }
         byte version = byteBuf.readByte();
-        if(version != Socks5Constants.VERSION) {
-            throw new ConnectionException(String.format("不支持的协议版本: %d", version));
+        if(version != Socks5ProtocolConstants.VERSION) {
+            throw new ProxyException(String.format("不支持的协议版本: %d", version));
         }
         byte cmdByte = byteBuf.readByte();
         Socks5Cmd socks5Cmd = Socks5Cmd.getCmd(cmdByte);
         if(socks5Cmd == null) {
-            throw new ConnectionException(String.format("不支持的命令: %d", cmdByte));
+            throw new ProxyException(String.format("不支持的命令: %d", cmdByte));
         }
         byte rsv = byteBuf.readByte();
         if(rsv != 0) {
-            throw new ConnectionException(String.format("rsv必须为0, 实际传输值为: %d", rsv));
+            throw new ProxyException(String.format("rsv必须为0, 实际传输值为: %d", rsv));
         }
         byte addressTypeByte = byteBuf.readByte();
         Socks5AddressType socks5AddressType = Socks5AddressType.getAddressType(addressTypeByte);
         if(socks5AddressType == null) {
-            throw new ConnectionException(String.format("不支持的地址类型: %d", addressTypeByte));
+            throw new ProxyException(String.format("不支持的地址类型: %d", addressTypeByte));
         }
         byte[] addressBytes = getAddressBytes(byteBuf, socks5AddressType);
         short port = byteBuf.readShort();
@@ -62,7 +62,7 @@ public class CmdRequestAnalyse {
             byteBuf.readBytes(bytes);
             return bytes;
         } else {
-            throw new ConnectionException("解析地址失败");
+            throw new ProxyException("解析地址失败");
         }
     }
 }

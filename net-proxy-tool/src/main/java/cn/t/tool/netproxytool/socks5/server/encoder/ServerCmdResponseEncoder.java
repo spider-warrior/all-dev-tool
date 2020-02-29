@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.encoder;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
-import cn.t.tool.netproxytool.exception.ConnectionException;
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import io.netty.buffer.ByteBuf;
@@ -26,7 +26,7 @@ public class ServerCmdResponseEncoder extends NettyTcpEncoder<CmdResponse> {
             out.writeByte(cmdResponse.getTargetAddress().length);
             out.writeBytes(cmdResponse.getTargetAddress());
         } else {
-            throw new ConnectionException(String.format("不支持的地址类型: %s", cmdResponse.getSocks5AddressType()));
+            throw new ProxyException(String.format("不支持的地址类型: %s", cmdResponse.getSocks5AddressType()));
         }
         out.writeShort(cmdResponse.getTargetPort());
     }

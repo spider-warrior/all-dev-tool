@@ -1,9 +1,9 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
-import cn.t.tool.netproxytool.socks5.constants.Socks5Constants;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Step;
-import cn.t.tool.netproxytool.exception.ConnectionException;
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.model.ConnectionLifeCycle;
 import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
 import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
@@ -20,16 +20,16 @@ import java.util.List;
 public class NegotiateRequestHandler {
     public Object handle(NegotiateRequest negotiateRequest, ConnectionLifeCycle lifeCycle) {
         byte version = negotiateRequest.getVersion();
-        if(version != Socks5Constants.VERSION) {
-            throw new ConnectionException(String.format("不支持的协议版本: %d", version));
+        if(version != Socks5ProtocolConstants.VERSION) {
+            throw new ProxyException(String.format("不支持的协议版本: %d", version));
         }
         List<Socks5Method> socks5MethodList =  negotiateRequest.getSupportSocks5MethodList();
         if(CollectionUtil.isEmpty(socks5MethodList)) {
-            throw new ConnectionException("客户端未提供支持的认证方法");
+            throw new ProxyException("客户端未提供支持的认证方法");
         } else {
             Socks5Method selectedSocks5Method = negotiateMethod(socks5MethodList);
             if(selectedSocks5Method == null) {
-                throw new ConnectionException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", socks5MethodList));
+                throw new ProxyException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", socks5MethodList));
             }
             NegotiateResponse negotiateResponse = new NegotiateResponse();
             negotiateResponse.setVersion(version);

@@ -1,8 +1,8 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
-import cn.t.tool.netproxytool.common.promise.MessageSender;
-import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
+import cn.t.tool.netproxytool.component.MessageSender;
+import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

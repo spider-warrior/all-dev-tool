@@ -5,7 +5,7 @@ package cn.t.tool.netproxytool.http.constants;
  */
 public enum HttpProxyBuildExecutionStatus {
     SUCCEEDED((byte) 0X00),
-    FAILED((byte) 0X00);
+    FAILED((byte) 0X01);
 
     public static HttpProxyBuildExecutionStatus getHttpProxyBuildExecutionStatus(byte value) {
         for(HttpProxyBuildExecutionStatus status: values()) {

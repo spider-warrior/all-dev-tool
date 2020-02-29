@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.initializer;
 
-import cn.t.tool.netproxytool.common.promise.MessageSender;
-import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.component.MessageSender;
+import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
 import cn.t.tool.netproxytool.socks5.server.handler.FetchMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;

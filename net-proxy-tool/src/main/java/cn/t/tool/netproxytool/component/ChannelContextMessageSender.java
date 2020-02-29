@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.common.promise;
+package cn.t.tool.netproxytool.component;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.common.promise.MessageSender;
+import cn.t.tool.netproxytool.component.MessageSender;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

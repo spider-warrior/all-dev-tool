@@ -1,11 +1,12 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
-import cn.t.tool.netproxytool.common.promise.ChannelContextMessageSender;
-import cn.t.tool.netproxytool.common.promise.MessageSender;
-import cn.t.tool.netproxytool.common.promise.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
+import cn.t.tool.netproxytool.component.MessageSender;
+import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOutboundHandler;
 import io.netty.channel.ChannelPromise;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,7 @@ import java.net.SocketAddress;
  * @since 2020-02-22 20:54
  **/
 @Slf4j
-public class FetchMessageHandler extends ForwardingMessageHandler {
+public class FetchMessageHandler extends ForwardingMessageHandler implements ChannelOutboundHandler {
 
     private ProxyBuildResultListener proxyBuildResultListener;
 
@@ -36,6 +37,41 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
                 proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.FAILED.value, new ChannelContextMessageSender(ctx));
             }
         }));
+    }
+
+    @Override
+    public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) {
+        ctx.bind(localAddress, promise);
+    }
+
+    @Override
+    public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) {
+        ctx.disconnect(promise);
+    }
+
+    @Override
+    public void close(ChannelHandlerContext ctx, ChannelPromise promise) {
+        ctx.close(promise);
+    }
+
+    @Override
+    public void deregister(ChannelHandlerContext ctx, ChannelPromise promise) {
+        ctx.deregister(promise);
+    }
+
+    @Override
+    public void read(ChannelHandlerContext ctx) {
+        ctx.read();
+    }
+
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+        ctx.write(msg, promise);
+    }
+
+    @Override
+    public void flush(ChannelHandlerContext ctx) {
+        ctx.flush();
     }
 
     public FetchMessageHandler(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {

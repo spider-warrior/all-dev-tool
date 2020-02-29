@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.http.server.promise;
 
-import cn.t.tool.netproxytool.common.promise.MessageSender;
+import cn.t.tool.netproxytool.component.MessageSender;
 import cn.t.tool.netproxytool.http.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.http.server.handler.HttpRequestHandler;
 import io.netty.channel.ChannelFuture;
@@ -10,6 +10,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.InetSocketAddress;
 
 /**
  * http代理结果监听器
@@ -27,8 +29,9 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
 
     @Override
     public void operationComplete(ChannelFuture future) {
+        InetSocketAddress inetSocketAddress = (InetSocketAddress)channelHandlerContext.channel().remoteAddress();
         if(future.isSuccess()) {
-            log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", channelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
+            log.info("[{}:{}] -> [{}:{}]: 通知客户端代理已就位成功, 目的地址:", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = channelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpServerCodec.class);
@@ -36,7 +39,7 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
             channelPipeline.remove(HttpRequestHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(messageSender));
         } else {
-            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", channelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause());
+            log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
             channelHandlerContext.close();
         }
     }
