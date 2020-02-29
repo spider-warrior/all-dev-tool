@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
@@ -54,7 +53,7 @@ public class CmdRequestHandler {
                 }
             };
             String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
-            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(new ChannelContextMessageSender(channelHandlerContext), proxyBuildResultListener).build();
+            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(channelHandlerContext, proxyBuildResultListener).build();
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
             return null;

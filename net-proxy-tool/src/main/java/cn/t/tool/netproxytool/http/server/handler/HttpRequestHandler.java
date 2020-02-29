@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
-import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyClientChannelInitializerBuilder;
@@ -69,7 +68,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = new HttpProxyClientChannelInitializerBuilder(new ChannelContextMessageSender(ctx), proxyBuildResultListener).build();
+        NettyChannelInitializer channelInitializer = new HttpProxyClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }

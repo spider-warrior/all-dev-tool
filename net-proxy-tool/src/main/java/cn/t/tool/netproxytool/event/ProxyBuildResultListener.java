@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.event;
 
-import cn.t.tool.netproxytool.component.MessageSender;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * 代理构建结果通知
@@ -10,5 +10,5 @@ import cn.t.tool.netproxytool.component.MessageSender;
  **/
 @FunctionalInterface
 public interface ProxyBuildResultListener {
-    void handle (byte status, MessageSender sender);
+    void handle (byte status, ChannelHandlerContext remoteChannelHandlerContext);
 }

@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.socks5.server.promise;
 
-import cn.t.tool.netproxytool.component.MessageSender;
 import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.Socks5MessageHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
@@ -20,30 +19,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Socks5ProxyForwardingResultListener implements ChannelFutureListener {
 
-    private ChannelHandlerContext channelHandlerContext;
-    private MessageSender messageSender;
+    private ChannelHandlerContext localChannelHandlerContext;
+    private ChannelHandlerContext remoteChannelHandlerContext;
     private String targetHost;
     private int targetPort;
 
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
-            log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", channelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
+            log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
             //已经通知客户端代理成功, 切换handler
-            ChannelPipeline channelPipeline = channelHandlerContext.channel().pipeline();
+            ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(NettyTcpDecoder.class);
             channelPipeline.remove(NettyTcpEncoder.class);
             channelPipeline.remove(Socks5MessageHandler.class);
-            channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(messageSender));
+            channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", channelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause());
-            channelHandlerContext.close();
+            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause());
+            localChannelHandlerContext.close();
         }
     }
 
-    public Socks5ProxyForwardingResultListener(ChannelHandlerContext channelHandlerContext, MessageSender messageSender, String targetHost, int targetPort) {
-        this.channelHandlerContext = channelHandlerContext;
-        this.messageSender = messageSender;
+    public Socks5ProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
+        this.localChannelHandlerContext = localChannelHandlerContext;
+        this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;
         this.targetPort = targetPort;
     }

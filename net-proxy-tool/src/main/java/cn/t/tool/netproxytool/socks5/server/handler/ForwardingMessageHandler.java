@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.component.MessageSender;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,13 +17,13 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected MessageSender messageSender;
+    private ChannelHandlerContext remoteChannelHandlerContext;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof ByteBuf) {
             log.info("[{}]: 转发消息: {} B", ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
-            messageSender.send(msg);
+            remoteChannelHandlerContext.writeAndFlush(msg);
         } else {
             super.channelRead(ctx, msg);
         }
@@ -32,13 +31,13 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        if(messageSender != null) {
+        if(remoteChannelHandlerContext != null) {
             if(this.getClass().equals(ForwardingMessageHandler.class)) {
                 log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
             } else {
                 log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
             }
-            messageSender.close();
+            remoteChannelHandlerContext.close();
         } else {
             log.warn("[{}]: 断开连接，没有获取代理句柄无法释放代理资源", ctx.channel().remoteAddress());
         }
@@ -50,7 +49,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
         ctx.close();
     }
 
-    public ForwardingMessageHandler(MessageSender messageSender) {
-        this.messageSender = messageSender;
+    public ForwardingMessageHandler(ChannelHandlerContext remoteChannelHandlerContext) {
+        this.remoteChannelHandlerContext = remoteChannelHandlerContext;
     }
 }

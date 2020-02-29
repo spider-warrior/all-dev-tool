@@ -1,7 +1,5 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
-import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
-import cn.t.tool.netproxytool.component.MessageSender;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
@@ -26,7 +24,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler implements Cha
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         log.info("[{}]: 连接成功, 回调监听器", ctx.channel().remoteAddress());
-        proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, new ChannelContextMessageSender(ctx));
+        proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler implements Cha
         ctx.connect(remoteAddress, localAddress, promise.addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
                 log.info("[{}]: 连接失败, 回调监听器", ctx.channel().remoteAddress());
-                proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.FAILED.value, new ChannelContextMessageSender(ctx));
+                proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.FAILED.value, ctx);
             }
         }));
     }
@@ -74,8 +72,8 @@ public class FetchMessageHandler extends ForwardingMessageHandler implements Cha
         ctx.flush();
     }
 
-    public FetchMessageHandler(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {
-        super(messageSender);
+    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+        super(remoteChannelHandlerContext);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }
 }

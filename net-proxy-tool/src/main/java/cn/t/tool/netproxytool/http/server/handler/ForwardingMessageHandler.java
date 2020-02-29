@@ -1,6 +1,5 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
-import cn.t.tool.netproxytool.component.MessageSender;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,14 +19,14 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected MessageSender messageSender;
+    private ChannelHandlerContext remoteChannelHandlerContext;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf byteBuf = (ByteBuf)msg;
         InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
         log.info("[{}:{}]: 转发消息: {} B", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), byteBuf.readableBytes());
-        messageSender.send(byteBuf);
+        remoteChannelHandlerContext.writeAndFlush(byteBuf);
     }
 
 
@@ -35,7 +34,7 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
         log.info("[{}:{}]: 断开连接", inetSocketAddress.getHostString(), inetSocketAddress.getPort());
-        messageSender.close();
+        remoteChannelHandlerContext.close();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
-    public ForwardingMessageHandler(MessageSender messageSender) {
-        this.messageSender = messageSender;
+    public ForwardingMessageHandler(ChannelHandlerContext remoteChannelHandlerContext) {
+        this.remoteChannelHandlerContext = remoteChannelHandlerContext;
     }
 }

@@ -3,8 +3,6 @@ package cn.t.tool.netproxytool.socks5.constants;
 import cn.t.util.common.SystemUtil;
 import io.netty.handler.logging.LogLevel;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 服务配置
  *

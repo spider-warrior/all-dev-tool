@@ -1,7 +1,5 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.component.ChannelContextMessageSender;
-import cn.t.tool.netproxytool.component.MessageSender;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
@@ -25,7 +23,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         log.info("[{}]: 连接成功, 回调代客户端听器", ctx.channel().remoteAddress());
-        proxyBuildResultListener.handle(Socks5CmdExecutionStatus.SUCCEEDED.value, new ChannelContextMessageSender(ctx));
+        proxyBuildResultListener.handle(Socks5CmdExecutionStatus.SUCCEEDED.value, ctx);
     }
 
     @Override
@@ -34,13 +32,13 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
             if (!future.isSuccess()) {
                 //连接失败处理
                 log.info("[{}]: 连接失败, 回调客户端监听器", ctx.channel().remoteAddress());
-                proxyBuildResultListener.handle(Socks5CmdExecutionStatus.CONNECTION_REFUSED.value, new ChannelContextMessageSender(ctx));
+                proxyBuildResultListener.handle(Socks5CmdExecutionStatus.CONNECTION_REFUSED.value, ctx);
             }
         }));
     }
 
-    public FetchMessageHandler(MessageSender messageSender, ProxyBuildResultListener proxyBuildResultListener) {
-        super(messageSender);
+    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+        super(remoteChannelHandlerContext);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }
 }
