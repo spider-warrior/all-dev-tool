@@ -17,7 +17,7 @@ import java.net.SocketAddress;
  * @since 2020-02-22 20:54
  **/
 @Slf4j
-public class FetchMessageHandlerHttps extends HttpsForwardingMessageHandler implements ChannelOutboundHandler {
+public class FetchMessageHandler extends HttpsForwardingMessageHandler implements ChannelOutboundHandler {
 
     private ProxyBuildResultListener proxyBuildResultListener;
 
@@ -72,7 +72,7 @@ public class FetchMessageHandlerHttps extends HttpsForwardingMessageHandler impl
         ctx.flush();
     }
 
-    public FetchMessageHandlerHttps(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
         super(remoteChannelHandlerContext);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }
