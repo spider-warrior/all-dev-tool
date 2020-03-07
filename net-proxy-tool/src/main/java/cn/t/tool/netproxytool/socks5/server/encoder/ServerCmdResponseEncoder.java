@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.encoder;
 
-import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.exception.ProxyException;
+import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import io.netty.buffer.ByteBuf;

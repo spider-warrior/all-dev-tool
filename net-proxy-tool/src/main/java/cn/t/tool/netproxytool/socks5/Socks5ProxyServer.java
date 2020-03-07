@@ -5,8 +5,6 @@ import cn.t.tool.netproxytool.socks5.server.initializer.LocalToProxyChannelIniti
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;
-import cn.t.util.common.LoggerUtil;
-import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.List;

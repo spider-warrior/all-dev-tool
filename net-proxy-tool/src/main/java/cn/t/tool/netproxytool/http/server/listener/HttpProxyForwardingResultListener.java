@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -30,6 +31,7 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
         if(future.isSuccess()) {
             log.info("[{}:{}] -> [{}:{}]: 代理请求发送成功", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
+            channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpRequestHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
