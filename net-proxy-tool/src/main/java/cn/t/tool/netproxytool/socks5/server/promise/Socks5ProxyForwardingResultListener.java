@@ -1,7 +1,8 @@
 package cn.t.tool.netproxytool.socks5.server.promise;
 
+import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
-import cn.t.tool.netproxytool.socks5.server.handler.Socks5MessageHandler;
+import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import io.netty.channel.ChannelFuture;
@@ -32,7 +33,8 @@ public class Socks5ProxyForwardingResultListener implements ChannelFutureListene
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(NettyTcpDecoder.class);
             channelPipeline.remove(NettyTcpEncoder.class);
-            channelPipeline.remove(Socks5MessageHandler.class);
+            channelPipeline.remove(NegotiateRequestHandler.class);
+            channelPipeline.remove(CmdRequestHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause());

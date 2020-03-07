@@ -1,6 +1,7 @@
 package cn.t.tool.nettytool.initializer;
 
 import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
+import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.util.common.CollectionUtil;
@@ -24,11 +25,24 @@ public class NettyChannelInitializerBuilder {
     private List<Supplier<ChannelHandler>> channelHandlerSupplierList = new ArrayList<>();
 
     public NettyChannelInitializer build() {
+        Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
+        if(byteBufAnalyserSupplier != null) {
+            nettyTcpDecoderSupplier = () -> {
+                ByteBufAnalyser byteBufAnalyser = byteBufAnalyserSupplier.get();
+                NettyTcpDecoder nettyTcpDecoder = new NettyTcpDecoder(byteBufAnalyser);
+                if(byteBufAnalyser instanceof NettyTcpDecoderAware) {
+                    ((NettyTcpDecoderAware)byteBufAnalyser).setNettyTcpDecoder(nettyTcpDecoder);
+                }
+                return nettyTcpDecoder;
+            };
+        } else {
+            nettyTcpDecoderSupplier = null;
+        }
         return new NettyChannelInitializer(
             loggingHandlerLogLevel,
             internalLoggerFactory,
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
-            byteBufAnalyserSupplier == null ? null : () -> new NettyTcpDecoder(byteBufAnalyserSupplier.get()),
+            nettyTcpDecoderSupplier,
             CollectionUtil.isEmpty(nettyTcpEncoderSupplierList) ? null : () -> {
                 List<NettyTcpEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {

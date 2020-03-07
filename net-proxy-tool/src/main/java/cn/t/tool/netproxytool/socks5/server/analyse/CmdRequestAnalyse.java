@@ -1,11 +1,13 @@
 package cn.t.tool.netproxytool.socks5.server.analyse;
 
+import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
-import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
+import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * 客户端命令请求解析器
@@ -13,8 +15,10 @@ import io.netty.buffer.ByteBuf;
  * @version V1.0
  * @since 2020-02-20 20:53
  **/
-public class CmdRequestAnalyse {
-    public Object analyse(ByteBuf byteBuf) {
+public class CmdRequestAnalyse extends ByteBufAnalyser {
+
+    @Override
+    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
         if(byteBuf.readableBytes() < 7) {
             return null;
         }

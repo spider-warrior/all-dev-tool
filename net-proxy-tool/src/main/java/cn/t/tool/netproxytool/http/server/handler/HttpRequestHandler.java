@@ -4,8 +4,8 @@ import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.server.initializer.HttpsProxyClientChannelInitializerBuilder;
-import cn.t.tool.netproxytool.http.server.promise.HttpProxyForwardingResultListener;
-import cn.t.tool.netproxytool.http.server.promise.HttpsProxyForwardingResultListener;
+import cn.t.tool.netproxytool.http.server.listener.HttpProxyForwardingResultListener;
+import cn.t.tool.netproxytool.http.server.listener.HttpsProxyForwardingResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
@@ -56,7 +56,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
-                ChannelPromise promise = ctx.channel().newPromise();
+                ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new HttpsProxyForwardingResultListener(ctx, sender, targetHost, targetPort));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
@@ -77,7 +77,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
-                ChannelPromise promise = remoteChannelHandlerContext.channel().newPromise();
+                ChannelPromise promise = remoteChannelHandlerContext.newPromise();
                 promise.addListener(new HttpProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort));
                 remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {

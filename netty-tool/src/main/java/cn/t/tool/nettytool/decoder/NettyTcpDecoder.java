@@ -38,4 +38,8 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
     public NettyTcpDecoder(ByteBufAnalyser byteBufAnalyser) {
         this.byteBufAnalyser = byteBufAnalyser;
     }
+
+    public void setByteBufAnalyser(ByteBufAnalyser byteBufAnalyser) {
+        this.byteBufAnalyser = byteBufAnalyser;
+    }
 }

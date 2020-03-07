@@ -1,5 +1,6 @@
 package cn.t.tool.nettytool.initializer;
 
+import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.tool.nettytool.handler.EventLoggingHandler;
@@ -23,7 +24,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     private InternalLoggerFactory internalLoggerFactory = Slf4JLoggerFactory.INSTANCE;
     private Supplier<IdleStateHandler> idleStateHandlerSupplier;
     private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
-    private Supplier<List<NettyTcpEncoder<?>>> NettyTcpEncoderListSupplier;
+    private Supplier<List<NettyTcpEncoder<?>>> nettyTcpEncoderListSupplier;
     private Supplier<List<ChannelHandler>> channelHandlerListSupplier;
 
     @Override
@@ -40,8 +41,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             if(nettyTcpDecoderSupplier != null) {
                 channelPipeline.addLast("msg-decoder", nettyTcpDecoderSupplier.get());
             }
-            if(NettyTcpEncoderListSupplier != null) {
-                List<NettyTcpEncoder<?>>nettyTcpEncoderList = NettyTcpEncoderListSupplier.get();
+            if(nettyTcpEncoderListSupplier != null) {
+                List<NettyTcpEncoder<?>>nettyTcpEncoderList = nettyTcpEncoderListSupplier.get();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderList)) {
                     nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast("encoder#" + encoder.getClass().getName(), encoder));
                 }
@@ -49,7 +50,15 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             if(channelHandlerListSupplier != null) {
                 List<ChannelHandler> channelHandlerList = channelHandlerListSupplier.get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {
-                    channelHandlerList.forEach(handler -> channelPipeline.addLast("handler#" + handler.getClass().getName(), handler));
+                    channelHandlerList.forEach(handler -> { channelPipeline.addLast("handler#" + handler.getClass().getName(), handler);});
+                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get("msg-decoder");
+                    if(nettyTcpDecoder != null) {
+                        channelHandlerList.forEach(handler -> {
+                            if(handler instanceof NettyTcpDecoderAware) {
+                                ((NettyTcpDecoderAware)handler).setNettyTcpDecoder(nettyTcpDecoder);
+                            }
+                        });
+                    }
                 }
             }
             channelPipeline.addLast("exception-handler", new NettyExceptionHandler());
@@ -67,7 +76,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
         this.idleStateHandlerSupplier = idleStateHandlerSupplier;
         this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
-        NettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
+        this.nettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
         this.channelHandlerListSupplier = channelHandlerListSupplier;
     }
 }
