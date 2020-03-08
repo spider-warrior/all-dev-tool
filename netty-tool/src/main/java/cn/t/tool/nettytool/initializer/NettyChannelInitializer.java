@@ -50,7 +50,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             if(channelHandlerListSupplier != null) {
                 List<ChannelHandler> channelHandlerList = channelHandlerListSupplier.get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {
-                    channelHandlerList.forEach(handler -> { channelPipeline.addLast("handler#" + handler.getClass().getName(), handler);});
+                    channelHandlerList.forEach(handler -> channelPipeline.addLast("handler#" + handler.getClass().getName(), handler));
                     NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get("msg-decoder");
                     if(nettyTcpDecoder != null) {
                         channelHandlerList.forEach(handler -> {
