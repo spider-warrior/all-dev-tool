@@ -39,11 +39,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -74,7 +76,7 @@
             <dependency>
                 <groupId>cn.t</groupId>
                 <artifactId>util</artifactId>
-                <version>1.0.7-SNAPSHOT</version>
+                <version>1.1.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
