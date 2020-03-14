@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5;
+package cn.t.tool.netproxytool.socks5.server;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
 import cn.t.tool.netproxytool.socks5.server.initializer.LocalToProxyChannelInitializerBuilder;

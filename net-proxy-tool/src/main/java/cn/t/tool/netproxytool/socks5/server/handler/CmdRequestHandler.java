@@ -30,7 +30,7 @@ import java.net.InetSocketAddress;
 public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CmdRequest msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, CmdRequest msg) {
         if(msg.getRequestSocks5Cmd() == Socks5Cmd.CONNECT) {
             InetSocketAddress remoteAddress = (InetSocketAddress)ctx.channel().remoteAddress();
             String targetHost = new String(msg.getTargetAddress());
@@ -40,9 +40,9 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
                 Socks5CmdExecutionStatus socks5CmdExecutionStatus = Socks5CmdExecutionStatus.getSocks5CmdExecutionStatus(status);
                 CmdResponse cmdResponse = new CmdResponse();
                 cmdResponse.setVersion(msg.getVersion());
-                cmdResponse.setExecutionStatus(socks5CmdExecutionStatus);
+                cmdResponse.setExecutionStatus(socks5CmdExecutionStatus.value);
                 cmdResponse.setRsv((byte)0);
-                cmdResponse.setSocks5AddressType(Socks5AddressType.IPV4);
+                cmdResponse.setSocks5AddressType(Socks5AddressType.IPV4.value);
                 cmdResponse.setTargetAddress(Socks5ServerConfig.SERVER_HOST_BYTES);
                 cmdResponse.setTargetPort(Socks5ServerConfig.SERVER_PORT);
                 if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {

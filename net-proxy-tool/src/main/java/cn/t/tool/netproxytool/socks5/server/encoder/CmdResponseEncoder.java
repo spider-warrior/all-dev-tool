@@ -11,18 +11,18 @@ import io.netty.channel.ChannelHandlerContext;
  * @author yj
  * @since 2020-01-12 16:27
  **/
-public class ServerCmdResponseEncoder extends NettyTcpEncoder<CmdResponse> {
+public class CmdResponseEncoder extends NettyTcpEncoder<CmdResponse> {
     @Override
     protected void doEncode(ChannelHandlerContext ctx, CmdResponse cmdResponse, ByteBuf out) {
         out.writeByte(cmdResponse.getVersion());
-        out.writeByte(cmdResponse.getExecutionStatus().value);
+        out.writeByte(cmdResponse.getExecutionStatus());
         out.writeByte(cmdResponse.getRsv());
-        out.writeByte(cmdResponse.getSocks5AddressType().value);
-        if(cmdResponse.getSocks5AddressType() == Socks5AddressType.IPV4) {
+        out.writeByte(cmdResponse.getSocks5AddressType());
+        if(cmdResponse.getSocks5AddressType() == Socks5AddressType.IPV4.value) {
             out.writeBytes(cmdResponse.getTargetAddress());
-        } else if(cmdResponse.getSocks5AddressType() == Socks5AddressType.IPV6) {
+        } else if(cmdResponse.getSocks5AddressType() == Socks5AddressType.IPV6.value) {
             out.writeBytes(cmdResponse.getTargetAddress());
-        } else if(cmdResponse.getSocks5AddressType() == Socks5AddressType.DOMAIN) {
+        } else if(cmdResponse.getSocks5AddressType() == Socks5AddressType.DOMAIN.value) {
             out.writeByte(cmdResponse.getTargetAddress().length);
             out.writeBytes(cmdResponse.getTargetAddress());
         } else {

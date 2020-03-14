@@ -9,10 +9,10 @@ import io.netty.channel.ChannelHandlerContext;
  * @author yj
  * @since 2020-01-12 16:27
  **/
-public class ServerNegotiateResponseEncoder extends NettyTcpEncoder<NegotiateResponse> {
+public class NegotiateResponseEncoder extends NettyTcpEncoder<NegotiateResponse> {
     @Override
     protected void doEncode(ChannelHandlerContext ctx, NegotiateResponse negotiateResponse, ByteBuf out) {
         out.writeByte(negotiateResponse.getVersion());
-        out.writeByte(negotiateResponse.getSocks5Method().rangeStart);
+        out.writeByte(negotiateResponse.getSocks5Method());
     }
 }

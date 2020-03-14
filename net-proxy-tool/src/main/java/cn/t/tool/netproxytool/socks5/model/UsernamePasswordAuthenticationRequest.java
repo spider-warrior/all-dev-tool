@@ -3,13 +3,15 @@ package cn.t.tool.netproxytool.socks5.model;
 import lombok.Data;
 
 /**
- * 服务器协商响应
+ * 用户名密码鉴权请求
+ *
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
  * @version V1.0
- * @since 2020-02-20 20:37
+ * @since 2020-03-14 19:33
  **/
 @Data
-public class NegotiateResponse {
+public class UsernamePasswordAuthenticationRequest {
     private byte version;
-    private byte socks5Method;
+    private byte[] username;
+    private byte[] password;
 }

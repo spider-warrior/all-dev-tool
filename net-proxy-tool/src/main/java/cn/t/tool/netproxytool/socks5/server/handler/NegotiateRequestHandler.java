@@ -41,7 +41,7 @@ public class NegotiateRequestHandler extends SimpleChannelInboundHandler<Negotia
             }
             NegotiateResponse negotiateResponse = new NegotiateResponse();
             negotiateResponse.setVersion(version);
-            negotiateResponse.setSocks5Method(selectedSocks5Method);
+            negotiateResponse.setSocks5Method(selectedSocks5Method.rangeStart);
 
             ChannelPromise channelPromise = ctx.newPromise();
             channelPromise.addListener(new NegotiateSuccessWriteListener(nettyTcpDecoder));
