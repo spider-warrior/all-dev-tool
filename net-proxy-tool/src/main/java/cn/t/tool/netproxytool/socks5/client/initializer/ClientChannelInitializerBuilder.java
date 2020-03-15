@@ -5,6 +5,7 @@ import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
+import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
@@ -26,5 +27,6 @@ public class ClientChannelInitializerBuilder extends NettyChannelInitializerBuil
         addEncoderListsSupplier(CmdRequestEncoder::new);
         addChannelHandlerSupplier(() -> new NegotiateResponseHandler(host, port));
         addChannelHandlerSupplier(AuthenticationResponseHandler::new);
+        addChannelHandlerSupplier(CmdResponseHandler::new);
     }
 }
