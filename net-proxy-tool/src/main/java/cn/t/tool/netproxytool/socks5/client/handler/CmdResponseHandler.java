@@ -1,11 +1,15 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
+import cn.t.tool.netproxytool.socks5.client.listener.ProxyEstablishedListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpVersion;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,24 +19,20 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-20 22:30
  **/
 @Slf4j
-public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse> implements NettyTcpDecoderAware {
-
-    private NettyTcpDecoder nettyTcpDecoder;
+public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>  {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) {
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("连接代理服务器成功, 即将发送数据");
-
+            HttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/");
+            ChannelPromise promise = ctx.newPromise();
+            promise.addListener(new ProxyEstablishedListener(ctx));
+            ctx.writeAndFlush(httpRequest, promise);
         } else {
             log.warn("连接代理服务器失败, status: {}", status);
         }
-    }
-
-    @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
     }
 
 }

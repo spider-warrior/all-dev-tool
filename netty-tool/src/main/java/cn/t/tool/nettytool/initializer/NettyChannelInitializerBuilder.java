@@ -3,9 +3,9 @@ package cn.t.tool.nettytool.initializer;
 import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -21,7 +21,7 @@ public class NettyChannelInitializerBuilder {
     private InternalLoggerFactory internalLoggerFactory;
     private IdleStateConfig idleStateConfig;
     private Supplier<ByteBufAnalyser> byteBufAnalyserSupplier;
-    private List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList = new ArrayList<>();
+    private List<Supplier<MessageToByteEncoder<?>>> nettyTcpEncoderSupplierList = new ArrayList<>();
     private List<Supplier<ChannelHandler>> channelHandlerSupplierList = new ArrayList<>();
 
     public NettyChannelInitializer build() {
@@ -44,7 +44,7 @@ public class NettyChannelInitializerBuilder {
             () -> idleStateConfig == null ? null : new IdleStateHandler(idleStateConfig.readerIdleTime, idleStateConfig.writerIdleTime, idleStateConfig.allIdleTime, TimeUnit.SECONDS),
             nettyTcpDecoderSupplier,
             CollectionUtil.isEmpty(nettyTcpEncoderSupplierList) ? null : () -> {
-                List<NettyTcpEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
+                List<MessageToByteEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {
                     nettyTcpEncoderSupplierList.forEach(supplier -> nettyTcpEncoderList.add(supplier.get()));
                 }
@@ -68,13 +68,13 @@ public class NettyChannelInitializerBuilder {
         this.byteBufAnalyserSupplier = byteBufAnalyserSupplier;
     }
 
-    public void addEncoderListsSupplier(List<Supplier<NettyTcpEncoder<?>>> nettyTcpEncoderSupplierList) {
+    public void addEncoderListsSupplier(List<Supplier<MessageToByteEncoder<?>>> nettyTcpEncoderSupplierList) {
         if(!CollectionUtil.isEmpty(nettyTcpEncoderSupplierList)) {
             this.nettyTcpEncoderSupplierList.addAll(nettyTcpEncoderSupplierList);
         }
     }
 
-    public void addEncoderListsSupplier(Supplier<NettyTcpEncoder<?>> nettyTcpEncoderSupplier) {
+    public void addEncoderListsSupplier(Supplier<MessageToByteEncoder<?>> nettyTcpEncoderSupplier) {
         if(nettyTcpEncoderSupplier != null) {
             this.nettyTcpEncoderSupplierList.add(nettyTcpEncoderSupplier);
         }

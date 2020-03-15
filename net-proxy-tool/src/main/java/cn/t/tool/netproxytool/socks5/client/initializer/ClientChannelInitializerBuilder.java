@@ -6,9 +6,11 @@ import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
+import cn.t.tool.netproxytool.socks5.client.handler.EchoServer;
 import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
+import io.netty.handler.codec.http.HttpRequestEncoder;
 
 /**
  * 客户端代理Initializer构建器
@@ -22,11 +24,17 @@ public class ClientChannelInitializerBuilder extends NettyChannelInitializerBuil
         setLoggingHandlerLogLevel(Socks5ClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(Socks5ClientConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(NegotiateResponseAnalyse::new);
+
         addEncoderListsSupplier(MethodRequestEncoder::new);
         addEncoderListsSupplier(UsernamePasswordAuthenticationRequestEncoder::new);
         addEncoderListsSupplier(CmdRequestEncoder::new);
-        addChannelHandlerSupplier(() -> new NegotiateResponseHandler(host, port));
+        addChannelHandlerSupplier(HttpRequestEncoder::new);
+
+        addChannelHandlerSupplier(NegotiateResponseHandler::new);
         addChannelHandlerSupplier(AuthenticationResponseHandler::new);
         addChannelHandlerSupplier(CmdResponseHandler::new);
+
+        addChannelHandlerSupplier(EchoServer::new);
+
     }
 }

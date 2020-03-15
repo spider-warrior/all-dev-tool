@@ -9,7 +9,7 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInitializerBuilder;
-import cn.t.tool.netproxytool.socks5.server.promise.Socks5ProxyForwardingResultListener;
+import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;

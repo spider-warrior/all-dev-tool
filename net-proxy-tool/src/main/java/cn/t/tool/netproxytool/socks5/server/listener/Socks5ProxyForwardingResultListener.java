@@ -1,8 +1,9 @@
-package cn.t.tool.netproxytool.socks5.server.promise;
+package cn.t.tool.netproxytool.socks5.server.listener;
 
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
+import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import io.netty.channel.ChannelFuture;
@@ -34,6 +35,7 @@ public class Socks5ProxyForwardingResultListener implements ChannelFutureListene
             channelPipeline.remove(NettyTcpDecoder.class);
             channelPipeline.remove(NettyTcpEncoder.class);
             channelPipeline.remove(NegotiateRequestHandler.class);
+            channelPipeline.remove(UsernamePasswordAuthenticationRequestHandler.class);
             channelPipeline.remove(CmdRequestHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {

@@ -28,8 +28,8 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
 
-    private final String host;
-    private final short port;
+    private final String host = "www.baidu.com";
+    private final short port = 443;
     private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
@@ -78,10 +78,5 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     @Override
     public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
         this.nettyTcpDecoder = nettyTcpDecoder;
-    }
-
-    public NegotiateResponseHandler(String host, short port) {
-        this.host = host;
-        this.port = port;
     }
 }
