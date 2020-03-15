@@ -16,5 +16,6 @@ public class Socks5ClientConfig {
     public static final int SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
     public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 0;
 
+    public static final byte[] SUPPORT_METHODS = {Socks5Method.NO_AUTHENTICATION_REQUIRED.rangeStart, Socks5Method.USERNAME_PASSWORD.rangeStart};
 
 }

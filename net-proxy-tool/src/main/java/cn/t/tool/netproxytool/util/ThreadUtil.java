@@ -24,6 +24,15 @@ public class ThreadUtil {
         scheduledExecutorService.scheduleAtFixedRate(runnable, initialDelayInSeconds, periodInSeconds, TimeUnit.SECONDS);
     }
 
+    public static void closeThreadPool() {
+        if(!Socks5ThreadPoolHolder.PROXY_THREAD_POOL_EXECUTOR.isShutdown()) {
+            Socks5ThreadPoolHolder.PROXY_THREAD_POOL_EXECUTOR.shutdownNow();
+        }
+        if(!scheduledExecutorService.isShutdown()) {
+            scheduledExecutorService.shutdownNow();
+        }
+    }
+
     private static class Socks5ThreadPoolHolder {
         private static final ThreadPoolExecutor PROXY_THREAD_POOL_EXECUTOR = new MonitoredThreadPool(
             Socks5ProxyConfig.PROXY_CORE_THREAD_COUNT,

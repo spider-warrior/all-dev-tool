@@ -3,11 +3,9 @@ package cn.t.tool.netproxytool.socks5.client.handler;
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.client.listener.AuthenticationRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
-import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
-import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
-import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
+import cn.t.tool.netproxytool.socks5.constants.*;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
+import cn.t.tool.netproxytool.socks5.model.MethodRequest;
 import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
@@ -17,7 +15,7 @@ import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
- * 协商请求处理器
+ * 协商响应处理器
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
  * @version V1.0
  * @since 2020-02-20 22:30
@@ -65,6 +63,14 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 throw new ProxyException("客户端未实现的方法处理: " + socks5Method);
             }
         }
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        MethodRequest methodRequest = new MethodRequest();
+        methodRequest.setVersion(Socks5ProtocolConstants.VERSION);
+        methodRequest.setMethods(Socks5ClientConfig.SUPPORT_METHODS);
+        ctx.writeAndFlush(methodRequest);
     }
 
     @Override

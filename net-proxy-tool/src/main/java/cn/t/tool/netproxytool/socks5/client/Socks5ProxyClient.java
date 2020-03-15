@@ -1,7 +1,6 @@
 package cn.t.tool.netproxytool.socks5.client;
 
 import cn.t.tool.netproxytool.socks5.client.initializer.ClientChannelInitializerBuilder;
-import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 
@@ -18,6 +17,6 @@ public class Socks5ProxyClient {
         String clientName =  "client -> " + host + ":" + port;
         NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(host, port).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, host, port, channelInitializer);
-        ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
+        new Thread(() -> nettyTcpClient.start(null)).start();
     }
 }

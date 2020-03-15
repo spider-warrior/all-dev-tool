@@ -22,25 +22,31 @@ public class CmdRequestAnalyse extends ByteBufAnalyser {
         if(byteBuf.readableBytes() < 7) {
             return null;
         }
+        //version
         byte version = byteBuf.readByte();
         if(version != Socks5ProtocolConstants.VERSION) {
             throw new ProxyException(String.format("不支持的协议版本: %d", version));
         }
+        //cmd
         byte cmdByte = byteBuf.readByte();
         Socks5Cmd socks5Cmd = Socks5Cmd.getCmd(cmdByte);
         if(socks5Cmd == null) {
             throw new ProxyException(String.format("不支持的命令: %d", cmdByte));
         }
+        //rsv
         byte rsv = byteBuf.readByte();
         if(rsv != 0) {
             throw new ProxyException(String.format("rsv必须为0, 实际传输值为: %d", rsv));
         }
+        //address type
         byte addressTypeByte = byteBuf.readByte();
         Socks5AddressType socks5AddressType = Socks5AddressType.getAddressType(addressTypeByte);
         if(socks5AddressType == null) {
             throw new ProxyException(String.format("不支持的地址类型: %d", addressTypeByte));
         }
+        //target address
         byte[] addressBytes = getAddressBytes(byteBuf, socks5AddressType);
+        //target port
         short port = byteBuf.readShort();
         CmdRequest cmdRequest = new CmdRequest();
         cmdRequest.setVersion(version);
