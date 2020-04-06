@@ -4,7 +4,7 @@ import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.server.listener.HttpProxyForwardingResultListener;
-import cn.t.tool.netproxytool.http.server.listener.HttpsProxyForwardingResultListener;
+import cn.t.tool.netproxytool.http.server.listener.HttpsProxyForwardingAsSocks5ClientResultListener;
 import cn.t.tool.netproxytool.socks5.client.initializer.ClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
@@ -57,7 +57,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new HttpsProxyForwardingResultListener(ctx, sender, targetHost, targetPort));
+                promise.addListener(new HttpsProxyForwardingAsSocks5ClientResultListener(ctx, sender, targetHost, targetPort));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -65,7 +65,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
                 ctx.close();
             }
         };
-
+        //连接socks5服务器
         String host = "127.0.0.1";
         short port = 10086;
         NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
