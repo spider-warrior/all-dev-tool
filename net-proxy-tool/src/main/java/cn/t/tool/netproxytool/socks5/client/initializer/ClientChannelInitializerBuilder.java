@@ -9,7 +9,6 @@ import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandle
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
-import cn.t.tool.netproxytool.socks5.server.handler.FetchMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequestEncoder;
@@ -35,8 +34,6 @@ public class ClientChannelInitializerBuilder extends NettyChannelInitializerBuil
 
         addChannelHandlerSupplier(NegotiateResponseHandler::new);
         addChannelHandlerSupplier(AuthenticationResponseHandler::new);
-        addChannelHandlerSupplier(CmdResponseHandler::new);
-
-        addChannelHandlerSupplier(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
+        addChannelHandlerSupplier(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext));
     }
 }

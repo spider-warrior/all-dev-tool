@@ -52,7 +52,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private void buildHttpsProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
@@ -65,6 +64,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 ctx.close();
             }
         };
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         NettyChannelInitializer channelInitializer = new HttpsProxyClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));

@@ -2,8 +2,8 @@ package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.socks5.constants.AuthenticationStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
-import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
+import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.server.listener.AuthenticationResponseWriteListener;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
