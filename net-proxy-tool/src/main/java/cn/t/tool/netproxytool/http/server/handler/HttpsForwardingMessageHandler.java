@@ -25,7 +25,7 @@ public class HttpsForwardingMessageHandler extends ChannelInboundHandlerAdapter 
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf byteBuf = (ByteBuf)msg;
         InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.info("[{}:{}]: 转发消息: {} B", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), byteBuf.readableBytes());
+        log.info("[{}:{}]: 转发消息: {} B\r\n detail： {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), byteBuf.readableBytes(), byteBuf);
         remoteChannelHandlerContext.writeAndFlush(byteBuf);
     }
 
