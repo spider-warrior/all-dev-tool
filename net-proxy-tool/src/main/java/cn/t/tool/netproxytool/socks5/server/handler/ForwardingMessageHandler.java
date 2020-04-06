@@ -24,7 +24,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof ByteBuf) {
-            log.info("[{}]: 转发消息: {} B\r\ndetail： {}", ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes(), ((ByteBuf)msg).toString(Charset.defaultCharset()));
+            log.info("[{}]: 转发消息: {} B", ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
             remoteChannelHandlerContext.writeAndFlush(msg);
         } else {
             super.channelRead(ctx, msg);
