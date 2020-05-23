@@ -4,8 +4,7 @@ import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerHttpClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerHttpsClientChannelInitializerBuilder;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerHttpClientBuildResultListener;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerHttpsClientBuildResultListener;
+import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerClientBuildResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
@@ -57,11 +56,12 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
 
     private void buildHttpsProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ count.incrementAndGet() +")";
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new HttpProxyServerHttpsClientBuildResultListener(ctx, sender, targetHost, targetPort));
+                promise.addListener(new HttpProxyServerClientBuildResultListener(ctx, sender, clientName));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -69,7 +69,6 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
                 ctx.close();
             }
         };
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         NettyChannelInitializer channelInitializer = new HttpProxyServerHttpsClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
@@ -77,14 +76,13 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
 
     private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion, FullHttpRequest request) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        int index = count.incrementAndGet();
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ index +")";
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ count.incrementAndGet() +")";
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = sender.newPromise();
-                promise.addListener(new HttpProxyServerHttpClientBuildResultListener(ctx, sender, targetHost, targetPort, clientName));
+                promise.addListener(new HttpProxyServerClientBuildResultListener(ctx, sender, clientName));
                 EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
                 embeddedChannel.writeOutbound(proxiedRequest);
                 ByteBuf byteBuf = embeddedChannel.readOutbound();
