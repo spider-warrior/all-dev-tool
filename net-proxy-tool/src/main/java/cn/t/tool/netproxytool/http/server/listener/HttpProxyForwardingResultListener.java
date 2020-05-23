@@ -33,8 +33,8 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
             log.info("[{}:{}] -> [{}:{}]: 代理请求发送成功", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpResponseEncoder.class);
-            channelPipeline.remove(HttpRequestDecoder.class);
-            channelPipeline.remove(HttpObjectAggregator.class);
+//            channelPipeline.remove(HttpRequestDecoder.class);
+//            channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 代理请求发送失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
