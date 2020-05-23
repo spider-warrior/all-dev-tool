@@ -40,7 +40,7 @@ public class HttpProxyServerHttpClientBuildResultListener implements ChannelFutu
                 }
             }
         } else {
-            log.error("{}([{}:{}] -> [{}:{}]): 代理请求发送失败, 即将关闭连接, 失败原因: {}", clientName, inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
+            log.error("{}([{}:{}] -> [{}:{}]): 代理请求发送失败, 即将关闭连接, 失败原因: {}", clientName, inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }

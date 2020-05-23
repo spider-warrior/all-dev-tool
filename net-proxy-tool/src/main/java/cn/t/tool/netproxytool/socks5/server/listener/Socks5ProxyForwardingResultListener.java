@@ -39,7 +39,7 @@ public class Socks5ProxyForwardingResultListener implements ChannelFutureListene
             channelPipeline.remove(CmdRequestHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause());
+            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }

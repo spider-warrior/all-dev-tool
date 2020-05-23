@@ -34,7 +34,7 @@ public class ProxyEstablishedListener implements ChannelFutureListener {
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);
         } else {
-            log.error("代理通道建立成功失败, 原因: {}", localChannelHandlerContext.channel().remoteAddress(), future.cause());
+            log.error("代理通道建立成功失败, 目的地址: [{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }

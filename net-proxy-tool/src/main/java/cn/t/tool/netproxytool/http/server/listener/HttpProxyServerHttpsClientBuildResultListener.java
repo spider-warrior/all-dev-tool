@@ -40,7 +40,7 @@ public class HttpProxyServerHttpsClientBuildResultListener implements ChannelFut
             channelPipeline.remove(HttpProxyServerHandler.class);
             channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
+            log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
