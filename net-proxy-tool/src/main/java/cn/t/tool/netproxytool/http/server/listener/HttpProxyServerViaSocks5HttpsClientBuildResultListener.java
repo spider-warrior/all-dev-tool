@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http.server.listener;
 
-import cn.t.tool.netproxytool.http.server.handler.HttpRequestAsSocket5ClientMsgHandler;
 import cn.t.tool.netproxytool.http.server.handler.ForwardingMessageHandler;
+import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerViaSocks5Handler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,12 +20,12 @@ import java.net.InetSocketAddress;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpsProxyForwardingAsSocks5ClientResultListener implements ChannelFutureListener {
+public class HttpProxyServerViaSocks5HttpsClientBuildResultListener implements ChannelFutureListener {
 
     private ChannelHandlerContext localChannelHandlerContext;
     private ChannelHandlerContext remoteChannelHandlerContext;
     private String targetHost;
-    private int targetPort;
+    private short targetPort;
 
     @Override
     public void operationComplete(ChannelFuture future) {
@@ -37,15 +37,15 @@ public class HttpsProxyForwardingAsSocks5ClientResultListener implements Channel
             channelPipeline.remove(HttpRequestDecoder.class);
             channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
-            channelPipeline.remove(HttpRequestAsSocket5ClientMsgHandler.class);
-            channelPipeline.addLast("proxy-as-socks5-client-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.remove(HttpProxyServerViaSocks5Handler.class);
+            channelPipeline.addLast("http-proxy-server-via-socks5-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
 
-    public HttpsProxyForwardingAsSocks5ClientResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
+    public HttpProxyServerViaSocks5HttpsClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, short targetPort) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;

@@ -2,10 +2,8 @@ package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerHttpClientChannelInitializerBuilder;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerHttpClientBuildResultListener;
-import cn.t.tool.netproxytool.http.server.listener.HttpsProxyForwardingAsSocks5ClientResultListener;
-import cn.t.tool.netproxytool.socks5.client.initializer.ClientChannelInitializerBuilder;
+import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerViaSocks5HttpsClientBuildResultListener;
+import cn.t.tool.netproxytool.socks5.client.initializer.HttpProxyServerViaSocks5ClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
@@ -29,7 +27,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
  * @since 2020-02-24 11:54
  **/
 @Slf4j
-public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private AtomicInteger count = new AtomicInteger(0);
 
@@ -59,7 +57,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new HttpsProxyForwardingAsSocks5ClientResultListener(ctx, sender, targetHost, targetPort));
+                promise.addListener(new HttpProxyServerViaSocks5HttpsClientBuildResultListener(ctx, sender, targetHost, targetPort));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -71,30 +69,32 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
         String host = "127.0.0.1";
         short port = 10086;
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
-        NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
+        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, host, port, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }
 
-    private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion, FullHttpRequest request) {
+    private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, short targetPort, HttpVersion httpVersion, FullHttpRequest request) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
         int index = count.incrementAndGet();
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ index +")";
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
-        ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
+        ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
-                ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyServerHttpClientBuildResultListener(ctx, targetHost, targetPort, clientName));
-                remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
+                ChannelPromise promise = sender.newPromise();
+                promise.addListener(new HttpProxyServerViaSocks5HttpsClientBuildResultListener(ctx, sender, targetHost, targetPort));
+                sender.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, BAD_GATEWAY));
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = new HttpProxyServerHttpClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
-        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
+        String host = "127.0.0.1";
+        short port = 10086;
+        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
+        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, host, port, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }
 

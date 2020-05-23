@@ -20,9 +20,9 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
  * @version V1.0
  * @since 2020-03-14 18:45
  **/
-public class ClientChannelInitializerBuilder extends NettyChannelInitializerBuilder {
+public class HttpProxyServerViaSocks5ClientChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
-    public ClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, String targetHost, short targetPort) {
+    public HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, String targetHost, short targetPort) {
         setLoggingHandlerLogLevel(Socks5ClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(Socks5ClientConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(NegotiateResponseAnalyse::new);
