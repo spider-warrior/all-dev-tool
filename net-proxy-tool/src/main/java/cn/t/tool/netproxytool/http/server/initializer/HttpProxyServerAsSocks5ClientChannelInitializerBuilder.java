@@ -15,8 +15,8 @@ public class HttpProxyServerAsSocks5ClientChannelInitializerBuilder extends Nett
     public HttpProxyServerAsSocks5ClientChannelInitializerBuilder() {
         setLoggingHandlerLogLevel(HttpProxyServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(HttpProxyServerConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
-        addChannelHandlerSupplier(HttpRequestDecoder::new);
         addChannelHandlerSupplier(HttpResponseEncoder::new);
+        addChannelHandlerSupplier(HttpRequestDecoder::new);
         addChannelHandlerSupplier(() -> new HttpObjectAggregator(1024 * 1024));
         addChannelHandlerSupplier(HttpRequestAsSocket5ClientMsgHandler::new);
     }

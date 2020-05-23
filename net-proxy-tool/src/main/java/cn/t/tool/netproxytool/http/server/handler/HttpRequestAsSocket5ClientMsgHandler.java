@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_GATEWAY;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -29,6 +30,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
  **/
 @Slf4j
 public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+    private AtomicInteger idGenerator = new AtomicInteger(0);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -81,7 +84,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort));
+                promise.addListener(new HttpProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort, idGenerator.getAndIncrement()));
                 remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
