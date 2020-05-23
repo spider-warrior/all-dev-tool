@@ -76,7 +76,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion, FullHttpRequest request) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
         int index = count.incrementAndGet();
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "_("+ index +")";
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ index +")";
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
         ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {

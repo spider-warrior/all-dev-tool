@@ -13,9 +13,9 @@ import io.netty.util.AttributeKey;
 public class Socks5ClientConfig {
     public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.DEBUG;
 
-    public static final int SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS = 60;
+    public static final int SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
     public static final int SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
-    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 0;
+    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 10;
 
     public static final byte[] SUPPORT_METHODS = {Socks5Method.NO_AUTHENTICATION_REQUIRED.rangeStart, Socks5Method.USERNAME_PASSWORD.rangeStart};
 
