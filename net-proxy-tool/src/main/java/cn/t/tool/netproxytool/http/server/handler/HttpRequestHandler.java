@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_GATEWAY;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -29,6 +30,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
  **/
 @Slf4j
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+    private AtomicInteger count = new AtomicInteger(0);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -72,13 +75,14 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion, FullHttpRequest request) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
+        int index = count.incrementAndGet();
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "_("+ index +")";
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
         ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort));
+                promise.addListener(new HttpProxyForwardingResultListener(ctx, targetHost, targetPort, clientName));
                 remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
