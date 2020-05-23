@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +34,7 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpRequestHandler.class);
+            channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 代理请求发送失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
