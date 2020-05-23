@@ -9,7 +9,6 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -32,7 +31,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
     protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) {
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
-            log.info("[{}]: 连接成功, 回调监听器", ctx.channel().remoteAddress());
+            log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());
             ChannelPipeline channelPipeline = ctx.channel().pipeline();
             channelPipeline.remove(NettyTcpDecoder.class);
 

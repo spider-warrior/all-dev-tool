@@ -26,16 +26,14 @@ public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<A
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthenticationResponse response) {
+        log.info("鉴权结果: version: {}, status: {}", response.getVersion(), response.getStatus());
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == response.getStatus()) {
-            log.info("鉴权成功");
             String targetHost = ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).get();
             Short targetPort = ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).get();
             CmdRequest cmdRequest = MessageBuildUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
             ChannelPromise promise = ctx.newPromise();
             promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
             ctx.writeAndFlush(cmdRequest, promise);
-        } else {
-            log.warn("鉴权失败");
         }
     }
 

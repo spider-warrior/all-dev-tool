@@ -16,6 +16,8 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 协商响应处理器
@@ -24,6 +26,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @since 2020-02-20 22:30
  **/
 public class NegotiateResponseHandler extends SimpleChannelInboundHandler<NegotiateResponse> implements NettyTcpDecoderAware {
+
+    private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
 
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
@@ -34,6 +38,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, NegotiateResponse response) {
+        logger.info("协商结果: version: {}, method: {}", response.getVersion(), response.getSocks5Method());
         byte version = response.getVersion();
         if(version != Socks5ProtocolConstants.VERSION) {
             throw new ProxyException(String.format("不支持的协议版本: %d", version));

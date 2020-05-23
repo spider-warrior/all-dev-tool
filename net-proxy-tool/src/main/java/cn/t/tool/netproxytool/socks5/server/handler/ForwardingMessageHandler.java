@@ -6,8 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
-
 /**
  * 转发消息处理器
  *
@@ -24,7 +22,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof ByteBuf) {
-            log.info("[{}]: 转发消息: {} B", ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
+            log.info("[{} : {}]: 转发消息: {} B", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
             remoteChannelHandlerContext.writeAndFlush(msg);
         } else {
             super.channelRead(ctx, msg);
