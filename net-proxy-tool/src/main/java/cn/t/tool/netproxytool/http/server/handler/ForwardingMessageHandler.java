@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
  * @version V1.0
  * @since 2020-02-22 23:46
  **/
-public class HttpsForwardingMessageHandler extends ChannelInboundHandlerAdapter {
+public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -45,7 +45,7 @@ public class HttpsForwardingMessageHandler extends ChannelInboundHandlerAdapter 
         ctx.close();
     }
 
-    public HttpsForwardingMessageHandler(ChannelHandlerContext remoteChannelHandlerContext) {
+    public ForwardingMessageHandler(ChannelHandlerContext remoteChannelHandlerContext) {
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
     }
 }

@@ -2,8 +2,8 @@ package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.server.initializer.HttpProxyClientChannelInitializerBuilder;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyForwardingResultListener;
+import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerHttpClientChannelInitializerBuilder;
+import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerHttpClientBuildResultListener;
 import cn.t.tool.netproxytool.http.server.listener.HttpsProxyForwardingAsSocks5ClientResultListener;
 import cn.t.tool.netproxytool.socks5.client.initializer.ClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
@@ -85,7 +85,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyForwardingResultListener(ctx, targetHost, targetPort, clientName));
+                promise.addListener(new HttpProxyServerHttpClientBuildResultListener(ctx, targetHost, targetPort, clientName));
                 remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -93,7 +93,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = new HttpProxyClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
+        NettyChannelInitializer channelInitializer = new HttpProxyServerHttpClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }

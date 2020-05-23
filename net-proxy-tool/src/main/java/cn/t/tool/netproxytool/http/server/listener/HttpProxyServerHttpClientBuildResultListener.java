@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpProxyForwardingResultListener implements ChannelFutureListener {
+public class HttpProxyServerHttpClientBuildResultListener implements ChannelFutureListener {
 
     private final ChannelHandlerContext localChannelHandlerContext;
     private final String targetHost;
@@ -45,7 +45,7 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
         }
     }
 
-    public HttpProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, String targetHost, int targetPort, String clientName) {
+    public HttpProxyServerHttpClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, String targetHost, int targetPort, String clientName) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.targetHost = targetHost;
         this.targetPort = targetPort;

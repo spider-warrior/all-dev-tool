@@ -9,7 +9,7 @@ import io.netty.handler.logging.LogLevel;
  * @version V1.0
  * @since 2020-02-22 23:00
  **/
-public class HttpProxyClientConfig {
+public class HttpProxyServerClientConfig {
 
     public static final int HTTP_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
     public static final int HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;

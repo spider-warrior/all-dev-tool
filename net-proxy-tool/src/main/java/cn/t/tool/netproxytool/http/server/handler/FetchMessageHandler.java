@@ -11,13 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.SocketAddress;
 
 /**
- * 抓取消息处理器处理器
+ * 抓取消息处理器
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
  * @version V1.0
  * @since 2020-02-22 20:54
  **/
 @Slf4j
-public class FetchMessageHandler extends HttpsForwardingMessageHandler implements ChannelOutboundHandler {
+public class FetchMessageHandler extends ForwardingMessageHandler implements ChannelOutboundHandler {
 
     private ProxyBuildResultListener proxyBuildResultListener;
 

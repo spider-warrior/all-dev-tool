@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http.server.initializer;
 
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
-import cn.t.tool.netproxytool.http.server.handler.HttpRequestHandler;
+import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
@@ -18,6 +18,6 @@ public class HttpProxyServerChannelInitializerBuilder extends NettyChannelInitia
         addChannelHandlerSupplier(HttpRequestDecoder::new);
         addChannelHandlerSupplier(HttpResponseEncoder::new);
         addChannelHandlerSupplier(() -> new HttpObjectAggregator(1024 * 1024));
-        addChannelHandlerSupplier(HttpRequestHandler::new);
+        addChannelHandlerSupplier(HttpProxyServerHandler::new);
     }
 }

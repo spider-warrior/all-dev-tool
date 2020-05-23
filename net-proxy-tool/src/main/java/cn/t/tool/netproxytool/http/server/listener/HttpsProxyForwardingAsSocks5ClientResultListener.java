@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http.server.listener;
 
 import cn.t.tool.netproxytool.http.server.handler.HttpRequestAsSocket5ClientMsgHandler;
-import cn.t.tool.netproxytool.http.server.handler.HttpsForwardingMessageHandler;
+import cn.t.tool.netproxytool.http.server.handler.ForwardingMessageHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,7 +38,7 @@ public class HttpsProxyForwardingAsSocks5ClientResultListener implements Channel
             channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.remove(HttpRequestAsSocket5ClientMsgHandler.class);
-            channelPipeline.addLast("proxy-as-socks5-client-fording-handler", new HttpsForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.addLast("proxy-as-socks5-client-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();

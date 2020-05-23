@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.http.server.listener;
 
-import cn.t.tool.netproxytool.http.server.handler.HttpRequestHandler;
-import cn.t.tool.netproxytool.http.server.handler.HttpsForwardingMessageHandler;
+import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerHandler;
+import cn.t.tool.netproxytool.http.server.handler.ForwardingMessageHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpsProxyForwardingResultListener implements ChannelFutureListener {
+public class HttpProxyServerHttpsClientBuildResultListener implements ChannelFutureListener {
 
     private ChannelHandlerContext localChannelHandlerContext;
     private ChannelHandlerContext remoteChannelHandlerContext;
@@ -34,18 +34,18 @@ public class HttpsProxyForwardingResultListener implements ChannelFutureListener
             log.info("[{}:{}] -> [{}:{}]: 通知客户端代理已就位成功", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
-            channelPipeline.remove(HttpRequestDecoder.class);
             channelPipeline.remove(HttpResponseEncoder.class);
+            channelPipeline.remove(HttpRequestDecoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
-            channelPipeline.remove(HttpRequestHandler.class);
-            channelPipeline.addLast("proxy-fording-handler", new HttpsForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.remove(HttpProxyServerHandler.class);
+            channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
             localChannelHandlerContext.close();
         }
     }
 
-    public HttpsProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
+    public HttpProxyServerHttpsClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;
