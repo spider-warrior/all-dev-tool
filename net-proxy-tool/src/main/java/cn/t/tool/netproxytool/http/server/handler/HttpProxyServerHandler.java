@@ -9,9 +9,11 @@ import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerHttpsClientBui
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,12 +80,16 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
         int index = count.incrementAndGet();
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort + "("+ index +")";
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
-        ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
+        ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
-                ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyServerHttpClientBuildResultListener(ctx, targetHost, targetPort, clientName));
-                remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
+                ChannelPromise promise = sender.newPromise();
+                promise.addListener(new HttpProxyServerHttpClientBuildResultListener(ctx, sender, targetHost, targetPort, clientName));
+                EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
+                embeddedChannel.writeOutbound(proxiedRequest);
+                ByteBuf byteBuf = embeddedChannel.readOutbound();
+                embeddedChannel.close();
+                sender.writeAndFlush(byteBuf, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, BAD_GATEWAY));
