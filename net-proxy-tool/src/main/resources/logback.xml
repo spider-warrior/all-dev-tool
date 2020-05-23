@@ -61,7 +61,7 @@
         </encoder>
     </appender>
     <logger name="EventLoggingHandler" level="INFO" additivity="false">
-        <appender-ref ref="EventLoggingHandler"/>
+        <appender-ref ref="LoggingHandler"/>
     </logger>
     <logger name="ThreadMonitor" level="INFO" additivity="false">
         <appender-ref ref="ThreadMonitor"/>
