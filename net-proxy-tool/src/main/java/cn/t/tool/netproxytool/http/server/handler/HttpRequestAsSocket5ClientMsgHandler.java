@@ -55,7 +55,6 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
 
     private void buildHttpsProxy(ChannelHandlerContext ctx, String targetHost, short targetPort, HttpVersion httpVersion) {
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
@@ -71,6 +70,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
         //连接socks5服务器
         String host = "127.0.0.1";
         short port = 10086;
+        String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, host, port, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
