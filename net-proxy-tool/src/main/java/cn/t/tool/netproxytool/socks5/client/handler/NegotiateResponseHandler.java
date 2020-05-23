@@ -32,8 +32,9 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
 
-    private final String host = "www.baidu.com";
-    private final short port = 443;
+    private String targetHost;
+    private short targetPort;
+
     private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
@@ -50,7 +51,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
         } else {
             //不需要认证, 直接构建cmd请求
             if(Socks5Method.NO_AUTHENTICATION_REQUIRED == socks5Method) {
-                CmdRequest cmdRequest = MessageBuildUtil.buildCmdRequest(host.getBytes(), port);
+                CmdRequest cmdRequest = MessageBuildUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
                 ctx.writeAndFlush(cmdRequest, promise);
@@ -69,8 +70,8 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         //init attr
-        ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).set(host);
-        ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).set(port);
+        ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).set(targetHost);
+        ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).set(targetPort);
         ctx.channel().attr(Socks5ClientConfig.USERNAME_KEY).set(USERNAME);
         ctx.channel().attr(Socks5ClientConfig.PASSWORD_KEY).set(PASSWORD);
         //send negotiate msg
@@ -83,5 +84,11 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     @Override
     public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
         this.nettyTcpDecoder = nettyTcpDecoder;
+    }
+
+
+    public NegotiateResponseHandler(String targetHost, short targetPort) {
+        this.targetHost = targetHost;
+        this.targetPort = targetPort;
     }
 }

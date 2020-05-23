@@ -71,7 +71,7 @@ public class HttpRequestAsSocket5ClientMsgHandler extends SimpleChannelInboundHa
         String host = "127.0.0.1";
         short port = 10086;
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
-        NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
+        NettyChannelInitializer channelInitializer = new ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, host, port, channelInitializer);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }
