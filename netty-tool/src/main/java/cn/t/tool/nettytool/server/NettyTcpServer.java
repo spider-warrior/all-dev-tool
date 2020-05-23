@@ -1,7 +1,7 @@
 package cn.t.tool.nettytool.server;
 
 import cn.t.tool.nettytool.launcher.Launcher;
-import cn.t.tool.nettytool.server.listener.DemonListener;
+import cn.t.tool.nettytool.server.listener.DaemonListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -19,7 +19,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
     private static final Logger logger = LoggerFactory.getLogger(NettyTcpServer.class);
 
     private ChannelInitializer<SocketChannel> channelInitializer;
-    private List<DemonListener> demonListenerList;
+    private List<DaemonListener> daemonListenerList;
     private Channel serverChannel;
 
     public void doStart(Launcher launcher) {
@@ -54,16 +54,16 @@ public class NettyTcpServer extends AbstractDaemonServer {
             serverChannel = openFuture.channel();
             ChannelFuture closeFuture = serverChannel.closeFuture();
             closeFuture.addListener(f -> {
-                if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                    for (DemonListener listener: demonListenerList) {
+                if (daemonListenerList != null && !daemonListenerList.isEmpty()) {
+                    for (DaemonListener listener: daemonListenerList) {
                         listener.close(NettyTcpServer.this);
                     }
                 }
             });
             openFuture.sync();
             logger.info("TCP Server: {} has been started successfully, port: {}", name, port);
-            if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                for (DemonListener listener: demonListenerList) {
+            if (daemonListenerList != null && !daemonListenerList.isEmpty()) {
+                for (DaemonListener listener: daemonListenerList) {
                     listener.startup(this);
                 }
             }
@@ -101,8 +101,8 @@ public class NettyTcpServer extends AbstractDaemonServer {
         return this;
     }
 
-    public NettyTcpServer setDemonListenerList(List<DemonListener> demonListenerList) {
-        this.demonListenerList = demonListenerList;
+    public NettyTcpServer setDaemonListenerList(List<DaemonListener> daemonListenerList) {
+        this.daemonListenerList = daemonListenerList;
         return this;
     }
 }

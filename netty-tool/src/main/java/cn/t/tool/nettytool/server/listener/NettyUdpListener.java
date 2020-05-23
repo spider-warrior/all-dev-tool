@@ -4,7 +4,7 @@ import cn.t.tool.nettytool.server.DaemonServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyUdpListener implements DemonListener {
+public class NettyUdpListener implements DaemonListener {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyUdpListener.class);
 

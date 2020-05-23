@@ -1,7 +1,7 @@
 package cn.t.tool.nettytool.client;
 
 import cn.t.tool.nettytool.launcher.Launcher;
-import cn.t.tool.nettytool.server.listener.DemonListener;
+import cn.t.tool.nettytool.server.listener.DaemonListener;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,7 +17,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
     private static final Logger logger = LoggerFactory.getLogger(NettyTcpClient.class);
 
     private ChannelInitializer<SocketChannel> channelInitializer;
-    private List<DemonListener> demonListenerList;
+    private List<DaemonListener> daemonListenerList;
     private Channel clientChannel;
 
     @Override
@@ -37,16 +37,16 @@ public class NettyTcpClient extends AbstractDaemonClient {
             clientChannel = openFuture.channel();
             ChannelFuture closeFuture = clientChannel.closeFuture();
             closeFuture.addListener(f ->  {
-                    if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                        for (DemonListener listener: demonListenerList) {
+                    if (daemonListenerList != null && !daemonListenerList.isEmpty()) {
+                        for (DaemonListener listener: daemonListenerList) {
                             listener.close(NettyTcpClient.this);
                         }
                     }
                 }
             );
             openFuture.sync();
-            if (demonListenerList != null && !demonListenerList.isEmpty()) {
-                for (DemonListener listener: demonListenerList) {
+            if (daemonListenerList != null && !daemonListenerList.isEmpty()) {
+                for (DaemonListener listener: daemonListenerList) {
                     listener.startup(this);
                 }
             }
@@ -74,8 +74,8 @@ public class NettyTcpClient extends AbstractDaemonClient {
         this.channelInitializer = channelInitializer;
     }
 
-    public void setDemonListenerList(List<DemonListener> demonListenerList) {
-        this.demonListenerList = demonListenerList;
+    public void setDaemonListenerList(List<DaemonListener> daemonListenerList) {
+        this.daemonListenerList = daemonListenerList;
     }
 
     public void sendMsg(Object msg) {
