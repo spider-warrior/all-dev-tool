@@ -1,12 +1,12 @@
 package cn.t.tool.netproxytool.http.server.listener;
 
 import cn.t.tool.netproxytool.http.server.handler.HttpForwardingMessageHandler;
-import cn.t.tool.netproxytool.http.server.handler.HttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +33,7 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
             log.info("[{}:{}] -> [{}:{}]: 代理请求发送成功", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpResponseEncoder.class);
-            channelPipeline.remove(HttpRequestHandler.class);
+            channelPipeline.remove(HttpRequestDecoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
         } else {

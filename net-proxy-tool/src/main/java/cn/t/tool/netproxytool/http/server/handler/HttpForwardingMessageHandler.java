@@ -41,7 +41,7 @@ public class HttpForwardingMessageHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         //消息读取失败不能实现消息转发，断开客户端代理
         InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.error("读取消息异常, 即将关闭连接: [{}:{}], 原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), cause);
+        log.error("读取消息异常, 即将关闭连接: [{}:{}], 原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), cause.getMessage());
         ctx.close();
     }
 
