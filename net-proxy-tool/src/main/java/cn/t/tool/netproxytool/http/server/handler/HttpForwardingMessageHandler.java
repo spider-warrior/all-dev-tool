@@ -1,5 +1,6 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -23,10 +24,15 @@ public class HttpForwardingMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        FullHttpRequest request = (FullHttpRequest)msg;
         InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.info("[{}:{}]: 转发消息: method: {}, uri: {}, version: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), request.method(), request.uri(), request.protocolVersion());
-        remoteChannelHandlerContext.writeAndFlush(request);
+        if(msg instanceof FullHttpRequest) {
+            FullHttpRequest request = (FullHttpRequest)msg;
+            log.info("[{}:{}]: 转发消息, method: {}, uri: {}, version: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), request.method(), request.uri(), request.protocolVersion());
+        } else if(msg instanceof ByteBuf) {
+            ByteBuf buf = (ByteBuf)msg;
+            log.info("[{}:{}]: 转发消息, size: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), buf.readableBytes());
+        }
+        remoteChannelHandlerContext.writeAndFlush(msg);
     }
 
 

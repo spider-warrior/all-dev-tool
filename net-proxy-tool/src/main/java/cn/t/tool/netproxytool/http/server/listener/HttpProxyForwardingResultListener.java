@@ -26,34 +26,29 @@ public class HttpProxyForwardingResultListener implements ChannelFutureListener 
     private ChannelHandlerContext remoteChannelHandlerContext;
     private String targetHost;
     private int targetPort;
-    private int id;
 
     @Override
     public void operationComplete(ChannelFuture future) {
         InetSocketAddress inetSocketAddress = (InetSocketAddress)localChannelHandlerContext.channel().remoteAddress();
         if(future.isSuccess()) {
             log.info("[{}:{}] -> [{}:{}]: 代理请求发送成功", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort);
-            //同一个连接首次执行
-            if(id == 0) {
-                ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
-                //HttpResponseEncoder会误处理写回来的数据
-                channelPipeline.remove(HttpResponseEncoder.class);
-                channelPipeline.remove(HttpRequestDecoder.class);
-                channelPipeline.remove(HttpObjectAggregator.class);
-                channelPipeline.remove(HttpRequestAsSocket5ClientMsgHandler.class);
-                channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
-            }
+            ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
+            //HttpResponseEncoder会误处理写回来的数据
+            channelPipeline.remove(HttpResponseEncoder.class);
+            channelPipeline.remove(HttpRequestDecoder.class);
+            channelPipeline.remove(HttpObjectAggregator.class);
+            channelPipeline.remove(HttpRequestAsSocket5ClientMsgHandler.class);
+            channelPipeline.addLast("proxy-fording-handler", new HttpForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}:{}] -> [{}:{}]: 代理请求发送失败, 即将关闭连接, 失败原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), targetHost, targetPort, future.cause());
             localChannelHandlerContext.close();
         }
     }
 
-    public HttpProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort, int  id) {
+    public HttpProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;
         this.targetPort = targetPort;
-        this.id = id;
     }
 }
