@@ -23,6 +23,14 @@
             <groupId>cn.t</groupId>
             <artifactId>netty-tool</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>common-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.t</groupId>
+            <artifactId>io-util</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

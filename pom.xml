@@ -75,7 +75,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.t</groupId>
-                <artifactId>util</artifactId>
+                <artifactId>util-dependency-management</artifactId>
                 <version>1.1.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
