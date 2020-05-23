@@ -72,7 +72,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
             }
             closeFuture.sync();
         } catch (Exception e) {
-            logger.error(String.format("TCP Server: [%s] is Down, port: %d ", name, port), e);
+            logger.error(String.format("TCP Server: [%s] is Down", name), e);
         } finally {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpServer.this);

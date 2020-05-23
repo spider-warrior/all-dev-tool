@@ -52,7 +52,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
             }
             closeFuture.sync();
         } catch (Exception e) {
-            logger.error("TCP Client: [{}] has been crashed", name);
+            logger.error(String.format("TCP Client: [%s] is Down", name), e);
         } finally {
             if(launcher != null) {
                 launcher.serverShutdownSuccess(NettyTcpClient.this);
