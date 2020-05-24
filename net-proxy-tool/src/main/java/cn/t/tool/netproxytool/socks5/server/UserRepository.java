@@ -11,6 +11,7 @@ import java.util.Map;
 public class UserRepository {
 
     private static final Map<String, String> ALL_USERS = new HashMap<>();
+    private static final Map<String, String> USER_SECURITY_MAPPING = new HashMap<>();
 
     public static void addUser(String username, String password) {
         ALL_USERS.put(username, password);
@@ -23,4 +24,13 @@ public class UserRepository {
     public static boolean exist(String username) {
         return ALL_USERS.containsKey(username);
     }
+
+    public static void addUserSecurity(String username, String security) {
+        USER_SECURITY_MAPPING.put(username, security);
+    }
+
+    public static String getUserSecurity(String username) {
+        return USER_SECURITY_MAPPING.get(username);
+    }
+
 }

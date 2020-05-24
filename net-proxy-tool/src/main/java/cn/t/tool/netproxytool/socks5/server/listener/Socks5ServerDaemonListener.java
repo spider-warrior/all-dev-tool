@@ -39,14 +39,23 @@ public class Socks5ServerDaemonListener implements DaemonListener {
                         properties.load(fileInputStream);
                         if(!properties.isEmpty()) {
                             properties.forEach((k, v) -> {
-                                logger.info("添加用户, username: {}, password: {}", k, v);
-                                UserRepository.addUser((String)k, (String)v);
+                                String passwordAndSecurity = (String)v;
+                                String[] elements = passwordAndSecurity.split(":");
+                                logger.info("添加用户, username: {}, password: {}, security: {}", k, elements[0], elements.length > 1 ? elements[1] : "");
+                                UserRepository.addUser((String)k, elements[0]);
+                                if(elements.length > 1) {
+                                    UserRepository.addUserSecurity((String)k, elements[1]);
+                                }
                             });
                         }
                     } catch (IOException e) {
                         logger.error("加载socks5配置文件失败", e);
                     }
+                } else {
+                    logger.warn("配置文件不存在: {}", config);
                 }
+            } else {
+                logger.warn("{}未设置", Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
             }
         }
     }

@@ -1,6 +1,7 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
 import cn.t.tool.netproxytool.exception.ProxyException;
+import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.tool.netproxytool.socks5.MessageBuildUtil;
 import cn.t.tool.netproxytool.socks5.client.listener.AuthenticationRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
@@ -29,9 +30,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
 
     private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
 
-    private static final String USERNAME = "admin";
-    private static final String PASSWORD = "admin";
-
+    private UserConfig userConfig;
     private String targetHost;
     private short targetPort;
 
@@ -57,7 +56,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 ctx.writeAndFlush(cmdRequest, promise);
                 //用户名密码认证
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
-                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = MessageBuildUtil.buildUsernamePasswordAuthenticationRequest(USERNAME.getBytes(), PASSWORD.getBytes());
+                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = MessageBuildUtil.buildUsernamePasswordAuthenticationRequest(userConfig.getUsername().getBytes(), userConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));
                 ctx.writeAndFlush(usernamePasswordAuthenticationRequest, promise);
@@ -72,8 +71,6 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
         //init attr
         ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).set(targetHost);
         ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).set(targetPort);
-        ctx.channel().attr(Socks5ClientConfig.USERNAME_KEY).set(USERNAME);
-        ctx.channel().attr(Socks5ClientConfig.PASSWORD_KEY).set(PASSWORD);
         //send negotiate msg
         MethodRequest methodRequest = new MethodRequest();
         methodRequest.setVersion(Socks5ProtocolConstants.VERSION);
@@ -87,7 +84,8 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     }
 
 
-    public NegotiateResponseHandler(String targetHost, short targetPort) {
+    public NegotiateResponseHandler(UserConfig userConfig, String targetHost, short targetPort) {
+        this.userConfig = userConfig;
         this.targetHost = targetHost;
         this.targetPort = targetPort;
     }

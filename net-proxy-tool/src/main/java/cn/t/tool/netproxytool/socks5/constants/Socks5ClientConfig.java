@@ -21,10 +21,4 @@ public class Socks5ClientConfig {
 
     public static final AttributeKey<String> TARGET_HOST_KEY = AttributeKey.newInstance("targetHost");
     public static final AttributeKey<Short> TARGET_PORT_KEY = AttributeKey.newInstance("targetPort");
-
-    public static final AttributeKey<String> USERNAME_KEY = AttributeKey.newInstance("username");
-    public static final AttributeKey<String> PASSWORD_KEY = AttributeKey.newInstance("password");
-
-
-
 }

@@ -4,6 +4,7 @@ import cn.t.tool.netproxytool.socks5.constants.AuthenticationStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
+import cn.t.tool.netproxytool.socks5.server.UserRepository;
 import cn.t.tool.netproxytool.socks5.server.listener.AuthenticationResponseWriteListener;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
@@ -24,12 +25,13 @@ public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelI
     private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest) {
         String username = new String(usernamePasswordAuthenticationRequest.getUsername());
         String password = new String(usernamePasswordAuthenticationRequest.getPassword());
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setVersion(Socks5ProtocolConstants.VERSION);
-        if ("admin".equals(username) && "admin".equals(password)) {
+        String passwordInConfig = UserRepository.getPassword(username);
+        if(passwordInConfig != null && passwordInConfig.equals(password)) {
             log.info("用户名密码验证通过, username: {}", username);
             authenticationResponse.setStatus(AuthenticationStatus.SUCCESS.value);
             ChannelPromise promise = ctx.newPromise();
