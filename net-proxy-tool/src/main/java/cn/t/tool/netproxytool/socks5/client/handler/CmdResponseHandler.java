@@ -1,13 +1,13 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;

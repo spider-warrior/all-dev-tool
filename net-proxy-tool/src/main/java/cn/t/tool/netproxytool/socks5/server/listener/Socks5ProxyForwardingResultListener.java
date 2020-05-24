@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.listener;
 
+import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
-import cn.t.tool.netproxytool.socks5.server.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;

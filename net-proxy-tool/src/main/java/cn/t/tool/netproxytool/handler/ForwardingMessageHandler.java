@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5.server.handler;
+package cn.t.tool.netproxytool.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
