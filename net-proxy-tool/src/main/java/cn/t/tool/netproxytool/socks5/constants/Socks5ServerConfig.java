@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.socks5.constants;
 
 import cn.t.util.common.SystemUtil;
 import io.netty.handler.logging.LogLevel;
+import io.netty.util.AttributeKey;
 
 /**
  * 服务配置
@@ -23,4 +24,6 @@ public class Socks5ServerConfig {
 
     public static final String SOCKS5_SERVER_HOME_KEY = "SOCKS5_HOME";
     public static final String SOCKS5_SERVER_USERS_FILE = "users";
+
+    public static final AttributeKey<String> CHANNEL_USERNAME = AttributeKey.newInstance("channel_username");
 }

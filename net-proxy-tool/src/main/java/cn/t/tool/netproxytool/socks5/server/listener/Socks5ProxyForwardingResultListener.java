@@ -1,16 +1,21 @@
 package cn.t.tool.netproxytool.socks5.server.listener;
 
+import cn.t.tool.netproxytool.handler.EncryptMessageAnalyser;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.util.common.ArrayUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * http代理结果监听器
@@ -25,29 +30,37 @@ public class Socks5ProxyForwardingResultListener implements ChannelFutureListene
     private ChannelHandlerContext remoteChannelHandlerContext;
     private String targetHost;
     private int targetPort;
+    private byte[] security;
+    private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
-    public void operationComplete(ChannelFuture future) {
+    public void operationComplete(ChannelFuture future) throws NoSuchAlgorithmException, NoSuchPaddingException {
         if(future.isSuccess()) {
             log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
-            channelPipeline.remove(NettyTcpDecoder.class);
+            if(!ArrayUtil.isEmpty(security)) {
+                nettyTcpDecoder.setByteBufAnalyser(new EncryptMessageAnalyser());
+            } else {
+                channelPipeline.remove(NettyTcpDecoder.class);
+            }
             channelPipeline.remove(NettyTcpEncoder.class);
             channelPipeline.remove(NegotiateRequestHandler.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestHandler.class);
             channelPipeline.remove(CmdRequestHandler.class);
-            channelPipeline.addLast("proxy-fording-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.addLast("proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
 
-    public Socks5ProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort) {
+    public Socks5ProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort, byte[] security, NettyTcpDecoder nettyTcpDecoder) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.targetHost = targetHost;
         this.targetPort = targetPort;
+        this.security = security;
+        this.nettyTcpDecoder = nettyTcpDecoder;
     }
 }

@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
  * @version V1.0
  * @since 2020-02-22 23:46
  **/
-public class ForwardingEncryptedMessageHandler extends ForwardingMessageHandler {
+public class ForwardingDecryptedMessageHandler extends ForwardingMessageHandler {
 
     private final Key key;
     private final Cipher cipher;
@@ -29,15 +29,14 @@ public class ForwardingEncryptedMessageHandler extends ForwardingMessageHandler 
             ByteBuf buf = (ByteBuf)msg;
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
-            bytes = AlgorithmUtil.encrypt(cipher, key, bytes);
+            bytes = AlgorithmUtil.decrypt(cipher, key, bytes);
             buf.clear();
-            buf.writeShort(bytes.length);
             buf.writeBytes(bytes);
         }
         super.channelRead(ctx, msg);
     }
 
-    public ForwardingEncryptedMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, byte[] keyBytes) throws NoSuchPaddingException, NoSuchAlgorithmException {
+    public ForwardingDecryptedMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, byte[] keyBytes) throws NoSuchPaddingException, NoSuchAlgorithmException {
         super(remoteChannelHandlerContext);
         this.key = new SecretKeySpec(keyBytes, "AES");
         this.cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");

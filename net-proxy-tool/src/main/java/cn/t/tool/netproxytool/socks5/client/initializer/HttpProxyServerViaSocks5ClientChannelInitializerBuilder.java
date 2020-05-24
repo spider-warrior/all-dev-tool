@@ -35,6 +35,6 @@ public class HttpProxyServerViaSocks5ClientChannelInitializerBuilder extends Net
 
         addChannelHandlerSupplier(() -> new NegotiateResponseHandler(userConfig, targetHost, targetPort));
         addChannelHandlerSupplier(AuthenticationResponseHandler::new);
-        addChannelHandlerSupplier(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext));
+        addChannelHandlerSupplier(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext, userConfig));
     }
 }

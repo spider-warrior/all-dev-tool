@@ -12,7 +12,7 @@ public class UserConfig {
     private String username;
     private String password;
 
-    private String security;
+    private byte[] security;
 
 
     public String getSocks5ServerHost() {
@@ -47,11 +47,11 @@ public class UserConfig {
         this.password = password;
     }
 
-    public String getSecurity() {
+    public byte[] getSecurity() {
         return security;
     }
 
-    public void setSecurity(String security) {
+    public void setSecurity(byte[] security) {
         this.security = security;
     }
 }

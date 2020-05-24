@@ -20,13 +20,15 @@ import java.util.List;
 public class HttpProxyServerViaSocks5 {
     public static void main(String[] args) {
         UserConfig userConfig = new UserConfig();
-        if(args.length < 3) {
+        if(args.length < 2) {
             System.out.println("参数格式: host:port username:password security");
             System.exit(1);
         }
         Socks5ClientUtil.analyseAndConfigSocks5Server(userConfig, args[0]);
         Socks5ClientUtil.analyseAndConfigUser(userConfig, args[1]);
-        Socks5ClientUtil.analyseAndConfigSecurity(userConfig, args[2]);
+        if(args.length > 2) {
+            Socks5ClientUtil.analyseAndConfigSecurity(userConfig, args[2]);
+        }
         List<DaemonServer> daemonServerList = new ArrayList<>();
         NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server-via-socks5", HttpProxyServerConfig.SERVER_PORT, new HttpProxyServerViaSocks5ChannelInitializerBuilder(userConfig).build());
         daemonServerList.add(proxyServer);

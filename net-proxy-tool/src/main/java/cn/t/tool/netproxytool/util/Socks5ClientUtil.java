@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.util;
 
 import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.util.common.StringUtil;
+import cn.t.util.security.message.base64.Base64Util;
 
 /**
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
@@ -50,6 +51,6 @@ public class Socks5ClientUtil {
         if(StringUtil.isEmpty(security)) {
             return;
         }
-        userConfig.setSecurity(security);
+        userConfig.setSecurity(Base64Util.decode(security.getBytes()));
     }
 }

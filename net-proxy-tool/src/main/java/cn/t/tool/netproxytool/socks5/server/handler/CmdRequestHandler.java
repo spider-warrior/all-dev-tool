@@ -8,11 +8,15 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
+import cn.t.tool.netproxytool.socks5.server.UserRepository;
 import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInitializerBuilder;
 import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
+import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
+import cn.t.util.security.message.base64.Base64Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,10 +31,14 @@ import java.net.InetSocketAddress;
  * @since 2020-02-20 22:30
  **/
 @Slf4j
-public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
+public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> implements NettyTcpDecoderAware {
+
+    private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CmdRequest msg) {
+        String username = ctx.channel().attr(Socks5ServerConfig.CHANNEL_USERNAME).get();
+        String security = UserRepository.getUserSecurity(username);
         if(msg.getRequestSocks5Cmd() == Socks5Cmd.CONNECT) {
             InetSocketAddress remoteAddress = (InetSocketAddress)ctx.channel().remoteAddress();
             String targetHost = new String(msg.getTargetAddress());
@@ -48,7 +56,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
                 if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
                     log.info("[{}]: 代理客户端成功, remote: {}:{}", remoteAddress, targetHost, targetPort);
                     ChannelPromise promise = ctx.newPromise();
-                    promise.addListener( new Socks5ProxyForwardingResultListener(ctx, sender, targetHost, targetPort));
+                    promise.addListener(new Socks5ProxyForwardingResultListener(ctx, sender, targetHost, targetPort, Base64Util.decode(security.getBytes()), nettyTcpDecoder));
                     ctx.writeAndFlush(cmdResponse, promise);
                 } else {
                     log.error("[{}]: 代理客户端失败, remote: {}:{}", remoteAddress, targetHost, targetPort);
@@ -56,7 +64,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
                 }
             };
             String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
-            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
+            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(ctx, proxyBuildResultListener, Base64Util.decode(security.getBytes())).build();
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
         } else {
@@ -64,4 +72,8 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
         }
     }
 
+    @Override
+    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
+        this.nettyTcpDecoder = nettyTcpDecoder;
+    }
 }
