@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.http.server.initializer;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
-import cn.t.tool.netproxytool.http.server.handler.FetchMessageHandler;
+import cn.t.tool.netproxytool.http.server.handler.HttpFetchMessageHandler;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -14,6 +14,6 @@ public class HttpProxyServerHttpClientChannelInitializerBuilder extends NettyCha
     public HttpProxyServerHttpClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
         setLoggingHandlerLogLevel(HttpProxyServerClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(HttpProxyServerClientConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
-        addChannelHandlerSupplier(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
+        addChannelHandlerSupplier(() -> new HttpFetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
     }
 }
