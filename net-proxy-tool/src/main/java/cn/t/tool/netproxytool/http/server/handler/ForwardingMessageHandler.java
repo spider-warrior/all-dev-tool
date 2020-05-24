@@ -1,8 +1,8 @@
 package cn.t.tool.netproxytool.http.server.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,25 +15,29 @@ import java.net.InetSocketAddress;
  * @version V1.0
  * @since 2020-02-22 23:46
  **/
-public class ForwardingMessageHandler extends ChannelInboundHandlerAdapter {
+public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final ChannelHandlerContext remoteChannelHandlerContext;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ByteBuf byteBuf = (ByteBuf)msg;
-        InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.info("[{}:{}]: 转发消息: {} B", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), byteBuf.readableBytes());
-        remoteChannelHandlerContext.writeAndFlush(byteBuf);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(msg instanceof ByteBuf) {
+            log.info("[{} : {}]: 转发消息: {} B", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
+            remoteChannelHandlerContext.writeAndFlush(msg);
+        } else {
+            super.channelRead(ctx, msg);
+        }
     }
-
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.info("[{}:{}]: 断开连接", inetSocketAddress.getHostString(), inetSocketAddress.getPort());
+        if(this.getClass().equals(ForwardingMessageHandler.class)) {
+            log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
+        } else {
+            log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
+        }
         remoteChannelHandlerContext.close();
     }
 
