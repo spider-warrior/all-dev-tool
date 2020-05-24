@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.util;
 
+import cn.t.tool.netproxytool.constants.ThreadPoolConfig;
 import cn.t.tool.netproxytool.monitor.ThreadPoolMonitor;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
 
 import java.util.concurrent.*;
 
@@ -35,16 +35,16 @@ public class ThreadUtil {
 
     private static class Socks5ThreadPoolHolder {
         private static final ThreadPoolExecutor PROXY_THREAD_POOL_EXECUTOR = new MonitoredThreadPool(
-            Socks5ProxyConfig.PROXY_CORE_THREAD_COUNT,
-            Socks5ProxyConfig.PROXY_MAX_THREAD_COUNT,
-            Socks5ProxyConfig.PROXY_THREAD_TT,
-            Socks5ProxyConfig.PROXY_THREAD_TT_TIME_UNIT,
-            new ArrayBlockingQueue<>(Socks5ProxyConfig.PROXY_BLOCKING_THREAD_COUNT),
-            new MonitoredThreadFactory(Socks5ProxyConfig.PROXY_THREAD_POOL_NAME),
-            Socks5ProxyConfig.PROXY_THREAD_POOL_NAME
+            ThreadPoolConfig.PROXY_CORE_THREAD_COUNT,
+            ThreadPoolConfig.PROXY_MAX_THREAD_COUNT,
+            ThreadPoolConfig.PROXY_THREAD_TT,
+            ThreadPoolConfig.PROXY_THREAD_TT_TIME_UNIT,
+            new ArrayBlockingQueue<>(ThreadPoolConfig.PROXY_BLOCKING_THREAD_COUNT),
+            new MonitoredThreadFactory(ThreadPoolConfig.PROXY_THREAD_POOL_NAME),
+            ThreadPoolConfig.PROXY_THREAD_POOL_NAME
         );
         static {
-            scheduleTask(new ThreadPoolMonitor(Socks5ProxyConfig.PROXY_THREAD_POOL_NAME, PROXY_THREAD_POOL_EXECUTOR), 3, 5);
+            scheduleTask(new ThreadPoolMonitor(ThreadPoolConfig.PROXY_THREAD_POOL_NAME, PROXY_THREAD_POOL_EXECUTOR), 3, 5);
         }
     }
 
