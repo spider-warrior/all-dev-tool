@@ -1,10 +1,7 @@
 package cn.t.tool.netproxytool.handler;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -20,41 +17,22 @@ import java.security.NoSuchAlgorithmException;
  * @version V1.0
  * @since 2020-02-22 23:46
  **/
-public class ForwardingEncryptedMessageHandler extends ChannelDuplexHandler {
+public class ForwardingEncryptedMessageHandler extends ForwardingMessageHandler {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private final ChannelHandlerContext remoteChannelHandlerContext;
     private final Cipher cipher;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof ByteBuf) {
+            //进行消息加密
             ByteBuf buf = (ByteBuf)msg;
-            log.info("[{} : {}]: 转发消息: {} B", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
             bytes = cipher.doFinal(bytes);
             buf.clear();
             buf.writeBytes(bytes);
-            remoteChannelHandlerContext.writeAndFlush(msg);
-        } else {
-            super.channelRead(ctx, msg);
         }
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        if(remoteChannelHandlerContext != null) {
-            if(this.getClass().equals(ForwardingEncryptedMessageHandler.class)) {
-                log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
-            } else {
-                log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
-            }
-            remoteChannelHandlerContext.close();
-        } else {
-            log.warn("[{}]: 断开连接，没有获取代理句柄无法释放代理资源", ctx.channel().remoteAddress());
-        }
+        super.channelRead(ctx, msg);
     }
 
     @Override
@@ -64,9 +42,9 @@ public class ForwardingEncryptedMessageHandler extends ChannelDuplexHandler {
     }
 
     public ForwardingEncryptedMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, String keyStr) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        super(remoteChannelHandlerContext);
         Key key = new SecretKeySpec(keyStr.getBytes(), "AES");
         this.cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key);
-        this.remoteChannelHandlerContext = remoteChannelHandlerContext;
     }
 }
