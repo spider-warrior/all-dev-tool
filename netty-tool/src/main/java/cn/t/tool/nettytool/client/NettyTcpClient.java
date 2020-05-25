@@ -2,15 +2,18 @@ package cn.t.tool.nettytool.client;
 
 import cn.t.tool.nettytool.launcher.Launcher;
 import cn.t.tool.nettytool.server.listener.DaemonListener;
+import cn.t.util.common.CollectionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class NettyTcpClient extends AbstractDaemonClient {
 
@@ -19,6 +22,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
     private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel clientChannel;
+    private Map<AttributeKey<Object>, Object> attrs;
 
     @Override
     public void doStart(Launcher launcher) {
@@ -28,6 +32,11 @@ public class NettyTcpClient extends AbstractDaemonClient {
             .channel(NioSocketChannel.class)
             .option(ChannelOption.SO_KEEPALIVE, true)
             .handler(channelInitializer);
+        if(!CollectionUtil.isEmpty(attrs)) {
+            for(Map.Entry<AttributeKey<Object>, Object> entry: attrs.entrySet()) {
+                bootstrap.attr(entry.getKey(), entry.getValue());
+            }
+        }
         try {
             logger.info("TCP Client: [{}] has been started successfully", name);
             if(launcher != null) {
@@ -70,8 +79,13 @@ public class NettyTcpClient extends AbstractDaemonClient {
     }
 
     public NettyTcpClient(String name, String host, int port, ChannelInitializer<SocketChannel> channelInitializer) {
+        this(name, host, port, channelInitializer, null);
+    }
+
+    public NettyTcpClient(String name, String host, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<Object>, Object> attrs) {
         super(name, host, port);
         this.channelInitializer = channelInitializer;
+        this.attrs = attrs;
     }
 
     public void setDaemonListenerList(List<DaemonListener> daemonListenerList) {

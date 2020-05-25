@@ -2,17 +2,20 @@ package cn.t.tool.nettytool.server;
 
 import cn.t.tool.nettytool.launcher.Launcher;
 import cn.t.tool.nettytool.server.listener.DaemonListener;
+import cn.t.util.common.CollectionUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class NettyTcpServer extends AbstractDaemonServer {
 
@@ -21,6 +24,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
     private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel serverChannel;
+    private Map<AttributeKey<Object>, Object> childAttrs;
 
     public void doStart(Launcher launcher) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));
@@ -50,6 +54,11 @@ public class NettyTcpServer extends AbstractDaemonServer {
 //                .childOption(ChannelOption.SO_KEEPALIVE,true)
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(channelInitializer);
+            if(!CollectionUtil.isEmpty(childAttrs)) {
+                for(Map.Entry<AttributeKey<Object>, Object> entry: childAttrs.entrySet()) {
+                    bootstrap.childAttr(entry.getKey(), entry.getValue());
+                }
+            }
             ChannelFuture openFuture = bootstrap.bind(getPort());
             serverChannel = openFuture.channel();
             ChannelFuture closeFuture = serverChannel.closeFuture();
@@ -91,8 +100,13 @@ public class NettyTcpServer extends AbstractDaemonServer {
     }
 
     public NettyTcpServer(String name, int port, ChannelInitializer<SocketChannel> channelInitializer) {
+        this(name, port, channelInitializer, null);
+    }
+
+    public NettyTcpServer(String name, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<Object>, Object> childAttrs) {
         super(name, port);
         this.channelInitializer = channelInitializer;
+        this.childAttrs = childAttrs;
     }
 
 
