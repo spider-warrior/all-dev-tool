@@ -21,7 +21,7 @@
             <charset>UTF-8</charset>
         </encoder>
     </appender>
-    <appender name="LoggingHandler" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="EventLoggingHandler" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/logging-handler.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
@@ -60,8 +60,8 @@
             <charset>UTF-8</charset>
         </encoder>
     </appender>
-    <logger name="EventLoggingHandler" level="INFO" additivity="false">
-        <appender-ref ref="LoggingHandler"/>
+    <logger name="EventLogger" level="INFO" additivity="false">
+        <appender-ref ref="EventLoggingHandler"/>
     </logger>
     <logger name="ThreadMonitor" level="INFO" additivity="false">
         <appender-ref ref="ThreadMonitor"/>
