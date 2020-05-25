@@ -22,7 +22,6 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -40,7 +39,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
     private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+    protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) throws NoSuchPaddingException, NoSuchAlgorithmException {
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());

@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.http.constants;
 
 import cn.t.util.common.SystemUtil;
 import io.netty.handler.logging.LogLevel;
+import io.netty.util.AttributeKey;
 
 /**
  * 服务配置

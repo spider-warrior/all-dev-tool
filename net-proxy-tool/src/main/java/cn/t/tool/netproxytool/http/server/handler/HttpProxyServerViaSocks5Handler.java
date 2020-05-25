@@ -3,6 +3,7 @@ package cn.t.tool.netproxytool.http.server.handler;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerViaSocks5ClientBuildResultListener;
 import cn.t.tool.netproxytool.socks5.client.initializer.HttpProxyServerViaSocks5ClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
@@ -14,9 +15,12 @@ import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_GATEWAY;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -70,7 +74,9 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
         };
         //连接socks5服务器
         NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, userConfig, targetHost, targetPort).build();
-        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer);
+        Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
+        attrs.put(HttpProxyServerClientConfig.USER_CONFIG_KEY, userConfig);
+        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer, attrs);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }
 
@@ -95,7 +101,9 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             }
         };
         NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, userConfig, targetHost, targetPort).build();
-        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer);
+        Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
+        attrs.put(HttpProxyServerClientConfig.USER_CONFIG_KEY, userConfig);
+        NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer, attrs);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
     }
 

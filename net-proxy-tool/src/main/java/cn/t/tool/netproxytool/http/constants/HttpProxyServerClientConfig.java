@@ -1,6 +1,7 @@
 package cn.t.tool.netproxytool.http.constants;
 
 import io.netty.handler.logging.LogLevel;
+import io.netty.util.AttributeKey;
 
 /**
  * 服务配置
@@ -17,4 +18,5 @@ public class HttpProxyServerClientConfig {
 
     public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.DEBUG;
 
+    public static final AttributeKey<Object> USER_CONFIG_KEY = AttributeKey.newInstance("user-config");
 }
