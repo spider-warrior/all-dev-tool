@@ -44,7 +44,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
             String targetHost = new String(msg.getTargetAddress());
             int targetPort = msg.getTargetPort();
             log.info("[{}]: [{}], 地址类型: {}, 地址: {}， 目标端口: {}", remoteAddress, Socks5Cmd.CONNECT, msg.getSocks5AddressType(), targetHost, targetPort);
-            ProxyBuildResultListener proxyBuildResultListener = (status, sender) -> {
+            ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
                 Socks5CmdExecutionStatus socks5CmdExecutionStatus = Socks5CmdExecutionStatus.getSocks5CmdExecutionStatus(status);
                 CmdResponse cmdResponse = new CmdResponse();
                 cmdResponse.setVersion(msg.getVersion());
@@ -56,7 +56,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
                 if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
                     log.info("[{}]: 代理客户端成功, remote: {}:{}", remoteAddress, targetHost, targetPort);
                     ChannelPromise promise = ctx.newPromise();
-                    promise.addListener(new Socks5ProxyForwardingResultListener(ctx, sender, targetHost, targetPort, Base64Util.decode(security.getBytes()), nettyTcpDecoder));
+                    promise.addListener(new Socks5ProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort, Base64Util.decode(security.getBytes()), nettyTcpDecoder));
                     ctx.writeAndFlush(cmdResponse, promise);
                 } else {
                     log.error("[{}]: 代理客户端失败, remote: {}:{}", remoteAddress, targetHost, targetPort);
