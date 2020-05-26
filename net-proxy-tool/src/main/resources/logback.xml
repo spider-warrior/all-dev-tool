@@ -22,9 +22,9 @@
         </encoder>
     </appender>
     <appender name="EventLoggingHandler" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${logHome}/logging-handler.log</File>
+        <File>${logHome}/event-logging-handler.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>event-logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
