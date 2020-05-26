@@ -24,7 +24,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
     private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel serverChannel;
-    private Map<AttributeKey<Object>, Object> childAttrs;
+    private final Map<AttributeKey<Object>, Object> childAttrs;
 
     public void doStart(Launcher launcher) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));
