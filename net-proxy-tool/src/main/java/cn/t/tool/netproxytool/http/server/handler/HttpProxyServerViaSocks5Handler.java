@@ -74,7 +74,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
         };
         //连接socks5服务器
         NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
-        Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
+        Map<AttributeKey<?>, Object> attrs = new HashMap<>();
         attrs.put(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer, attrs);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
@@ -101,7 +101,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             }
         };
         NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
-        Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
+        Map<AttributeKey<?>, Object> attrs = new HashMap<>();
         attrs.put(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer, attrs);
         ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));

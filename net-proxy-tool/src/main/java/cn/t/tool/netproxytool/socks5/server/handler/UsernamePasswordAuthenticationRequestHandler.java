@@ -1,11 +1,12 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
+import cn.t.tool.netproxytool.socks5.config.ServerConfig;
+import cn.t.tool.netproxytool.socks5.config.UserConfig;
 import cn.t.tool.netproxytool.socks5.constants.AuthenticationStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
-import cn.t.tool.netproxytool.socks5.server.UserRepository;
 import cn.t.tool.netproxytool.socks5.server.listener.AuthenticationResponseWriteListener;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
@@ -31,8 +32,15 @@ public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelI
         String password = new String(usernamePasswordAuthenticationRequest.getPassword());
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setVersion(Socks5ProtocolConstants.VERSION);
-        String passwordInConfig = UserRepository.getPassword(username);
-        if(passwordInConfig != null && passwordInConfig.equals(password)) {
+        ServerConfig serverConfig = ctx.channel().attr(Socks5ServerDaemonConfig.SERVER_CONFIG_KEY).get();
+        boolean authenticationSuccess = false;
+        if(serverConfig != null) {
+            UserConfig userConfig = serverConfig.getUserConfigMap().get(username);
+            if(userConfig != null && userConfig.getPassword() != null && userConfig.getPassword().equals(password)) {
+                authenticationSuccess = true;
+            }
+        }
+        if(authenticationSuccess) {
             log.info("用户名密码验证通过, username: {}", username);
             ctx.channel().attr(Socks5ServerDaemonConfig.CHANNEL_USERNAME).set(username);
             authenticationResponse.setStatus(AuthenticationStatus.SUCCESS.value);

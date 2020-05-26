@@ -57,11 +57,11 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 ctx.writeAndFlush(cmdRequest, promise);
                 //用户名密码认证
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
-                Attribute<Object> socks5ClientConfigAttr = (ctx.channel().attr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY));
+                Attribute<Socks5ClientConfig> socks5ClientConfigAttr = (ctx.channel().attr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY));
                 if(socks5ClientConfigAttr == null || socks5ClientConfigAttr.get() == null) {
                     throw new ProxyException("客户端未配置Socks5ClientConfig");
                 }
-                Socks5ClientConfig socks5ClientConfig = (Socks5ClientConfig) socks5ClientConfigAttr.get();
+                Socks5ClientConfig socks5ClientConfig = socks5ClientConfigAttr.get();
                 UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = Socks5MessageUtil.buildUsernamePasswordAuthenticationRequest(socks5ClientConfig.getUsername().getBytes(), socks5ClientConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));

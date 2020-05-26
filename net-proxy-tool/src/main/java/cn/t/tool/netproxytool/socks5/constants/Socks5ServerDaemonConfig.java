@@ -1,5 +1,6 @@
 package cn.t.tool.netproxytool.socks5.constants;
 
+import cn.t.tool.netproxytool.socks5.config.ServerConfig;
 import cn.t.util.common.SystemUtil;
 import io.netty.handler.logging.LogLevel;
 import io.netty.util.AttributeKey;
@@ -23,7 +24,9 @@ public class Socks5ServerDaemonConfig {
     public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 60;
 
     public static final String SOCKS5_SERVER_HOME_KEY = "SOCKS5_HOME";
-    public static final String SOCKS5_SERVER_USERS_FILE = "users";
+    public static final String SOCKS5_SERVER_USERS_CONFIG_FILE = "users";
 
     public static final AttributeKey<String> CHANNEL_USERNAME = AttributeKey.newInstance("channel_username");
+
+    public static final AttributeKey<ServerConfig> SERVER_CONFIG_KEY = AttributeKey.newInstance("server_config_key");
 }

@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author yj
@@ -12,13 +12,13 @@ public class ServerConfig {
     /**
      * 用户配置
      */
-    private List<UserConfig> userConfigList = new ArrayList<>();
+    private Map<String, UserConfig> userConfigMap = new HashMap<>();
 
-    public List<UserConfig> getUserConfigList() {
-        return userConfigList;
+    public Map<String, UserConfig> getUserConfigMap() {
+        return userConfigMap;
     }
 
-    public void setUserConfigList(List<UserConfig> userConfigList) {
-        this.userConfigList = userConfigList;
+    public void setUserConfigMap(Map<String, UserConfig> userConfigMap) {
+        this.userConfigMap = userConfigMap;
     }
 }

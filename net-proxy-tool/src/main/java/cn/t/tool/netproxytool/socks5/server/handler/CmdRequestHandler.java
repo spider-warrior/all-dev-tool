@@ -2,13 +2,14 @@ package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.exception.ProxyException;
+import cn.t.tool.netproxytool.socks5.config.ServerConfig;
+import cn.t.tool.netproxytool.socks5.config.UserConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.netproxytool.socks5.server.UserRepository;
 import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInitializerBuilder;
 import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
@@ -16,8 +17,8 @@ import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.client.NettyTcpClient;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
+import cn.t.util.common.ArrayUtil;
 import cn.t.util.common.StringUtil;
-import cn.t.util.security.message.base64.Base64Util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -39,11 +40,17 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CmdRequest msg) {
         String username = ctx.channel().attr(Socks5ServerDaemonConfig.CHANNEL_USERNAME).get();
-        String security = null;
+        byte[] security = null;
         if(!StringUtil.isEmpty(username)) {
-            security = UserRepository.getUserSecurity(username);
+            ServerConfig serverConfig = ctx.channel().attr(Socks5ServerDaemonConfig.SERVER_CONFIG_KEY).get();
+            if(serverConfig != null) {
+                UserConfig userConfig = serverConfig.getUserConfigMap().get(username);
+                if(userConfig != null) {
+                    security = userConfig.getSecurity();
+                }
+            }
         }
-        byte[] securityBytes = StringUtil.isEmpty(security) ? null : Base64Util.decode(security.getBytes());
+        byte[] securityBytes = ArrayUtil.isEmpty(security) ? null : security;
         if(msg.getRequestSocks5Cmd() == Socks5Cmd.CONNECT) {
             InetSocketAddress remoteAddress = (InetSocketAddress)ctx.channel().remoteAddress();
             String targetHost = new String(msg.getTargetAddress());
