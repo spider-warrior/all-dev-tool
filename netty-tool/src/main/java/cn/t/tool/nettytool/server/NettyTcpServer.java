@@ -57,8 +57,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
             if(!CollectionUtil.isEmpty(childAttrs)) {
                 for(Map.Entry<AttributeKey<?>, ?> entry: childAttrs.entrySet()) {
                     AttributeKey k = entry.getKey();
-                    Object value = entry.getValue();
-                    bootstrap.childAttr(k, value);
+                    bootstrap.childAttr(k, entry.getValue());
                 }
             }
             ChannelFuture openFuture = bootstrap.bind(getPort());

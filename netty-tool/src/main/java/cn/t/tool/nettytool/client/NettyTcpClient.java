@@ -22,7 +22,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
     private final ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel clientChannel;
-    private final Map<AttributeKey<Object>, Object> attrs;
+    private final Map<AttributeKey<?>, ?> attrs;
 
     @Override
     public void doStart(Launcher launcher) {
@@ -33,8 +33,9 @@ public class NettyTcpClient extends AbstractDaemonClient {
             .option(ChannelOption.SO_KEEPALIVE, true)
             .handler(channelInitializer);
         if(!CollectionUtil.isEmpty(attrs)) {
-            for(Map.Entry<AttributeKey<Object>, Object> entry: attrs.entrySet()) {
-                bootstrap.attr(entry.getKey(), entry.getValue());
+            for(Map.Entry<AttributeKey<?>, ?> entry: attrs.entrySet()) {
+                AttributeKey key = entry.getKey();
+                bootstrap.attr(key, entry.getValue());
             }
         }
         try {
@@ -82,7 +83,7 @@ public class NettyTcpClient extends AbstractDaemonClient {
         this(name, host, port, channelInitializer, null);
     }
 
-    public NettyTcpClient(String name, String host, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<Object>, Object> attrs) {
+    public NettyTcpClient(String name, String host, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<?>, ?> attrs) {
         super(name, host, port);
         this.channelInitializer = channelInitializer;
         this.attrs = attrs;
