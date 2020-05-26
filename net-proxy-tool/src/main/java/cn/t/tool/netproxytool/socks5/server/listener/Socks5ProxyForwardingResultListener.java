@@ -14,9 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.crypto.NoSuchPaddingException;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * http代理结果监听器
  * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
@@ -26,15 +23,15 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public class Socks5ProxyForwardingResultListener implements ChannelFutureListener {
 
-    private ChannelHandlerContext localChannelHandlerContext;
-    private ChannelHandlerContext remoteChannelHandlerContext;
-    private String targetHost;
-    private int targetPort;
-    private byte[] security;
-    private NettyTcpDecoder nettyTcpDecoder;
+    private final ChannelHandlerContext localChannelHandlerContext;
+    private final ChannelHandlerContext remoteChannelHandlerContext;
+    private final String targetHost;
+    private final int targetPort;
+    private final byte[] security;
+    private final NettyTcpDecoder nettyTcpDecoder;
 
     @Override
-    public void operationComplete(ChannelFuture future) throws NoSuchAlgorithmException, NoSuchPaddingException {
+    public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
             log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
             //已经通知客户端代理成功, 切换handler
