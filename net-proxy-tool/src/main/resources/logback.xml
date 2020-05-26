@@ -26,7 +26,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
-            <maxFileSize>100MB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -39,7 +39,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>thread-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
-            <maxFileSize>100MB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -52,7 +52,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>thread-pool-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
-            <maxFileSize>100MB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>

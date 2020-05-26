@@ -30,12 +30,12 @@ public class MonitoredThreadPool extends ThreadPoolExecutor {
     /**
      * 保存任务开始执行的时间，当任务结束时，用任务结束时间减去开始时间计算任务执行时间
      */
-    private ConcurrentHashMap<String, Long> startTimes;
+    private final ConcurrentHashMap<String, Long> startTimes;
 
     /**
      * 线程池名称，一般以业务名称命名，方便区分
      */
-    private String poolName;
+    private final String poolName;
 
     /**
      * 调用父类的构造方法，并初始化HashMap和线程池名称

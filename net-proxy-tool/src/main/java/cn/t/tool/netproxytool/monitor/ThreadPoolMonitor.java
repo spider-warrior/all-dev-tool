@@ -18,8 +18,8 @@ public class ThreadPoolMonitor implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorConstants.THREAD_POOL_MONITOR_LOG_NAME);
 
-    private String poolName;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private final String poolName;
+    private final ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     public void run() {
