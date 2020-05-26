@@ -24,7 +24,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
     private ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel serverChannel;
-    private final Map<AttributeKey<Object>, Object> childAttrs;
+    private final Map<AttributeKey<?>, ?> childAttrs;
 
     public void doStart(Launcher launcher) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));
@@ -55,8 +55,10 @@ public class NettyTcpServer extends AbstractDaemonServer {
                 .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(channelInitializer);
             if(!CollectionUtil.isEmpty(childAttrs)) {
-                for(Map.Entry<AttributeKey<Object>, Object> entry: childAttrs.entrySet()) {
-                    bootstrap.childAttr(entry.getKey(), entry.getValue());
+                for(Map.Entry<AttributeKey<?>, ?> entry: childAttrs.entrySet()) {
+                    AttributeKey k = entry.getKey();
+                    Object value = entry.getValue();
+                    bootstrap.childAttr(k, value);
                 }
             }
             ChannelFuture openFuture = bootstrap.bind(getPort());
@@ -103,7 +105,7 @@ public class NettyTcpServer extends AbstractDaemonServer {
         this(name, port, channelInitializer, null);
     }
 
-    public NettyTcpServer(String name, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<Object>, Object> childAttrs) {
+    public NettyTcpServer(String name, int port, ChannelInitializer<SocketChannel> channelInitializer, Map<AttributeKey<?>, ?> childAttrs) {
         super(name, port);
         this.channelInitializer = channelInitializer;
         this.childAttrs = childAttrs;
