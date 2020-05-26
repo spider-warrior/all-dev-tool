@@ -19,10 +19,10 @@ public class NettyTcpClient extends AbstractDaemonClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyTcpClient.class);
 
-    private ChannelInitializer<SocketChannel> channelInitializer;
+    private final ChannelInitializer<SocketChannel> channelInitializer;
     private List<DaemonListener> daemonListenerList;
     private Channel clientChannel;
-    private Map<AttributeKey<Object>, Object> attrs;
+    private final Map<AttributeKey<Object>, Object> attrs;
 
     @Override
     public void doStart(Launcher launcher) {

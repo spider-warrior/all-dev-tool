@@ -35,7 +35,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 @Slf4j
 public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private UserConfig userConfig;
+    private final UserConfig userConfig;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -73,7 +73,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             }
         };
         //连接socks5服务器
-        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, userConfig, targetHost, targetPort).build();
+        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
         Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
         attrs.put(HttpProxyServerClientConfig.USER_CONFIG_KEY, userConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer, attrs);
@@ -100,7 +100,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, userConfig, targetHost, targetPort).build();
+        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
         Map<AttributeKey<Object>, Object> attrs = new HashMap<>();
         attrs.put(HttpProxyServerClientConfig.USER_CONFIG_KEY, userConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, userConfig.getSocks5ServerHost(), userConfig.getSocks5ServerPort(), channelInitializer, attrs);

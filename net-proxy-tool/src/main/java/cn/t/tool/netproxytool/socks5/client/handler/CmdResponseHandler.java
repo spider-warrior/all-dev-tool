@@ -7,6 +7,7 @@ import cn.t.tool.netproxytool.handler.ForwardingDecryptedMessageHandler;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
@@ -14,11 +15,11 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
-import cn.t.util.common.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpRequestEncoder;
+import io.netty.util.Attribute;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.NoSuchPaddingException;
@@ -35,7 +36,6 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
 
     private final ProxyBuildResultListener proxyBuildResultListener;
     private final ChannelHandlerContext remoteChannelHandlerContext;
-    private final UserConfig userConfig;
     private NettyTcpDecoder nettyTcpDecoder;
 
     @Override
@@ -43,8 +43,9 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());
+            Attribute<Object> userConfigAttr = ctx.channel().attr(HttpProxyServerClientConfig.USER_CONFIG_KEY);
             ChannelPipeline channelPipeline = ctx.channel().pipeline();
-            if(ArrayUtil.isEmpty(userConfig.getSecurity())) {
+            if(userConfigAttr == null || userConfigAttr.get() == null) {
                 channelPipeline.remove(NettyTcpDecoder.class);
             } else {
                 nettyTcpDecoder.setByteBufAnalyser(new DecryptMessageAnalyser());
@@ -56,10 +57,10 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
 
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);
-
-            if(ArrayUtil.isEmpty(userConfig.getSecurity())) {
+            if(userConfigAttr == null || userConfigAttr.get() == null) {
                 channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
             } else {
+                UserConfig userConfig = (UserConfig)userConfigAttr.get();
                 //消息加密
                 channelPipeline.addFirst("http-via-socks5-proxy-encrypt-forwarding-encoder", new EncryptedMessageEncoder(userConfig.getSecurity()));
                 //消息解密转发器
@@ -71,10 +72,9 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
         }
     }
 
-    public CmdResponseHandler(ProxyBuildResultListener proxyBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext, UserConfig userConfig) {
+    public CmdResponseHandler(ProxyBuildResultListener proxyBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext) {
         this.proxyBuildResultListener = proxyBuildResultListener;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
-        this.userConfig = userConfig;
     }
 
     @Override

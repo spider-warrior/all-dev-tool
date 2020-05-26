@@ -23,7 +23,7 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
  **/
 public class HttpProxyServerViaSocks5ClientChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
-    public HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, UserConfig userConfig, String targetHost, short targetPort) {
+    public HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, String targetHost, short targetPort) {
         setLoggingHandlerLogLevel(Socks5ClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         setIdleState(Socks5ClientConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(NegotiateResponseAnalyse::new);
@@ -33,8 +33,8 @@ public class HttpProxyServerViaSocks5ClientChannelInitializerBuilder extends Net
         addEncoderListsSupplier(CmdRequestEncoder::new);
         addChannelHandlerSupplier(HttpRequestEncoder::new);
 
-        addChannelHandlerSupplier(() -> new NegotiateResponseHandler(userConfig, targetHost, targetPort));
+        addChannelHandlerSupplier(() -> new NegotiateResponseHandler(targetHost, targetPort));
         addChannelHandlerSupplier(AuthenticationResponseHandler::new);
-        addChannelHandlerSupplier(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext, userConfig));
+        addChannelHandlerSupplier(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext));
     }
 }

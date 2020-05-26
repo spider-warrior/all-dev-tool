@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.socks5.client.handler;
 
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.http.UserConfig;
+import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.socks5.MessageBuildUtil;
 import cn.t.tool.netproxytool.socks5.client.listener.AuthenticationRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
@@ -17,6 +18,7 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +32,8 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
 
     private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
 
-    private UserConfig userConfig;
-    private String targetHost;
-    private short targetPort;
+    private final String targetHost;
+    private final short targetPort;
 
     private NettyTcpDecoder nettyTcpDecoder;
 
@@ -56,6 +57,11 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 ctx.writeAndFlush(cmdRequest, promise);
                 //用户名密码认证
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
+                Attribute<Object> userConfigAttr = (ctx.channel().attr(HttpProxyServerClientConfig.USER_CONFIG_KEY));
+                if(userConfigAttr == null || userConfigAttr.get() == null) {
+                    throw new ProxyException("客户端未配置UserConfig");
+                }
+                UserConfig userConfig = (UserConfig) userConfigAttr.get();
                 UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = MessageBuildUtil.buildUsernamePasswordAuthenticationRequest(userConfig.getUsername().getBytes(), userConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));
@@ -83,9 +89,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
         this.nettyTcpDecoder = nettyTcpDecoder;
     }
 
-
-    public NegotiateResponseHandler(UserConfig userConfig, String targetHost, short targetPort) {
-        this.userConfig = userConfig;
+    public NegotiateResponseHandler(String targetHost, short targetPort) {
         this.targetHost = targetHost;
         this.targetPort = targetPort;
     }

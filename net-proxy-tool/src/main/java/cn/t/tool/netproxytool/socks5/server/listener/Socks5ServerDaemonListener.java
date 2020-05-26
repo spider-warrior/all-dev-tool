@@ -57,6 +57,8 @@ public class Socks5ServerDaemonListener implements DaemonListener {
             } else {
                 logger.warn("{}未设置", Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
             }
+        } else {
+            logger.warn("{} not set", Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
         }
     }
 

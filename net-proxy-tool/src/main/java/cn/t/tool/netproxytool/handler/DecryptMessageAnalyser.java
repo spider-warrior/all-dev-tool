@@ -28,7 +28,7 @@ public class DecryptMessageAnalyser extends ByteBufAnalyser {
         buf.writeBytes(byteBuf, size);
         ByteBuf dup = buf.duplicate();
         byte[] bytes = new byte[dup.readableBytes()];
-        dup.writeBytes(bytes);
+        dup.readBytes(bytes);
         logger.info("加密数据长度: {}, content: {}", bytes.length, Arrays.toString(bytes));
         return buf;
     }
