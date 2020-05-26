@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.util;
+package cn.t.tool.netproxytool.socks5.util;
 
 import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.util.common.StringUtil;

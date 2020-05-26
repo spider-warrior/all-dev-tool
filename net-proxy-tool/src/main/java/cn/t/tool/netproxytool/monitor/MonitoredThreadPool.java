@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.util;
+package cn.t.tool.netproxytool.monitor;
 
 import cn.t.tool.netproxytool.constants.MonitorConstants;
 import org.slf4j.Logger;

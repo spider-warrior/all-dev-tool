@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.http;
 
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerViaSocks5ChannelInitializerBuilder;
-import cn.t.tool.netproxytool.util.Socks5ClientUtil;
+import cn.t.tool.netproxytool.socks5.util.Socks5ClientUtil;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.NettyTcpServer;

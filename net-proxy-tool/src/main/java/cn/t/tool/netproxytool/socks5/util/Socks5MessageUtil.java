@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5;
+package cn.t.tool.netproxytool.socks5.util;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
@@ -13,7 +13,7 @@ import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest
  * @version V1.0
  * @since 2020-03-15 13:37
  **/
-public class MessageBuildUtil {
+public class Socks5MessageUtil {
 
     public static CmdRequest buildCmdRequest(byte[] hostBytes, short port) {
         CmdRequest cmdRequest = new CmdRequest();

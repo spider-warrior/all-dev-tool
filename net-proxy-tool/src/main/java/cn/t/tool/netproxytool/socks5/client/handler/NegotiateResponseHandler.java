@@ -3,7 +3,7 @@ package cn.t.tool.netproxytool.socks5.client.handler;
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
-import cn.t.tool.netproxytool.socks5.MessageBuildUtil;
+import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
 import cn.t.tool.netproxytool.socks5.client.listener.AuthenticationRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
@@ -51,7 +51,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
         } else {
             //不需要认证, 直接构建cmd请求
             if(Socks5Method.NO_AUTHENTICATION_REQUIRED == socks5Method) {
-                CmdRequest cmdRequest = MessageBuildUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
+                CmdRequest cmdRequest = Socks5MessageUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
                 ctx.writeAndFlush(cmdRequest, promise);
@@ -62,7 +62,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                     throw new ProxyException("客户端未配置UserConfig");
                 }
                 UserConfig userConfig = (UserConfig) userConfigAttr.get();
-                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = MessageBuildUtil.buildUsernamePasswordAuthenticationRequest(userConfig.getUsername().getBytes(), userConfig.getPassword().getBytes());
+                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = Socks5MessageUtil.buildUsernamePasswordAuthenticationRequest(userConfig.getUsername().getBytes(), userConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));
                 ctx.writeAndFlush(usernamePasswordAuthenticationRequest, promise);

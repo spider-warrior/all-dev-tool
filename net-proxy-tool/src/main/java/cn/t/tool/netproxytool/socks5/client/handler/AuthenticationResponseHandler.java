@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
-import cn.t.tool.netproxytool.socks5.MessageBuildUtil;
+import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
@@ -30,7 +30,7 @@ public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<A
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == response.getStatus()) {
             String targetHost = ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).get();
             Short targetPort = ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).get();
-            CmdRequest cmdRequest = MessageBuildUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
+            CmdRequest cmdRequest = Socks5MessageUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
             ChannelPromise promise = ctx.newPromise();
             promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
             ctx.writeAndFlush(cmdRequest, promise);

@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.util;
+package cn.t.tool.netproxytool.monitor;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
