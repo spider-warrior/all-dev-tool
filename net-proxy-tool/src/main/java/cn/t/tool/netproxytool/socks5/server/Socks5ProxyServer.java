@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server;
 
-import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.server.initializer.LocalToProxyChannelInitializerBuilder;
 import cn.t.tool.netproxytool.socks5.server.listener.Socks5ServerDaemonListener;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
@@ -25,7 +25,7 @@ import java.util.List;
 public class Socks5ProxyServer {
     public static void main(String[] args) {
         List<DaemonServer> daemonServerList = new ArrayList<>();
-        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", Socks5ServerConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
+        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", Socks5ServerDaemonConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
         List<DaemonListener> daemonListenerList = new ArrayList<>();
         daemonListenerList.add(new Socks5ServerDaemonListener());
         proxyServer.setDaemonListenerList(daemonListenerList);

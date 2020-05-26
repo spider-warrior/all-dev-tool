@@ -11,7 +11,7 @@ import io.netty.util.AttributeKey;
  * @version V1.0
  * @since 2020-02-22 23:00
  **/
-public class Socks5ServerConfig {
+public class Socks5ServerDaemonConfig {
     public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
     public static final byte[] SERVER_HOST_BYTES = SystemUtil.convertHostToBytes(SERVER_HOST);
     public static final short SERVER_PORT = 10086;

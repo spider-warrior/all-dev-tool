@@ -18,5 +18,5 @@ public class HttpProxyServerClientConfig {
 
     public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.DEBUG;
 
-    public static final AttributeKey<Object> USER_CONFIG_KEY = AttributeKey.newInstance("user-config");
+    public static final AttributeKey<Object> SOCKS5_CLIENT_CONFIG_KEY = AttributeKey.newInstance("socks5_client_config_key");
 }

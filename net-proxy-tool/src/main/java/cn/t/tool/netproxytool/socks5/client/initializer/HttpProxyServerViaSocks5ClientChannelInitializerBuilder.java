@@ -1,7 +1,6 @@
 package cn.t.tool.netproxytool.socks5.client.initializer;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
-import cn.t.tool.netproxytool.http.UserConfig;
 import cn.t.tool.netproxytool.socks5.client.analyse.NegotiateResponseAnalyse;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
@@ -9,7 +8,7 @@ import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticati
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ClientDaemonConfig;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequestEncoder;
@@ -24,8 +23,8 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
 public class HttpProxyServerViaSocks5ClientChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
     public HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, String targetHost, short targetPort) {
-        setLoggingHandlerLogLevel(Socks5ClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
-        setIdleState(Socks5ClientConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        setLoggingHandlerLogLevel(Socks5ClientDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        setIdleState(Socks5ClientDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(NegotiateResponseAnalyse::new);
 
         addEncoderListsSupplier(MethodRequestEncoder::new);

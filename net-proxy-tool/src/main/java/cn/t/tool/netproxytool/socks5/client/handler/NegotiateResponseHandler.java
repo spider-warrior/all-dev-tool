@@ -1,18 +1,18 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
 import cn.t.tool.netproxytool.exception.ProxyException;
-import cn.t.tool.netproxytool.http.UserConfig;
+import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
-import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
 import cn.t.tool.netproxytool.socks5.client.listener.AuthenticationRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ClientConstants;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.MethodRequest;
 import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
+import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
@@ -57,12 +57,12 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 ctx.writeAndFlush(cmdRequest, promise);
                 //用户名密码认证
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
-                Attribute<Object> userConfigAttr = (ctx.channel().attr(HttpProxyServerClientConfig.USER_CONFIG_KEY));
-                if(userConfigAttr == null || userConfigAttr.get() == null) {
-                    throw new ProxyException("客户端未配置UserConfig");
+                Attribute<Object> socks5ClientConfigAttr = (ctx.channel().attr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY));
+                if(socks5ClientConfigAttr == null || socks5ClientConfigAttr.get() == null) {
+                    throw new ProxyException("客户端未配置Socks5ClientConfig");
                 }
-                UserConfig userConfig = (UserConfig) userConfigAttr.get();
-                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = Socks5MessageUtil.buildUsernamePasswordAuthenticationRequest(userConfig.getUsername().getBytes(), userConfig.getPassword().getBytes());
+                Socks5ClientConfig socks5ClientConfig = (Socks5ClientConfig) socks5ClientConfigAttr.get();
+                UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = Socks5MessageUtil.buildUsernamePasswordAuthenticationRequest(socks5ClientConfig.getUsername().getBytes(), socks5ClientConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));
                 ctx.writeAndFlush(usernamePasswordAuthenticationRequest, promise);
@@ -75,12 +75,12 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         //init attr
-        ctx.channel().attr(Socks5ClientConfig.TARGET_HOST_KEY).set(targetHost);
-        ctx.channel().attr(Socks5ClientConfig.TARGET_PORT_KEY).set(targetPort);
+        ctx.channel().attr(Socks5ClientConstants.TARGET_HOST_KEY).set(targetHost);
+        ctx.channel().attr(Socks5ClientConstants.TARGET_PORT_KEY).set(targetPort);
         //send negotiate msg
         MethodRequest methodRequest = new MethodRequest();
         methodRequest.setVersion(Socks5ProtocolConstants.VERSION);
-        methodRequest.setMethods(Socks5ClientConfig.SUPPORT_METHODS);
+        methodRequest.setMethods(Socks5ClientConstants.SUPPORT_METHODS);
         ctx.writeAndFlush(methodRequest);
     }
 

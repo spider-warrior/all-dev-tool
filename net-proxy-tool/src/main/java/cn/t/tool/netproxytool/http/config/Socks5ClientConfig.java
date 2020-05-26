@@ -1,19 +1,18 @@
-package cn.t.tool.netproxytool.http;
+package cn.t.tool.netproxytool.http.config;
+
+import java.util.Arrays;
 
 /**
- * @author <a href="mailto:jian.yang@liby.ltd">野生程序员-杨建</a>
- * @version V1.0
- * @since 2020-05-24 09:29
+ * @author yj
+ * @since 2020-05-26 20:08
  **/
-public class UserConfig {
+public class Socks5ClientConfig {
     private String socks5ServerHost;
     private short socks5ServerPort;
 
     private String username;
     private String password;
-
     private byte[] security;
-
 
     public String getSocks5ServerHost() {
         return socks5ServerHost;
@@ -53,5 +52,17 @@ public class UserConfig {
 
     public void setSecurity(byte[] security) {
         this.security = security;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Socks5ClientConfig{");
+        sb.append("socks5ServerHost='").append(socks5ServerHost).append('\'');
+        sb.append(", socks5ServerPort=").append(socks5ServerPort);
+        sb.append(", username='").append(username).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", security=").append(Arrays.toString(security));
+        sb.append('}');
+        return sb.toString();
     }
 }

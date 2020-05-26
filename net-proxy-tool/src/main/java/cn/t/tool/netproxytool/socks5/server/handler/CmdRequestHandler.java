@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Cmd;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
 import cn.t.tool.netproxytool.socks5.server.UserRepository;
@@ -38,7 +38,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CmdRequest msg) {
-        String username = ctx.channel().attr(Socks5ServerConfig.CHANNEL_USERNAME).get();
+        String username = ctx.channel().attr(Socks5ServerDaemonConfig.CHANNEL_USERNAME).get();
         String security = null;
         if(!StringUtil.isEmpty(username)) {
             security = UserRepository.getUserSecurity(username);
@@ -56,8 +56,8 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
                 cmdResponse.setExecutionStatus(socks5CmdExecutionStatus.value);
                 cmdResponse.setRsv((byte)0);
                 cmdResponse.setSocks5AddressType(Socks5AddressType.IPV4.value);
-                cmdResponse.setTargetAddress(Socks5ServerConfig.SERVER_HOST_BYTES);
-                cmdResponse.setTargetPort(Socks5ServerConfig.SERVER_PORT);
+                cmdResponse.setTargetAddress(Socks5ServerDaemonConfig.SERVER_HOST_BYTES);
+                cmdResponse.setTargetPort(Socks5ServerDaemonConfig.SERVER_PORT);
                 if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
                     log.info("[{}]: 代理客户端成功, remote: {}:{}", remoteAddress, targetHost, targetPort);
                     ChannelPromise promise = ctx.newPromise();

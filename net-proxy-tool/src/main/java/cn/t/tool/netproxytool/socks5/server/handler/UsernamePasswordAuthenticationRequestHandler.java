@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.socks5.constants.AuthenticationStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
-import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.server.UserRepository;
@@ -34,7 +34,7 @@ public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelI
         String passwordInConfig = UserRepository.getPassword(username);
         if(passwordInConfig != null && passwordInConfig.equals(password)) {
             log.info("用户名密码验证通过, username: {}", username);
-            ctx.channel().attr(Socks5ServerConfig.CHANNEL_USERNAME).set(username);
+            ctx.channel().attr(Socks5ServerDaemonConfig.CHANNEL_USERNAME).set(username);
             authenticationResponse.setStatus(AuthenticationStatus.SUCCESS.value);
             ChannelPromise promise = ctx.newPromise();
             promise.addListener(new AuthenticationResponseWriteListener(nettyTcpDecoder));

@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.initializer;
 
-import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.server.analyse.NegotiateRequestAnalyse;
 import cn.t.tool.netproxytool.socks5.server.encoder.CmdResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.encoder.NegotiateResponseEncoder;
@@ -17,8 +17,8 @@ import cn.t.tool.nettytool.initializer.NettyChannelInitializerBuilder;
 public class LocalToProxyChannelInitializerBuilder extends NettyChannelInitializerBuilder {
 
     public LocalToProxyChannelInitializerBuilder() {
-        setLoggingHandlerLogLevel(Socks5ServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
-        setIdleState(Socks5ServerConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        setLoggingHandlerLogLevel(Socks5ServerDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        setIdleState(Socks5ServerDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         setByteBufAnalyserSupplier(NegotiateRequestAnalyse::new);
         addEncoderListsSupplier(NegotiateResponseEncoder::new);
         addEncoderListsSupplier(UsernamePasswordAuthenticationResponseEncoder::new);

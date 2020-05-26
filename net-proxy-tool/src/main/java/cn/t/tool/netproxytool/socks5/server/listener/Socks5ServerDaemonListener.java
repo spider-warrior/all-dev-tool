@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.listener;
 
-import cn.t.tool.netproxytool.socks5.constants.Socks5ServerConfig;
+import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.server.UserRepository;
 import cn.t.tool.nettytool.server.DaemonServer;
 import cn.t.tool.nettytool.server.listener.DaemonListener;
@@ -26,11 +26,11 @@ public class Socks5ServerDaemonListener implements DaemonListener {
 
     @Override
     public void startup(DaemonServer server) {
-        String socks5Home = SystemUtil.getSysEnv(Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
+        String socks5Home = SystemUtil.getSysEnv(Socks5ServerDaemonConfig.SOCKS5_SERVER_HOME_KEY);
         if(!StringUtil.isEmpty(socks5Home)) {
             File home = new File(socks5Home);
             if(home.exists()) {
-                File config = new File(FileUtil.appendFilePath(socks5Home, Socks5ServerConfig.SOCKS5_SERVER_USERS_FILE));
+                File config = new File(FileUtil.appendFilePath(socks5Home, Socks5ServerDaemonConfig.SOCKS5_SERVER_USERS_FILE));
                 if(config.exists()) {
                     try (
                         FileInputStream fileInputStream = new FileInputStream(config)
@@ -55,10 +55,10 @@ public class Socks5ServerDaemonListener implements DaemonListener {
                     logger.warn("配置文件不存在: {}", config);
                 }
             } else {
-                logger.warn("{}未设置", Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
+                logger.warn("{}未设置", Socks5ServerDaemonConfig.SOCKS5_SERVER_HOME_KEY);
             }
         } else {
-            logger.warn("{} not set", Socks5ServerConfig.SOCKS5_SERVER_HOME_KEY);
+            logger.warn("{} not set", Socks5ServerDaemonConfig.SOCKS5_SERVER_HOME_KEY);
         }
     }
 

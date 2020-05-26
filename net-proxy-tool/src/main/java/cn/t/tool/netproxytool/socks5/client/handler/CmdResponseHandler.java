@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.handler.DecryptMessageAnalyser;
 import cn.t.tool.netproxytool.handler.EncryptedMessageEncoder;
 import cn.t.tool.netproxytool.handler.ForwardingDecryptedMessageHandler;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
-import cn.t.tool.netproxytool.http.UserConfig;
+import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
@@ -43,7 +43,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());
-            Attribute<Object> userConfigAttr = ctx.channel().attr(HttpProxyServerClientConfig.USER_CONFIG_KEY);
+            Attribute<Object> userConfigAttr = ctx.channel().attr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY);
             ChannelPipeline channelPipeline = ctx.channel().pipeline();
             if(userConfigAttr == null || userConfigAttr.get() == null) {
                 channelPipeline.remove(NettyTcpDecoder.class);
@@ -60,7 +60,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
             if(userConfigAttr == null || userConfigAttr.get() == null) {
                 channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
             } else {
-                UserConfig userConfig = (UserConfig)userConfigAttr.get();
+                Socks5ClientConfig userConfig = (Socks5ClientConfig)userConfigAttr.get();
                 //消息加密
                 channelPipeline.addFirst("http-via-socks5-proxy-encrypt-forwarding-encoder", new EncryptedMessageEncoder(userConfig.getSecurity()));
                 //消息解密转发器
