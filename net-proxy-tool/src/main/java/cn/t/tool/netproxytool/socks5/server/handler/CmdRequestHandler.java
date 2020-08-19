@@ -78,7 +78,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
             String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
             NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(ctx, proxyBuildResultListener, securityBytes).build();
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
-            ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
+            ThreadUtil.submitProxyTask(nettyTcpClient::start);
         } else {
             throw new ProxyException("未实现的命令处理: " + msg.getRequestSocks5Cmd());
         }

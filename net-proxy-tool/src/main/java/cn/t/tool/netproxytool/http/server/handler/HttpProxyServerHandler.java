@@ -67,7 +67,7 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
         };
         NettyChannelInitializer channelInitializer = new HttpProxyServerClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
-        ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
+        ThreadUtil.submitProxyTask(nettyTcpClient::start);
     }
 
     private void buildHttpProxy(ChannelHandlerContext ctx, String targetHost, int targetPort, HttpVersion httpVersion, FullHttpRequest request) {
@@ -92,7 +92,7 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
         };
         NettyChannelInitializer channelInitializer = new HttpProxyServerClientChannelInitializerBuilder(ctx, proxyBuildResultListener).build();
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
-        ThreadUtil.submitProxyTask(() -> nettyTcpClient.start(null));
+        ThreadUtil.submitProxyTask(nettyTcpClient::start);
     }
 
 }

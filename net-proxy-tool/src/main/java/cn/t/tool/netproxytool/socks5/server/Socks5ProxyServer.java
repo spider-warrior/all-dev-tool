@@ -4,15 +4,12 @@ import cn.t.tool.netproxytool.socks5.config.ServerConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.server.initializer.LocalToProxyChannelInitializerBuilder;
 import cn.t.tool.netproxytool.socks5.util.ServerConfigUtil;
+import cn.t.tool.nettytool.daemon.DaemonService;
+import cn.t.tool.nettytool.daemon.server.NettyTcpServer;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
-import cn.t.tool.nettytool.daemon.Daemon;
-import cn.t.tool.nettytool.daemon.NettyTcp;
-import io.netty.util.AttributeKey;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 代理服务器
@@ -27,11 +24,10 @@ import java.util.Map;
  **/
 public class Socks5ProxyServer {
     public static void main(String[] args) {
-        Map<AttributeKey<?>, Object> childAttrs = new HashMap<>();
         ServerConfig serverConfig = ServerConfigUtil.loadServerConfig();
-        childAttrs.put(Socks5ServerDaemonConfig.SERVER_CONFIG_KEY, serverConfig);
-        List<Daemon> daemonServerList = new ArrayList<>();
-        NettyTcp proxyServer = new NettyTcp("socks5-proxy-server", Socks5ServerDaemonConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build(), childAttrs);
+        List<DaemonService> daemonServerList = new ArrayList<>();
+        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", Socks5ServerDaemonConfig.SERVER_PORT, new LocalToProxyChannelInitializerBuilder().build());
+        proxyServer.childAttr(Socks5ServerDaemonConfig.SERVER_CONFIG_KEY, serverConfig);
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServiceList(daemonServerList);

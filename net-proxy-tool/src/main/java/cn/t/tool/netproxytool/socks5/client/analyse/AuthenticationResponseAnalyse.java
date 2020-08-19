@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class AuthenticationResponseAnalyse extends ByteBufAnalyser {
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setVersion(byteBuf.readByte());
         authenticationResponse.setStatus(byteBuf.readByte());

@@ -4,9 +4,9 @@ import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerViaSocks5ChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.util.Socks5ClientConfigUtil;
+import cn.t.tool.nettytool.daemon.DaemonService;
+import cn.t.tool.nettytool.daemon.server.NettyTcpServer;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
-import cn.t.tool.nettytool.daemon.Daemon;
-import cn.t.tool.nettytool.daemon.NettyTcp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,8 @@ public class HttpProxyServerViaSocks5 {
         if(args.length > 2) {
             Socks5ClientConfigUtil.analyseAndConfigSecurity(socks5ClientConfig, args[2]);
         }
-        List<Daemon> daemonServerList = new ArrayList<>();
-        NettyTcp proxyServer = new NettyTcp("http-proxy-server-via-socks5", HttpProxyServerConfig.SERVER_PORT, new HttpProxyServerViaSocks5ChannelInitializerBuilder(socks5ClientConfig).build());
+        List<DaemonService> daemonServerList = new ArrayList<>();
+        NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server-via-socks5", HttpProxyServerConfig.SERVER_PORT, new HttpProxyServerViaSocks5ChannelInitializerBuilder(socks5ClientConfig).build());
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServiceList(daemonServerList);

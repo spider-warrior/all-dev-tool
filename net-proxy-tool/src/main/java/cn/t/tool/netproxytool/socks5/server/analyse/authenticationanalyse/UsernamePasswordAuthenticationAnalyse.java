@@ -14,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class UsernamePasswordAuthenticationAnalyse extends ByteBufAnalyser {
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = new UsernamePasswordAuthenticationRequest();
         usernamePasswordAuthenticationRequest.setVersion(byteBuf.readByte());
         byte usernameLength = byteBuf.readByte();

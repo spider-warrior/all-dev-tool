@@ -12,7 +12,7 @@ import java.util.List;
 
 public class NettyTcpDecoder extends ByteToMessageDecoder {
 
-    private static Logger logger = LoggerFactory.getLogger(NettyTcpDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyTcpDecoder.class);
 
     private ByteBufAnalyser byteBufAnalyser;
 
@@ -20,7 +20,7 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if(in.isReadable()) {
             int readerIndex = in.readerIndex();
-            Object msg = byteBufAnalyser.analyse(ctx, in);
+            Object msg = byteBufAnalyser.analyse(in, ctx);
             if(msg == null) {
                 logger.info("[{}]: message is incomplete, reader index reset", ctx.channel().remoteAddress());
                 in.readerIndex(readerIndex);

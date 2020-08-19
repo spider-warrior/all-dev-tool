@@ -16,7 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class CmdResponseAnalyse extends ByteBufAnalyser {
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         CmdResponse cmdResponse = new CmdResponse();
         //version
         cmdResponse.setVersion(byteBuf.readByte());

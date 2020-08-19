@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class NegotiateResponseAnalyse extends ByteBufAnalyser {
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         NegotiateResponse negotiateResponse = new NegotiateResponse();
         negotiateResponse.setVersion(byteBuf.readByte());
         negotiateResponse.setSocks5Method(byteBuf.readByte());

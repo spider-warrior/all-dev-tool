@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class NegotiateRequestAnalyse extends ByteBufAnalyser {
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         if(byteBuf.readableBytes() < 2) {
             return null;
         }

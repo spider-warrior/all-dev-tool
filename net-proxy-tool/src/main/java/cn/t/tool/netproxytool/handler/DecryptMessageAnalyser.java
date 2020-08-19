@@ -19,7 +19,7 @@ public class DecryptMessageAnalyser extends ByteBufAnalyser {
     private static final Logger logger = LoggerFactory.getLogger(DecryptMessageAnalyser.class);
 
     @Override
-    public Object analyse(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) {
+    public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
         short size = byteBuf.readShort();
         if(byteBuf.readableBytes() < size) {
             return null;
