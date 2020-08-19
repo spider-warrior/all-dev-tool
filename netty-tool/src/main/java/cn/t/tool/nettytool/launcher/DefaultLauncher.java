@@ -73,7 +73,7 @@ public class DefaultLauncher extends AbstractLauncher {
         if (getDaemonServerList() != null && !getDaemonServerList().isEmpty()) {
             logger.info(getDaemonServerList().size() + " servers to stop");
             for (DaemonServer server: getDaemonServerList()) {
-                server.close(this);
+                server.close();
             }
             while (serverSuccessCount.get() != 0) {
                 try {

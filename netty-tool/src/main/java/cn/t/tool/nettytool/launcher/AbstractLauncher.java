@@ -2,6 +2,7 @@ package cn.t.tool.nettytool.launcher;
 
 import cn.t.tool.nettytool.launcher.listener.LauncherListener;
 import cn.t.tool.nettytool.server.DaemonServer;
+import cn.t.tool.nettytool.server.listener.DaemonListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +13,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class AbstractLauncher implements Launcher {
+public abstract class AbstractLauncher implements Launcher, DaemonListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractLauncher.class);
 
     protected volatile boolean stop = false;
     protected AtomicInteger serverSuccessCount = new AtomicInteger(0);
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private List<DaemonServer> daemonServerList;
     protected List<DaemonServer> downDaemonServer = new Vector<>();
     private List<LauncherListener> launcherListenerList;
-    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     /**
      * 启动
@@ -58,7 +60,7 @@ public abstract class AbstractLauncher implements Launcher {
         //回调监听器
         if (launcherListenerList != null && !launcherListenerList.isEmpty()) {
             for (LauncherListener listener: launcherListenerList) {
-                try { listener.close(this); } catch (Exception e) { }
+                try { listener.close(this); } catch (Exception e) { logger.error("", e); }
             }
         }
         logger.info("launcher shutdown successfully");
@@ -66,20 +68,20 @@ public abstract class AbstractLauncher implements Launcher {
 
     public void startServer(DaemonServer server) {
         if (!executorService.isShutdown()) {
-            executorService.submit(() -> server.start(this));
+            executorService.submit(server::start);
         }
     }
 
     public abstract void doClose();
 
     @Override
-    public void serverStartSuccess(DaemonServer server) {
+    public void startup(DaemonServer server) {
         serverSuccessCount.addAndGet(1);
         logger.info("server alive count: " + serverSuccessCount.get());
     }
 
     @Override
-    public void serverShutdownSuccess(DaemonServer server) {
+    public void close(DaemonServer server) {
         serverSuccessCount.addAndGet(-1);
         downDaemonServer.add(server);
     }

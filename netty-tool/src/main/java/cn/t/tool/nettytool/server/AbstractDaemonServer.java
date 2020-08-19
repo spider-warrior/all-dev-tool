@@ -1,35 +1,31 @@
 package cn.t.tool.nettytool.server;
 
-import cn.t.tool.nettytool.launcher.Launcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDaemonServer implements DaemonServer {
+public abstract class AbstractDaemonServer extends ListenableDaemonServer {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDaemonServer.class);
-
     protected String name;
     protected int port;
 
     @Override
-    public void start(Launcher launcher) {
-        doStart(launcher);
+    public final void start() {
+        logger.debug("server: {} is going to start", name);
+        doStart();
+        logger.debug("server: {} is started", name);
     }
 
     @Override
-    public void close(Launcher launcher) {
-        doClose(launcher);
+    public final void close() {
+        logger.debug("server: {} is going to stop", name);
+        doClose();
+        logger.debug("server: {} is stopped", name);
     }
 
-    /**
-     * 服务器会阻塞在这里
-     * */
-    public abstract void doStart(Launcher launcher);
+    public abstract void doStart();
 
-    /**
-     *
-     * */
-    public abstract void doClose(Launcher launcher);
+    public abstract void doClose();
 
     public AbstractDaemonServer () {}
 
@@ -57,4 +53,5 @@ public abstract class AbstractDaemonServer implements DaemonServer {
     public void setPort(int port) {
         this.port = port;
     }
+
 }
