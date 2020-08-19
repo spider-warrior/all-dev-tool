@@ -7,7 +7,7 @@ import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerViaSocks5ClientBuildResultListener;
 import cn.t.tool.netproxytool.socks5.client.initializer.HttpProxyServerViaSocks5ClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
-import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

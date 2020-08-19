@@ -1,7 +1,7 @@
 package cn.t.tool.nettytool.launcher;
 
 import cn.t.tool.nettytool.launcher.listener.LauncherListener;
-import cn.t.tool.nettytool.server.DaemonServer;
+import cn.t.tool.nettytool.daemon.DaemonService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class DefaultLauncherBuilder {
 
     private boolean autoRestart;
 
-    private List<DaemonServer> daemonServerList;
+    private List<DaemonService> daemonServiceList;
 
     private List<LauncherListener> launcherListenerList;
 
@@ -23,8 +23,8 @@ public class DefaultLauncherBuilder {
         this.autoRestart = autoRestart;
     }
 
-    public void setDaemonServerList(List<DaemonServer> daemonServerList) {
-        this.daemonServerList = daemonServerList;
+    public void setDaemonServiceList(List<DaemonService> daemonServiceList) {
+        this.daemonServiceList = daemonServiceList;
     }
 
     public void setLauncherListenerList(List<LauncherListener> launcherListenerList) {
@@ -35,7 +35,7 @@ public class DefaultLauncherBuilder {
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setTimeout(timeout);
         defaultLauncher.setAutoRestart(autoRestart);
-        defaultLauncher.setDaemonServerList(daemonServerList);
+        defaultLauncher.setDaemonServiceList(daemonServiceList);
         defaultLauncher.setLauncherListenerList(launcherListenerList);
         return defaultLauncher;
     }

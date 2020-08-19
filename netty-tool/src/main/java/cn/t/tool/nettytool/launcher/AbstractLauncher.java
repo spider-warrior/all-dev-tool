@@ -1,8 +1,8 @@
 package cn.t.tool.nettytool.launcher;
 
 import cn.t.tool.nettytool.launcher.listener.LauncherListener;
-import cn.t.tool.nettytool.server.DaemonServer;
-import cn.t.tool.nettytool.server.listener.DaemonListener;
+import cn.t.tool.nettytool.daemon.DaemonService;
+import cn.t.tool.nettytool.daemon.listener.DaemonListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +19,8 @@ public abstract class AbstractLauncher implements Launcher, DaemonListener {
 
     protected volatile boolean stop = false;
     protected AtomicInteger serverSuccessCount = new AtomicInteger(0);
-    private List<DaemonServer> daemonServerList;
-    protected List<DaemonServer> downDaemonServer = new Vector<>();
+    private List<DaemonService> daemonServiceList;
+    protected List<DaemonService> downDaemonService = new Vector<>();
     private List<LauncherListener> launcherListenerList;
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -66,7 +66,7 @@ public abstract class AbstractLauncher implements Launcher, DaemonListener {
         logger.info("launcher shutdown successfully");
     }
 
-    public void startServer(DaemonServer server) {
+    public void startServer(DaemonService server) {
         if (!executorService.isShutdown()) {
             executorService.submit(server::start);
         }
@@ -75,23 +75,23 @@ public abstract class AbstractLauncher implements Launcher, DaemonListener {
     public abstract void doClose();
 
     @Override
-    public void startup(DaemonServer server) {
+    public void startup(DaemonService server) {
         serverSuccessCount.addAndGet(1);
         logger.info("server alive count: " + serverSuccessCount.get());
     }
 
     @Override
-    public void close(DaemonServer server) {
+    public void close(DaemonService server) {
         serverSuccessCount.addAndGet(-1);
-        downDaemonServer.add(server);
+        downDaemonService.add(server);
     }
 
-    public List<DaemonServer> getDaemonServerList() {
-        return daemonServerList;
+    public List<DaemonService> getDaemonServiceList() {
+        return daemonServiceList;
     }
 
-    public AbstractLauncher setDaemonServerList(List<DaemonServer> daemonServerList) {
-        this.daemonServerList = daemonServerList;
+    public AbstractLauncher setDaemonServiceList(List<DaemonService> daemonServiceList) {
+        this.daemonServiceList = daemonServiceList;
         return this;
     }
 

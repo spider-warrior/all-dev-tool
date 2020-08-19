@@ -1,10 +1,10 @@
-package cn.t.tool.nettytool.client;
+package cn.t.tool.nettytool.daemon.client;
 
-import cn.t.tool.nettytool.server.ListenableDaemonServer;
+import cn.t.tool.nettytool.daemon.ListenableDaemonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDaemonClient extends ListenableDaemonServer {
+public abstract class AbstractDaemonClient extends ListenableDaemonService {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDaemonClient.class);
 

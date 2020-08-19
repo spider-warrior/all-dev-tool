@@ -1,6 +1,6 @@
-package cn.t.tool.nettytool.client;
+package cn.t.tool.nettytool.daemon.client;
 
-import cn.t.tool.nettytool.server.listener.DaemonListener;
+import cn.t.tool.nettytool.daemon.listener.DaemonListener;
 import cn.t.util.common.CollectionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

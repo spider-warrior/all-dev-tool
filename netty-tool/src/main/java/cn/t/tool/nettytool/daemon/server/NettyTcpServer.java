@@ -1,6 +1,6 @@
-package cn.t.tool.nettytool.server;
+package cn.t.tool.nettytool.daemon.server;
 
-import cn.t.tool.nettytool.server.listener.DaemonListener;
+import cn.t.tool.nettytool.daemon.listener.DaemonListener;
 import cn.t.util.common.CollectionUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

@@ -1,9 +1,9 @@
-package cn.t.tool.nettytool.server;
+package cn.t.tool.nettytool.daemon;
 
 /**
  * 守护服务
  * */
-public interface DaemonServer {
+public interface DaemonService {
 
     /**
      * 启动

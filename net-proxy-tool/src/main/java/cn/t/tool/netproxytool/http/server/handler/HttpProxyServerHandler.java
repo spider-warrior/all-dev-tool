@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerClientChannelInitializerBuilder;
 import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerClientBuildResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
-import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

@@ -14,7 +14,7 @@ import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInit
 import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.client.NettyTcpClient;
+import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import cn.t.util.common.ArrayUtil;

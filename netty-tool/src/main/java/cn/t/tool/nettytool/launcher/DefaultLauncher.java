@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.launcher;
 
-import cn.t.tool.nettytool.server.DaemonServer;
+import cn.t.tool.nettytool.daemon.DaemonService;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -17,15 +17,15 @@ public class DefaultLauncher extends AbstractLauncher {
 
     public void doStart() {
         //启动所有服务器
-        if (getDaemonServerList() != null && !getDaemonServerList().isEmpty()) {
-            logger.info(String.format("server list size: %d", getDaemonServerList().size()));
+        if (getDaemonServiceList() != null && !getDaemonServiceList().isEmpty()) {
+            logger.info(String.format("server list size: %d", getDaemonServiceList().size()));
             long before = System.currentTimeMillis();
             boolean notTimeout = true;
-            for (final DaemonServer server: getDaemonServerList()) {
+            for (final DaemonService server: getDaemonServiceList()) {
                 startServer(server);
             }
             //等待直到超时
-            while (serverSuccessCount.get() != getDaemonServerList().size() && (notTimeout = System.currentTimeMillis() - before < timeout)) {
+            while (serverSuccessCount.get() != getDaemonServiceList().size() && (notTimeout = System.currentTimeMillis() - before < timeout)) {
                 try { Thread.sleep(500); } catch (InterruptedException e) {logger.error("", e);}
             }
             if (!notTimeout) {
@@ -41,14 +41,14 @@ public class DefaultLauncher extends AbstractLauncher {
             timer.newTimeout(new TimerTask() {
                 public void run(Timeout timeout) {
                     logger.info("monitor down server....");
-                    if (downDaemonServer.size() > 0) {
-                        logger.info(stop + ", find down server, size: " + downDaemonServer.size());
-                        while (downDaemonServer.size() > 0) {
-                            DaemonServer daemonServer = downDaemonServer.get(0);
-                            logger.info("server restart: " + daemonServer);
+                    if (downDaemonService.size() > 0) {
+                        logger.info(stop + ", find down server, size: " + downDaemonService.size());
+                        while (downDaemonService.size() > 0) {
+                            DaemonService daemonService = downDaemonService.get(0);
+                            logger.info("server restart: " + daemonService);
                             if (!stop) {
-                                startServer(daemonServer);
-                                downDaemonServer.remove(0);
+                                startServer(daemonService);
+                                downDaemonService.remove(0);
                             }
                             else {
                                 break;
@@ -70,9 +70,9 @@ public class DefaultLauncher extends AbstractLauncher {
 
     public void doClose() {
         //停止所有服务器
-        if (getDaemonServerList() != null && !getDaemonServerList().isEmpty()) {
-            logger.info(getDaemonServerList().size() + " servers to stop");
-            for (DaemonServer server: getDaemonServerList()) {
+        if (getDaemonServiceList() != null && !getDaemonServiceList().isEmpty()) {
+            logger.info(getDaemonServiceList().size() + " servers to stop");
+            for (DaemonService server: getDaemonServiceList()) {
                 server.close();
             }
             while (serverSuccessCount.get() != 0) {

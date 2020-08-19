@@ -1,9 +1,10 @@
-package cn.t.tool.nettytool.server;
+package cn.t.tool.nettytool.daemon.server;
 
+import cn.t.tool.nettytool.daemon.ListenableDaemonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDaemonServer extends ListenableDaemonServer {
+public abstract class AbstractDaemonServer extends ListenableDaemonService {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDaemonServer.class);
     protected String name;
@@ -27,7 +28,7 @@ public abstract class AbstractDaemonServer extends ListenableDaemonServer {
 
     public abstract void doClose();
 
-    public AbstractDaemonServer () {}
+    public AbstractDaemonServer() {}
 
     public AbstractDaemonServer(int port) {
         this.port = port;
