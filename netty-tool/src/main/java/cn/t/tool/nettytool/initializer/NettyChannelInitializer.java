@@ -1,6 +1,7 @@
 package cn.t.tool.nettytool.initializer;
 
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
+import cn.t.tool.nettytool.daemon.DaemonConfig;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.tool.nettytool.handler.EventLoggingHandler;
 import cn.t.tool.nettytool.handler.NettyExceptionHandler;
@@ -10,48 +11,41 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.MessageToByteEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.util.List;
-import java.util.function.Supplier;
+
+import static cn.t.tool.nettytool.constants.HandlerNames.*;
 
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private LogLevel loggingHandlerLogLevel = LogLevel.DEBUG;
-    private InternalLoggerFactory internalLoggerFactory = Slf4JLoggerFactory.INSTANCE;
-    private Supplier<IdleStateHandler> idleStateHandlerSupplier;
-    private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
-    private Supplier<List<MessageToByteEncoder<?>>> nettyTcpEncoderListSupplier;
-    private Supplier<List<ChannelHandler>> channelHandlerListSupplier;
+    private final DaemonConfig daemonConfig;
 
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline channelPipeline = ch.pipeline();
         //切换日志实现，防止有人篡改LoggerFactory，强制使用Slf4JLoggerFactory
         InternalLoggerFactory originalInternalLoggerFactory = InternalLoggerFactory.getDefaultFactory();
-        InternalLoggerFactory.setDefaultFactory(internalLoggerFactory);
+        InternalLoggerFactory.setDefaultFactory(daemonConfig.getInternalLoggerFactory());
         try {
-            channelPipeline.addLast("logging-handler",new EventLoggingHandler(loggingHandlerLogLevel));
-            if(idleStateHandlerSupplier != null) {
-                channelPipeline.addLast("idle-handler", idleStateHandlerSupplier.get());
+            channelPipeline.addLast(LOGGING_HANDLER, new EventLoggingHandler(daemonConfig.getLoggingHandlerLogLevel()));
+            if(daemonConfig.getIdleStateHandlerSupplier() != null) {
+                channelPipeline.addLast(IDLE_HANDLER, daemonConfig.getIdleStateHandlerSupplier().get());
             }
-            if(nettyTcpDecoderSupplier != null) {
-                channelPipeline.addLast("msg-decoder", nettyTcpDecoderSupplier.get());
+            if(daemonConfig.getNettyTcpDecoderSupplier() != null) {
+                channelPipeline.addLast(MSG_DECODER, daemonConfig.getNettyTcpDecoderSupplier().get());
             }
-            if(nettyTcpEncoderListSupplier != null) {
-                List<MessageToByteEncoder<?>>nettyTcpEncoderList = nettyTcpEncoderListSupplier.get();
+            if(daemonConfig.getNettyTcpEncoderListSupplier() != null) {
+                List<MessageToByteEncoder<?>>nettyTcpEncoderList = daemonConfig.getNettyTcpEncoderListSupplier().get();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderList)) {
-                    nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast("encoder#" + encoder.getClass().getName(), encoder));
+                    nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast(ENCODER_PREFIX + encoder.getClass().getName(), encoder));
                 }
             }
-            if(channelHandlerListSupplier != null) {
-                List<ChannelHandler> channelHandlerList = channelHandlerListSupplier.get();
+            if(daemonConfig.getChannelHandlerListSupplier() != null) {
+                List<ChannelHandler> channelHandlerList = daemonConfig.getChannelHandlerListSupplier().get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {
-                    channelHandlerList.forEach(handler -> channelPipeline.addLast("handler#" + handler.getClass().getName(), handler));
-                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get("msg-decoder");
+                    channelHandlerList.forEach(handler -> channelPipeline.addLast(HANDLER_PREFIX + handler.getClass().getName(), handler));
+                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get(DECODER_PREFIX);
                     if(nettyTcpDecoder != null) {
                         channelHandlerList.forEach(handler -> {
                             if(handler instanceof NettyTcpDecoderAware) {
@@ -61,22 +55,13 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
                     }
                 }
             }
-            channelPipeline.addLast("exception-handler", new NettyExceptionHandler());
+            channelPipeline.addLast(EXCEPTION_HANDLER, new NettyExceptionHandler());
         } finally {
             InternalLoggerFactory.setDefaultFactory(originalInternalLoggerFactory);
         }
     }
 
-    public NettyChannelInitializer(LogLevel loggingHandlerLogLevel, InternalLoggerFactory internalLoggerFactory, Supplier<IdleStateHandler> idleStateHandlerSupplier, Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier, Supplier<List<MessageToByteEncoder<?>>> nettyTcpEncoderListSupplier, Supplier<List<ChannelHandler>> channelHandlerListSupplier) {
-        if(loggingHandlerLogLevel != null) {
-            this.loggingHandlerLogLevel = loggingHandlerLogLevel;
-        }
-        if(internalLoggerFactory != null) {
-            this.internalLoggerFactory = internalLoggerFactory;
-        }
-        this.idleStateHandlerSupplier = idleStateHandlerSupplier;
-        this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
-        this.nettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
-        this.channelHandlerListSupplier = channelHandlerListSupplier;
+    public NettyChannelInitializer(DaemonConfig daemonConfig) {
+        this.daemonConfig = daemonConfig;
     }
 }

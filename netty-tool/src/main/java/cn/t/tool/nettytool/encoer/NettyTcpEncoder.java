@@ -15,7 +15,7 @@ public abstract class NettyTcpEncoder<Msg> extends MessageToByteEncoder<Msg> {
         if(msg != null) {
             doEncode(ctx, msg, out);
         } else {
-            logger.warn("sent msg is null, ignored!");
+            logger.debug("sent msg is null, ignored!");
         }
     }
 
