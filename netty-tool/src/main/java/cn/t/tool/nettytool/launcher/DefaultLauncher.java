@@ -93,4 +93,6 @@ public class DefaultLauncher extends AbstractLauncher {
     void setAutoRestart(boolean autoRestart) {
         this.autoRestart = autoRestart;
     }
+
+    public DefaultLauncher() {}
 }

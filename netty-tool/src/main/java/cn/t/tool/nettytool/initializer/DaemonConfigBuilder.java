@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class NettyChannelInitializerBuilder {
+public class DaemonConfigBuilder {
 
     private final DaemonConfig daemonConfig = new DaemonConfig();
 
-    public NettyChannelInitializerBuilder configByteBufAnalyser(Supplier<ByteBufAnalyser> byteBufAnalyserSupplier) {
+    public DaemonConfigBuilder configByteBufAnalyser(Supplier<ByteBufAnalyser> byteBufAnalyserSupplier) {
         if(byteBufAnalyserSupplier != null) {
             daemonConfig.setNettyTcpDecoderSupplier(() -> {
                 ByteBufAnalyser byteBufAnalyser = byteBufAnalyserSupplier.get();
@@ -34,26 +34,26 @@ public class NettyChannelInitializerBuilder {
         return this;
     }
 
-    public NettyChannelInitializerBuilder configLogLevel(LogLevel logLevel) {
+    public DaemonConfigBuilder configLogLevel(LogLevel logLevel) {
         if(logLevel != null) {
             daemonConfig.setLoggingHandlerLogLevel(logLevel);
         }
         return this;
     }
 
-    public NettyChannelInitializerBuilder configLogFactory(InternalLoggerFactory loggerFactory) {
+    public DaemonConfigBuilder configLogFactory(InternalLoggerFactory loggerFactory) {
         if(loggerFactory != null) {
             daemonConfig.setInternalLoggerFactory(loggerFactory);
         }
         return this;
     }
 
-    public NettyChannelInitializerBuilder configIdleHandler(long readerIdleTime, long writerIdleTime, long allIdleTime) {
+    public DaemonConfigBuilder configIdleHandler(long readerIdleTime, long writerIdleTime, long allIdleTime) {
         daemonConfig.setIdleStateHandlerSupplier(() -> new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
         return this;
     }
 
-    public NettyChannelInitializerBuilder configEncoder(List<Supplier<MessageToByteEncoder<?>>> supplierList) {
+    public DaemonConfigBuilder configEncoder(List<Supplier<MessageToByteEncoder<?>>> supplierList) {
         if(!CollectionUtil.isEmpty(supplierList)) {
             daemonConfig.setNettyTcpEncoderListSupplier(() -> {
                 List<MessageToByteEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class NettyChannelInitializerBuilder {
         return this;
     }
 
-    public NettyChannelInitializerBuilder configHandler(List<Supplier<ChannelHandler>> supplierList) {
+    public DaemonConfigBuilder configHandler(List<Supplier<ChannelHandler>> supplierList) {
         if(!CollectionUtil.isEmpty(supplierList)) {
             daemonConfig.setChannelHandlerListSupplier(() -> {
                 List<ChannelHandler> handlerList = new ArrayList<>();
