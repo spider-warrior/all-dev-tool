@@ -75,4 +75,10 @@ public class DaemonConfigBuilder {
         return this;
     }
 
+    public static DaemonConfigBuilder newInstance() {
+        return new DaemonConfigBuilder();
+    }
+
+    private DaemonConfigBuilder() {}
+
 }
