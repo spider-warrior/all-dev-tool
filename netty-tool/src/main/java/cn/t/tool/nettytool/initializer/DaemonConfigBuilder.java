@@ -79,6 +79,10 @@ public class DaemonConfigBuilder {
         return new DaemonConfigBuilder();
     }
 
+    public DaemonConfig build() {
+        return daemonConfig;
+    }
+
     private DaemonConfigBuilder() {}
 
 }
