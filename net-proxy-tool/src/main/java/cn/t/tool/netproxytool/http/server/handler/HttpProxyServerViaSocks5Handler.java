@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerViaSocks5ClientBuildResultListener;
-import cn.t.tool.netproxytool.socks5.client.initializer.HttpProxyServerViaSocks5ClientChannelInitializerBuilder;
+import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
@@ -70,7 +70,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             }
         };
         //连接socks5服务器
-        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
+        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer);
         nettyTcpClient.childAttr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);
@@ -96,7 +96,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = new HttpProxyServerViaSocks5ClientChannelInitializerBuilder(ctx, proxyBuildResultListener, targetHost, targetPort).build();
+        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer);
         nettyTcpClient.childAttr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);

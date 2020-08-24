@@ -10,8 +10,8 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.netproxytool.socks5.server.initializer.ProxyToRemoteChannelInitializerBuilder;
 import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
+import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
@@ -76,7 +76,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> i
                 }
             };
             String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
-            NettyChannelInitializer channelInitializer = new ProxyToRemoteChannelInitializerBuilder(ctx, proxyBuildResultListener, securityBytes).build();
+            NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyToRemoteChannelInitializer(ctx, proxyBuildResultListener, securityBytes);
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(nettyTcpClient::start);
         } else {

@@ -1,9 +1,10 @@
 package cn.t.tool.netproxytool.http;
 
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
-import cn.t.tool.netproxytool.http.server.initializer.HttpProxyServerChannelInitializerBuilder;
+import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.nettytool.daemon.DaemonService;
 import cn.t.tool.nettytool.daemon.server.NettyTcpServer;
+import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import cn.t.tool.nettytool.launcher.DefaultLauncher;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ import java.util.List;
 public class HttpProxyServer {
     public static void main(String[] args) {
         List<DaemonService> daemonServerList = new ArrayList<>();
-        NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server", HttpProxyServerConfig.SERVER_PORT, new HttpProxyServerChannelInitializerBuilder().build());
+        NettyChannelInitializer nettyChannelInitializer = InitializerBuilder.buildHttpProxyServerChannelInitializer();
+        NettyTcpServer proxyServer = new NettyTcpServer("http-proxy-server", HttpProxyServerConfig.SERVER_PORT, nettyChannelInitializer);
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
         defaultLauncher.setDaemonServiceList(daemonServerList);
