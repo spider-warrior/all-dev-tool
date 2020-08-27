@@ -44,15 +44,13 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             if(daemonConfig.getChannelHandlerListSupplier() != null) {
                 List<ChannelHandler> channelHandlerList = daemonConfig.getChannelHandlerListSupplier().get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {
-                    channelHandlerList.forEach(handler -> channelPipeline.addLast(HANDLER_PREFIX + handler.getClass().getName(), handler));
-                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get(DECODER_PREFIX);
-                    if(nettyTcpDecoder != null) {
-                        channelHandlerList.forEach(handler -> {
-                            if(handler instanceof NettyTcpDecoderAware) {
-                                ((NettyTcpDecoderAware)handler).setNettyTcpDecoder(nettyTcpDecoder);
-                            }
-                        });
-                    }
+                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get(MSG_DECODER);
+                    channelHandlerList.forEach(handler -> {
+                        if(handler instanceof NettyTcpDecoderAware) {
+                            ((NettyTcpDecoderAware)handler).setNettyTcpDecoder(nettyTcpDecoder);
+                        }
+                        channelPipeline.addLast(HANDLER_PREFIX + handler.getClass().getName(), handler);
+                    });
                 }
             }
             channelPipeline.addLast(EXCEPTION_HANDLER, new NettyExceptionHandler());

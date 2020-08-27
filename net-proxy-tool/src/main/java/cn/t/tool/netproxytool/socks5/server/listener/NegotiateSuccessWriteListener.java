@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NegotiateSuccessWriteListener implements ChannelFutureListener {
 
-    private NettyTcpDecoder nettyTcpDecoder;
-    private Socks5Method socks5Method;
+    private final NettyTcpDecoder nettyTcpDecoder;
+    private final Socks5Method socks5Method;
 
     @Override
     public void operationComplete(ChannelFuture future) {
