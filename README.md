@@ -21,6 +21,13 @@
     cd cd net-proxy-tool/target
     java -jar net-proxy.jar
  
+>5.本地主机启动端口监听
+     
+     java -jar net-proxy.jar HttpProxyServerViaSocks5
+     
+>6.配置浏览器代理地址
+    
+    127.0.0.1:1080
     
     
     
