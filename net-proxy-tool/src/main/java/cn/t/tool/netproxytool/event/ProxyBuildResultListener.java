@@ -10,5 +10,5 @@ import io.netty.channel.ChannelHandlerContext;
  **/
 @FunctionalInterface
 public interface ProxyBuildResultListener {
-    void handle (byte status, ChannelHandlerContext remoteChannelHandlerContext);
+    void handle(byte status, ChannelHandlerContext remoteChannelHandlerContext);
 }

@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpProxyServerClientBuildResultListener implements ChannelFutureListener {
 
-    private ChannelHandlerContext localChannelHandlerContext;
-    private ChannelHandlerContext remoteChannelHandlerContext;
-    private String clientName;
+    private final ChannelHandlerContext localChannelHandlerContext;
+    private final ChannelHandlerContext remoteChannelHandlerContext;
+    private final String clientName;
 
     @Override
     public void operationComplete(ChannelFuture future) {

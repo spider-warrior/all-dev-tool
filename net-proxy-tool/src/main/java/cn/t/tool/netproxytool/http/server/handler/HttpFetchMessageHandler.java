@@ -19,7 +19,7 @@ import java.net.SocketAddress;
 @Slf4j
 public class HttpFetchMessageHandler extends ForwardingMessageHandler {
 
-    private ProxyBuildResultListener proxyBuildResultListener;
+    private final ProxyBuildResultListener proxyBuildResultListener;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
