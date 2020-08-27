@@ -4,15 +4,12 @@ import cn.t.util.security.message.AlgorithmUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  * 转发消息处理器
@@ -22,8 +19,6 @@ import java.util.Arrays;
  * @since 2020-02-22 23:46
  **/
 public class EncryptedMessageEncoder extends MessageToByteEncoder<ByteBuf> {
-
-    private static final Logger logger = LoggerFactory.getLogger(EncryptedMessageEncoder.class);
 
     private final Key key;
     private final Cipher cipher;
@@ -35,7 +30,6 @@ public class EncryptedMessageEncoder extends MessageToByteEncoder<ByteBuf> {
         buf.readBytes(bytes);
         bytes = AlgorithmUtil.encrypt(cipher, key, bytes);
         buf.clear();
-        logger.info("加密数据长度: {}, content: {}", bytes.length, Arrays.toString(bytes));
         out.writeShort(bytes.length);
         buf.writeBytes(bytes);
         out.writeBytes(buf);
