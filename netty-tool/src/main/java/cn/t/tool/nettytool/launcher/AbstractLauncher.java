@@ -66,6 +66,7 @@ public abstract class AbstractLauncher implements Launcher, DaemonListener {
         logger.info("launcher shutdown successfully");
     }
 
+    //异步启动服务
     public void startServer(DaemonService server) {
         if (!executorService.isShutdown()) {
             executorService.submit(server::start);

@@ -25,7 +25,7 @@ public class DefaultLauncher extends AbstractLauncher {
                 startServer(server);
             }
             //等待直到超时
-            while (serverSuccessCount.get() != getDaemonServiceList().size() && (notTimeout = System.currentTimeMillis() - before < timeout)) {
+            while ((notTimeout = System.currentTimeMillis() - before < timeout) && serverSuccessCount.get() != getDaemonServiceList().size()) {
                 try { Thread.sleep(500); } catch (InterruptedException e) {logger.error("", e);}
             }
             if (!notTimeout) {
