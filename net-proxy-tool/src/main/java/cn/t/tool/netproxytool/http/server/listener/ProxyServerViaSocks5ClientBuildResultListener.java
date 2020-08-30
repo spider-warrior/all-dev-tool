@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpProxyServerViaSocks5ClientBuildResultListener implements ChannelFutureListener {
+public class ProxyServerViaSocks5ClientBuildResultListener implements ChannelFutureListener {
 
     private final ChannelHandlerContext localChannelHandlerContext;
     private final ChannelHandlerContext remoteChannelHandlerContext;
@@ -34,14 +34,14 @@ public class HttpProxyServerViaSocks5ClientBuildResultListener implements Channe
             channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.remove(HttpProxyServerViaSocks5Handler.class);
-            channelPipeline.addLast("http-proxy-server-via-socks5-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.addLast(new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
             log.error("{}: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
 
-    public HttpProxyServerViaSocks5ClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
+    public ProxyServerViaSocks5ClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.clientName = clientName;

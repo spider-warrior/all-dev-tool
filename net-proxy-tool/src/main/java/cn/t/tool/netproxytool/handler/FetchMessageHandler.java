@@ -1,4 +1,4 @@
-package cn.t.tool.netproxytool.socks5.server.handler;
+package cn.t.tool.netproxytool.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
@@ -17,9 +17,9 @@ import java.net.SocketAddress;
  * @since 2020-02-22 20:54
  **/
 @Slf4j
-public class Socks5FetchMessageHandler extends ForwardingMessageHandler {
+public class FetchMessageHandler extends ForwardingMessageHandler {
 
-    private ProxyBuildResultListener proxyBuildResultListener;
+    private final ProxyBuildResultListener proxyBuildResultListener;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -38,7 +38,7 @@ public class Socks5FetchMessageHandler extends ForwardingMessageHandler {
         }));
     }
 
-    public Socks5FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
         super(remoteChannelHandlerContext);
         this.proxyBuildResultListener = proxyBuildResultListener;
     }

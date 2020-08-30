@@ -26,7 +26,7 @@ public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<A
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthenticationResponse response) {
-        log.info("鉴权结果: version: {}, status: {}", response.getVersion(), response.getStatus());
+        log.info("鉴权结果: version: {}, status: {}({})", response.getVersion(), response.getStatus(), Socks5CmdExecutionStatus.getSocks5CmdExecutionStatus(response.getStatus()));
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == response.getStatus()) {
             String targetHost = ctx.channel().attr(Socks5ClientConstants.TARGET_HOST_KEY).get();
             Short targetPort = ctx.channel().attr(Socks5ClientConstants.TARGET_PORT_KEY).get();

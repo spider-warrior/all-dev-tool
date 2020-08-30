@@ -1,6 +1,7 @@
 package cn.t.tool.nettytool.launcher;
 
 import cn.t.tool.nettytool.daemon.DaemonService;
+import cn.t.tool.nettytool.daemon.ListenableDaemonService;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -20,10 +21,13 @@ public class DefaultLauncher extends AbstractLauncher {
         if (getDaemonServiceList() != null && !getDaemonServiceList().isEmpty()) {
             logger.info(String.format("server list size: %d", getDaemonServiceList().size()));
             long before = System.currentTimeMillis();
-            boolean notTimeout = true;
-            for (final DaemonService server: getDaemonServiceList()) {
-                startServer(server);
+            for (final DaemonService service: getDaemonServiceList()) {
+                if(service instanceof ListenableDaemonService) {
+                    ((ListenableDaemonService)service).addListener(this);
+                }
+                startServer(service);
             }
+            boolean notTimeout;
             //等待直到超时
             while ((notTimeout = System.currentTimeMillis() - before < timeout) && serverSuccessCount.get() != getDaemonServiceList().size()) {
                 try { Thread.sleep(500); } catch (InterruptedException e) {logger.error("", e);}

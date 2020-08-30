@@ -3,8 +3,7 @@ package cn.t.tool.netproxytool.http.server.handler;
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerViaSocks5ClientBuildResultListener;
+import cn.t.tool.netproxytool.http.server.listener.ProxyServerViaSocks5ClientBuildResultListener;
 import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
@@ -61,7 +60,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new HttpProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
+                promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -70,9 +69,8 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             }
         };
         //连接socks5服务器
-        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort);
+        NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort, socks5ClientConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer);
-        nettyTcpClient.childAttr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);
     }
 
@@ -84,21 +82,20 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
+                promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
                 EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
                 embeddedChannel.writeOutbound(proxiedRequest);
                 ByteBuf byteBuf = embeddedChannel.readOutbound();
                 embeddedChannel.close();
-                remoteChannelHandlerContext.writeAndFlush(byteBuf, promise);
+                remoteChannelHandlerContext.channel().writeAndFlush(byteBuf, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, BAD_GATEWAY));
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort);
+        NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyServerViaSocks5ClientChannelInitializer(ctx, proxyBuildResultListener, targetHost, targetPort, socks5ClientConfig);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, socks5ClientConfig.getSocks5ServerHost(), socks5ClientConfig.getSocks5ServerPort(), channelInitializer);
-        nettyTcpClient.childAttr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY, socks5ClientConfig);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);
     }
 

@@ -1,25 +1,21 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
-import cn.t.tool.netproxytool.handler.DecryptMessageAnalyser;
-import cn.t.tool.netproxytool.handler.EncryptedMessageEncoder;
-import cn.t.tool.netproxytool.handler.ForwardingDecryptedMessageHandler;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
+import cn.t.tool.netproxytool.handler.LengthBasedDecryptedMessageDecoder;
+import cn.t.tool.netproxytool.handler.LengthBasedEncryptedMessageEncoder;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpRequestEncoder;
-import io.netty.util.Attribute;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.NoSuchPaddingException;
@@ -32,53 +28,41 @@ import java.security.NoSuchAlgorithmException;
  * @since 2020-02-20 22:30
  **/
 @Slf4j
-public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse> implements NettyTcpDecoderAware {
+public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse> {
 
     private final ProxyBuildResultListener proxyBuildResultListener;
     private final ChannelHandlerContext remoteChannelHandlerContext;
-    private NettyTcpDecoder nettyTcpDecoder;
+    private final Socks5ClientConfig socks5ClientConfig;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) throws NoSuchPaddingException, NoSuchAlgorithmException {
+    protected void channelRead0(ChannelHandlerContext ctx, CmdResponse response) throws NoSuchAlgorithmException, NoSuchPaddingException {
         byte status = response.getExecutionStatus();
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());
-            Attribute<Socks5ClientConfig> userConfigAttr = ctx.channel().attr(HttpProxyServerClientConfig.SOCKS5_CLIENT_CONFIG_KEY);
             ChannelPipeline channelPipeline = ctx.channel().pipeline();
-            if(userConfigAttr == null || userConfigAttr.get() == null) {
-                channelPipeline.remove(NettyTcpDecoder.class);
-            } else {
-                nettyTcpDecoder.setByteBufAnalyser(new DecryptMessageAnalyser());
-            }
+            channelPipeline.remove(NettyTcpDecoder.class);
             channelPipeline.remove(MethodRequestEncoder.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestEncoder.class);
             channelPipeline.remove(CmdRequestEncoder.class);
             channelPipeline.remove(HttpRequestEncoder.class);
-
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);
-            if(userConfigAttr == null || userConfigAttr.get() == null) {
-                channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
-            } else {
-                Socks5ClientConfig userConfig = userConfigAttr.get();
-                //消息加密
-                channelPipeline.addFirst("http-via-socks5-proxy-encrypt-forwarding-encoder", new EncryptedMessageEncoder(userConfig.getSecurity()));
-                //消息解密转发器
-                channelPipeline.addLast("http-via-socks5-proxy-decrypt-forwarding-handler", new ForwardingDecryptedMessageHandler(remoteChannelHandlerContext, userConfig.getSecurity()));
+            if(socks5ClientConfig != null) {
+                //读取的数据要解密
+                channelPipeline.addFirst(new LengthBasedDecryptedMessageDecoder(socks5ClientConfig.getSecurity()));
+                //写出去的数据要加密
+                channelPipeline.addFirst(new LengthBasedEncryptedMessageEncoder(socks5ClientConfig.getSecurity()));
             }
+            channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
             proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
         } else {
             log.warn("连接代理服务器失败, status: {}", status);
         }
     }
 
-    public CmdResponseHandler(ProxyBuildResultListener proxyBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext) {
+    public CmdResponseHandler(ProxyBuildResultListener proxyBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext, Socks5ClientConfig socks5ClientConfig) {
         this.proxyBuildResultListener = proxyBuildResultListener;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
-    }
-
-    @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+        this.socks5ClientConfig = socks5ClientConfig;
     }
 }
