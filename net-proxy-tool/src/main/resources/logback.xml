@@ -11,7 +11,7 @@
     <appender name="Default" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/default.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>default.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>${logHome}/default.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
@@ -24,7 +24,7 @@
     <appender name="EventLoggingHandler" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/event-logging-handler.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>event-logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>${logHome}/event-logging-handler.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
@@ -37,7 +37,7 @@
     <appender name="ThreadMonitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/thread-monitor.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>thread-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>${logHome}/thread-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
@@ -50,7 +50,7 @@
     <appender name="ThreadPoolMonitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logHome}/thread-pool-monitor.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <FileNamePattern>thread-pool-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>${logHome}/thread-pool-monitor.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!-- keep 10 days worth of history -->
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
