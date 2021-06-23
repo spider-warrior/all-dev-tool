@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.socks5.constants;
 
 import cn.t.tool.netproxytool.socks5.config.ServerConfig;
 import cn.t.util.common.SystemUtil;
+import cn.t.util.common.digital.ByteUtil;
 import io.netty.handler.logging.LogLevel;
 import io.netty.util.AttributeKey;
 
@@ -14,7 +15,7 @@ import io.netty.util.AttributeKey;
  **/
 public class Socks5ServerDaemonConfig {
     public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
-    public static final byte[] SERVER_HOST_BYTES = SystemUtil.convertHostToBytes(SERVER_HOST);
+    public static final byte[] SERVER_HOST_BYTES = ByteUtil.stringsToBytes(SERVER_HOST, "\\.");
     public static final short SERVER_PORT = 10086;
 
     public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.DEBUG;

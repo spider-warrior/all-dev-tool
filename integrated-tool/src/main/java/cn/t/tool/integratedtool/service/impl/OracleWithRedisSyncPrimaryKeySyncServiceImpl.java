@@ -20,9 +20,9 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
 
     private static final Logger logger = LoggerFactory.getLogger(OracleWithRedisSyncPrimaryKeySyncServiceImpl.class);
 
-    private OracleHelper oracleHelper;
-    private JedisHelper jedisHelper;
-    private PrimaryKeyConfiguration primaryKeyConfiguration;
+    private final OracleHelper oracleHelper;
+    private final JedisHelper jedisHelper;
+    private final PrimaryKeyConfiguration primaryKeyConfiguration;
 
     public boolean synchronizePrimaryKey(String tableName, String idColumn, long targetId, String key) throws RequiredParamMissingException, TableNotExistException, ColumnNotExistException {
 

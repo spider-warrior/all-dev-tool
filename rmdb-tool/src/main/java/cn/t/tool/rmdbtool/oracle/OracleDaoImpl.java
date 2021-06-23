@@ -47,15 +47,15 @@ public class OracleDaoImpl implements DbDao {
         Map<Integer, String> param = new HashMap<>();
         if(queryParam != null) {
             int index = 1;
-            if(StringUtil.hasLength(queryParam.getTableName())) {
+            if(!StringUtil.isEmpty(queryParam.getTableName())) {
                 builder.append(" and a.table_name = ?");
                 param.put(index++, queryParam.getTableName().toUpperCase());
             }
-            if(StringUtil.hasLength(queryParam.getColumnName())) {
+            if(!StringUtil.isEmpty(queryParam.getColumnName())) {
                 builder.append(" and a.column_name = ?");
                 param.put(index++, queryParam.getColumnName().toUpperCase());
             }
-            if(StringUtil.hasLength(queryParam.getType())) {
+            if(!StringUtil.isEmpty(queryParam.getType())) {
                 builder.append(" and b.constraint_type = ?");
                 param.put(index, queryParam.getType().toUpperCase());
             }
