@@ -24,8 +24,8 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof ByteBuf) {
-            log.info("[{} : {}]: 转发消息: {} B", remoteChannelHandlerContext.channel().localAddress(), ctx.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
             remoteChannelHandlerContext.writeAndFlush(msg);
+            log.info("[{}] -> [{}]: 转发消息: {} B", ctx.channel().remoteAddress(), remoteChannelHandlerContext.channel().remoteAddress(), ((ByteBuf)msg).readableBytes());
         } else {
             super.channelRead(ctx, msg);
         }
@@ -33,12 +33,22 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        boolean remoteOpen = remoteChannelHandlerContext.channel().isOpen();
         if(this.getClass().equals(ForwardingMessageHandler.class)) {
-            log.info("[{}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
+            if(remoteOpen) {
+                log.info("[client: {}]: 断开连接, 释放代理资源", ctx.channel().remoteAddress());
+                remoteChannelHandlerContext.close();
+            } else {
+                log.info("[client: {}]: 断开连接", ctx.channel().remoteAddress());
+            }
         } else {
-            log.info("[{}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
+            if(remoteOpen) {
+                log.info("[remote: {}]: 断开连接, 关闭客户端", ctx.channel().remoteAddress());
+                remoteChannelHandlerContext.close();
+            } else {
+                log.info("[remote: {}]: 断开连接", ctx.channel().remoteAddress());
+            }
         }
-        remoteChannelHandlerContext.close();
     }
 
     @Override

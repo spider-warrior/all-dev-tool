@@ -27,7 +27,7 @@ public class HttpProxyServerClientBuildResultListener implements ChannelFutureLi
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
-            log.info("{}: 代理请求发送成功", clientName);
+            log.info("{}: 代理成功消息已发送至客户端", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpResponseEncoder.class);

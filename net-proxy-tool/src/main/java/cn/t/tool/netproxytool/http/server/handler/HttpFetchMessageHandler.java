@@ -23,7 +23,6 @@ public class HttpFetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("[{}]: 连接成功, 回调监听器", ctx.channel().remoteAddress());
         proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
     }
 
