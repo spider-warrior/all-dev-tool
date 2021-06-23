@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
-import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.http.server.listener.ProxyServerViaSocks5ClientBuildResultListener;
 import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.ThreadUtil;
@@ -57,7 +57,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
         InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
-            if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
+            if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
                 promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
@@ -79,7 +79,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
         String clientName = clientAddress.getHostString() + ":" + clientAddress.getPort() + " -> " + targetHost + ":" + targetPort;
         FullHttpRequest proxiedRequest = request.retainedDuplicate();
         ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
-            if(HttpProxyBuildExecutionStatus.SUCCEEDED.value == status) {
+            if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
                 promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));

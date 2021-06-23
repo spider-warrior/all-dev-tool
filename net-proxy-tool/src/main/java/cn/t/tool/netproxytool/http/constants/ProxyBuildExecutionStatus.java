@@ -3,12 +3,12 @@ package cn.t.tool.netproxytool.http.constants;
 /**
  * htt创建代理响应码
  */
-public enum HttpProxyBuildExecutionStatus {
+public enum ProxyBuildExecutionStatus {
     SUCCEEDED((byte) 0X00),
     FAILED((byte) 0X01);
 
-    public static HttpProxyBuildExecutionStatus getHttpProxyBuildExecutionStatus(byte value) {
-        for(HttpProxyBuildExecutionStatus status: values()) {
+    public static ProxyBuildExecutionStatus getHttpProxyBuildExecutionStatus(byte value) {
+        for(ProxyBuildExecutionStatus status: values()) {
             if(status.value == value) {
                 return status;
             }
@@ -17,7 +17,7 @@ public enum HttpProxyBuildExecutionStatus {
     }
 
     public final byte value;
-    HttpProxyBuildExecutionStatus(byte value) {
+    ProxyBuildExecutionStatus(byte value) {
         this.value = value;
     }
 }

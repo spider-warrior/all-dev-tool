@@ -1,8 +1,7 @@
 package cn.t.tool.netproxytool.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
-import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
-import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -23,8 +22,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("[{}]: 连接成功, 回调监听器", ctx.channel().remoteAddress());
-        proxyBuildResultListener.handle(Socks5CmdExecutionStatus.SUCCEEDED.value, ctx);
+        proxyBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
     }
 
     @Override
@@ -33,7 +31,7 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
             if (!future.isSuccess()) {
                 //连接失败处理
                 log.info("[{}]: 连接失败, 回调监听器", ctx.channel().remoteAddress());
-                proxyBuildResultListener.handle(Socks5CmdExecutionStatus.CONNECTION_REFUSED.value, ctx);
+                proxyBuildResultListener.handle(ProxyBuildExecutionStatus.FAILED.value, ctx);
             }
         }));
     }

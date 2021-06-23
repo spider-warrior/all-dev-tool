@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.handler.LengthBasedDecryptedMessageDecoder;
 import cn.t.tool.netproxytool.handler.LengthBasedEncryptedMessageEncoder;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
-import cn.t.tool.netproxytool.http.constants.HttpProxyBuildExecutionStatus;
+import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
@@ -54,7 +54,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
                 channelPipeline.addFirst(new LengthBasedEncryptedMessageEncoder(socks5ClientConfig.getSecurity()));
             }
             channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
-            proxyBuildResultListener.handle(HttpProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
+            proxyBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
         } else {
             log.warn("连接代理服务器失败, status: {}", status);
         }

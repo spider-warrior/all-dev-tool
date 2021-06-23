@@ -5,7 +5,6 @@ import cn.t.tool.netproxytool.handler.FetchMessageHandler;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
-import cn.t.tool.netproxytool.http.server.handler.HttpFetchMessageHandler;
 import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerHandler;
 import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerViaSocks5Handler;
 import cn.t.tool.netproxytool.socks5.client.analyse.NegotiateResponseAnalyse;
@@ -61,7 +60,7 @@ public class InitializerBuilder {
         daemonConfigBuilder.configLogLevel(HttpProxyServerClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         daemonConfigBuilder.configIdleHandler(HttpProxyServerClientConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
-        supplierList.add(() -> new HttpFetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
+        supplierList.add(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
         daemonConfigBuilder.configHandler(supplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();
         return new NettyChannelInitializer(daemonConfig);
