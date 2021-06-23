@@ -1,5 +1,5 @@
 import org.junit.Test;
-import redis.clients.util.JedisClusterCRC16;
+import redis.clients.jedis.util.JedisClusterCRC16;
 
 /**
  * @author yj
@@ -13,7 +13,5 @@ public class CrcTest {
         int result = JedisClusterCRC16.getCRC16(str);
         System.out.println("crc: " + result);
     }
-
-
 
 }

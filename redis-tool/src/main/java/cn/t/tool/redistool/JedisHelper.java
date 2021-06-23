@@ -17,19 +17,15 @@ public class JedisHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisHelper.class);
 
-    private JedisCluster jc;
+    private final JedisCluster jc;
 
     public JedisCluster getJedisCluster() {
         return jc;
     }
 
     public void close() {
-        try {
-            if(jc != null) {
-                jc.close();
-            }
-        } catch (IOException e) {
-            logger.error("", e);
+        if(jc != null) {
+            jc.close();
         }
     }
 

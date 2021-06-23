@@ -11,7 +11,7 @@ import java.util.Collections;
 public class SingleNodeJedisClusterAdapter extends JedisCluster {
 
     public SingleNodeJedisClusterAdapter(HostAndPort node, String password) {
-        super(Collections.emptySet(), DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, password, new GenericObjectPoolConfig());
-        connectionHandler = new  SingleNodeJedisClusterConnectionHandlerAdapter(node, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, password, new GenericObjectPoolConfig());
+        super(Collections.emptySet(), DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, DEFAULT_MAX_ATTEMPTS, password, new GenericObjectPoolConfig<Jedis>());
+        connectionHandler = new SingleNodeJedisClusterConnectionHandlerAdapter(node, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, password, new GenericObjectPoolConfig<Jedis>());
     }
 }

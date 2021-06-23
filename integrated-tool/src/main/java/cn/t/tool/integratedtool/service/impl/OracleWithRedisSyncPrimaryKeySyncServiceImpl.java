@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -97,11 +96,7 @@ public class OracleWithRedisSyncPrimaryKeySyncServiceImpl implements PrimaryKeyS
 
     @Override
     public void destroy() {
-        try {
-            jedisHelper.getJedisCluster().close();
-        } catch (IOException e) {
-            logger.error("", e);
-        }
+        jedisHelper.getJedisCluster().close();
     }
 
     public OracleWithRedisSyncPrimaryKeySyncServiceImpl(OracleHelper oracleHelper, JedisHelper jedisHelper, PrimaryKeyConfiguration primaryKeyConfiguration) {
