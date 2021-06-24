@@ -30,7 +30,7 @@ public class LengthBasedEncryptedMessageEncoder extends MessageToByteEncoder<Byt
         msg.readBytes(bytes);
         bytes = AlgorithmUtil.encrypt(cipher, key, bytes);
         //length
-        out.writeShort(bytes.length);
+        out.writeInt(bytes.length);
         //body
         out.writeBytes(bytes);
         logger.info("encrypt bytes: {} B", bytes.length);

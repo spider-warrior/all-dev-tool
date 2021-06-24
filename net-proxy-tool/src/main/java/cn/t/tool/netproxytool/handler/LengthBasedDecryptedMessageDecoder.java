@@ -28,12 +28,12 @@ public class LengthBasedDecryptedMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-        if(in.readableBytes() < 2) {
+        if(in.readableBytes() < 4) {
             logger.info("readable bytes length less than 2, return immediately");
             return;
         }
         in.markReaderIndex();
-        short size = in.readShort();
+        int size = in.readInt();
         if(in.readableBytes() < size) {
             in.resetReaderIndex();
             logger.info("readable bytes length less than required: {}, actually: {} return immediately", size, in.readableBytes());
