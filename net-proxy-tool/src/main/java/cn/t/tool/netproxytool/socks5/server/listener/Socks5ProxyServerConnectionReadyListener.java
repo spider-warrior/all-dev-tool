@@ -26,18 +26,17 @@ import java.security.NoSuchAlgorithmException;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class Socks5ProxyForwardingResultListener implements ChannelFutureListener {
+public class Socks5ProxyServerConnectionReadyListener implements ChannelFutureListener {
 
     private final ChannelHandlerContext localChannelHandlerContext;
     private final ChannelHandlerContext remoteChannelHandlerContext;
-    private final String targetHost;
-    private final int targetPort;
+    private final String clientName;
     private final byte[] security;
 
     @Override
     public void operationComplete(ChannelFuture future) throws NoSuchAlgorithmException, NoSuchPaddingException {
         if(future.isSuccess()) {
-            log.info("[{}]: 发送代理结果成功, 目的地址: [{}:{}]", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort);
+            log.info("{}: 代理连接已就位", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(NettyTcpDecoder.class);
@@ -55,16 +54,15 @@ public class Socks5ProxyForwardingResultListener implements ChannelFutureListene
             }
             channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("[{}]: 发送代理结果失败, 目的地址: [{}:{}], 原因: {}", localChannelHandlerContext.channel().remoteAddress(), targetHost, targetPort, future.cause().getMessage());
+            log.error("{}: 代理请求发送失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
 
-    public Socks5ProxyForwardingResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String targetHost, int targetPort, byte[] security) {
+    public Socks5ProxyServerConnectionReadyListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName, byte[] security) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
-        this.targetHost = targetHost;
-        this.targetPort = targetPort;
+        this.clientName = clientName;
         this.security = security;
     }
 }

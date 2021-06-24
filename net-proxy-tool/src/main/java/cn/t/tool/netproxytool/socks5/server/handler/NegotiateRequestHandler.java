@@ -31,7 +31,7 @@ public class NegotiateRequestHandler extends SimpleChannelInboundHandler<Negotia
         if(version != Socks5ProtocolConstants.VERSION) {
             throw new ProxyException(String.format("不支持的协议版本: %d", version));
         }
-        List<Socks5Method> socks5MethodList =  negotiateRequest.getSupportSocks5MethodList();
+        List<Socks5Method> socks5MethodList = negotiateRequest.getSupportSocks5MethodList();
         if(CollectionUtil.isEmpty(socks5MethodList)) {
             throw new ProxyException("客户端未提供支持的认证方法");
         } else {

@@ -115,15 +115,22 @@ public class InitializerBuilder {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         daemonConfigBuilder.configLogLevel(Socks5ServerDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         daemonConfigBuilder.configIdleHandler(Socks5ServerDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        //协商消息解析
         daemonConfigBuilder.configByteBufAnalyser(NegotiateRequestAnalyse::new);
-        List<Supplier<MessageToByteEncoder<?>>> encoderSupplierList = new ArrayList<>();
-        encoderSupplierList.add(NegotiateResponseEncoder::new);
-        encoderSupplierList.add(UsernamePasswordAuthenticationResponseEncoder::new);
-        encoderSupplierList.add(CmdResponseEncoder::new);
-        daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
+        List<Supplier<MessageToByteEncoder<?>>> m2bEncoderSupplierList = new ArrayList<>();
+        //协商响应消息编码
+        m2bEncoderSupplierList.add(NegotiateResponseEncoder::new);
+        //用户名密码鉴权响应编码
+        m2bEncoderSupplierList.add(UsernamePasswordAuthenticationResponseEncoder::new);
+        //CMD编码响应
+        m2bEncoderSupplierList.add(CmdResponseEncoder::new);
+        daemonConfigBuilder.configM2bEncoder(m2bEncoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
+        //协商消息处理器
         handlerSupplierList.add(NegotiateRequestHandler::new);
+        //用户名密码鉴权处理器
         handlerSupplierList.add(UsernamePasswordAuthenticationRequestHandler::new);
+        //CMD处理器
         handlerSupplierList.add(CmdRequestHandler::new);
         daemonConfigBuilder.configHandler(handlerSupplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();
@@ -132,9 +139,12 @@ public class InitializerBuilder {
 
     public static NettyChannelInitializer buildProxyToRemoteChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
+        //log config
         daemonConfigBuilder.configLogLevel(Socks5ProxyConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        //idle config
         daemonConfigBuilder.configIdleHandler(Socks5ProxyConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ProxyConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ProxyConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
+        //fetchMessageHandler
         handlerSupplierList.add(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
         daemonConfigBuilder.configHandler(handlerSupplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();

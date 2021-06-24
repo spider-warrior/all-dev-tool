@@ -22,7 +22,7 @@ public class Socks5ServerDaemonConfig {
 
     public static final int SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
     public static final int SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS = 0;
-    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 60;
+    public static final int SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS = 10;
 
     public static final String SOCKS5_SERVER_HOME_KEY = "SOCKS5_HOME";
     public static final String SOCKS5_SERVER_USERS_CONFIG_FILE = "users";

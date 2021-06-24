@@ -2,6 +2,7 @@ package cn.t.tool.netproxytool.socks5.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.exception.ProxyException;
+import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.socks5.config.ServerConfig;
 import cn.t.tool.netproxytool.socks5.config.UserConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
@@ -10,8 +11,9 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyForwardingResultListener;
+import cn.t.tool.netproxytool.socks5.server.listener.Socks5ProxyServerConnectionReadyListener;
 import cn.t.tool.netproxytool.util.InitializerBuilder;
+import cn.t.tool.netproxytool.util.NetProxyUtil;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
@@ -48,30 +50,30 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
         }
         byte[] securityBytes = ArrayUtil.isEmpty(security) ? null : security;
         if(msg.getRequestSocks5Cmd() == Socks5Cmd.CONNECT) {
-            InetSocketAddress remoteAddress = (InetSocketAddress)ctx.channel().remoteAddress();
+            InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
             String targetHost = new String(msg.getTargetAddress());
             int targetPort = msg.getTargetPort();
-            log.info("[{}]: [{}], 地址类型: {}, 地址: {}， 目标端口: {}", remoteAddress, Socks5Cmd.CONNECT, msg.getSocks5AddressType(), targetHost, targetPort);
+            log.info("[{}]: [{}], 地址类型: {}, 地址: {}:{}", clientAddress, Socks5Cmd.CONNECT, msg.getSocks5AddressType(), targetHost, targetPort);
+            String clientName = NetProxyUtil.buildProxyConnectionName(clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
             ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
-                Socks5CmdExecutionStatus socks5CmdExecutionStatus = Socks5CmdExecutionStatus.getSocks5CmdExecutionStatus(status);
                 CmdResponse cmdResponse = new CmdResponse();
                 cmdResponse.setVersion(msg.getVersion());
-                cmdResponse.setExecutionStatus(socks5CmdExecutionStatus.value);
                 cmdResponse.setRsv((byte)0);
                 cmdResponse.setSocks5AddressType(Socks5AddressType.IPV4.value);
                 cmdResponse.setTargetAddress(Socks5ServerDaemonConfig.SERVER_HOST_BYTES);
                 cmdResponse.setTargetPort(Socks5ServerDaemonConfig.SERVER_PORT);
-                if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
-                    log.info("[{}]: 代理客户端成功, remote: {}:{}", remoteAddress, targetHost, targetPort);
+                if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
+                    cmdResponse.setExecutionStatus(Socks5CmdExecutionStatus.SUCCEEDED.value);
+                    log.info("[client: {}] -> [local: {}] -> [remote: {}]: 代理创建成功", ctx.channel().remoteAddress(), remoteChannelHandlerContext.channel().localAddress(), remoteChannelHandlerContext.channel().remoteAddress());
                     ChannelPromise promise = ctx.newPromise();
-                    promise.addListener(new Socks5ProxyForwardingResultListener(ctx, remoteChannelHandlerContext, targetHost, targetPort, securityBytes));
+                    promise.addListener(new Socks5ProxyServerConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName, securityBytes));
                     ctx.writeAndFlush(cmdResponse, promise);
                 } else {
-                    log.error("[{}]: 代理客户端失败, remote: {}:{}", remoteAddress, targetHost, targetPort);
+                    cmdResponse.setExecutionStatus(Socks5CmdExecutionStatus.GENERAL_SOCKS_SERVER_FAILURE.value);
+                    log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                     ctx.writeAndFlush(cmdResponse);
                 }
             };
-            String clientName = remoteAddress.getHostString() + ":" + remoteAddress.getPort() + " -> " + targetHost + ":" + targetPort;
             NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyToRemoteChannelInitializer(ctx, proxyBuildResultListener);
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(nettyTcpClient::start);
