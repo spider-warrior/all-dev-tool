@@ -70,6 +70,17 @@ public class InitializerBuilder {
         return new NettyChannelInitializer(daemonConfig);
     }
 
+    public static NettyChannelInitializer buildHttpsProxyServerClientChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+        DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
+        daemonConfigBuilder.configLogLevel(HttpProxyServerClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        daemonConfigBuilder.configIdleHandler(HttpProxyServerClientConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
+        supplierList.add(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
+        daemonConfigBuilder.configHandler(supplierList);
+        DaemonConfig daemonConfig = daemonConfigBuilder.build();
+        return new NettyChannelInitializer(daemonConfig);
+    }
+
     public static NettyChannelInitializer buildHttpProxyServerChannelInitializer() {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         daemonConfigBuilder.configLogLevel(HttpProxyServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);

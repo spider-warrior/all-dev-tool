@@ -64,7 +64,7 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
                 ctx.close();
             }
         };
-        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerClientChannelInitializer(ctx, proxyBuildResultListener);
+        NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpsProxyServerClientChannelInitializer(ctx, proxyBuildResultListener);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);
     }
@@ -78,6 +78,7 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
                 log.info("[client: {}] -> [local: {}] -> [remote: {}]: 代理创建成功", ctx.channel().remoteAddress(), remoteChannelHandlerContext.channel().localAddress(), remoteChannelHandlerContext.channel().remoteAddress());
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
                 promise.addListener(new ProxyServerConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
+                prepareProxiedRequest(proxiedRequest);
                 remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -88,6 +89,15 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
         NettyChannelInitializer channelInitializer = InitializerBuilder.buildHttpProxyServerClientChannelInitializer(ctx, proxyBuildResultListener);
         NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
         ThreadUtil.submitProxyTask(nettyTcpClient::start);
+    }
+
+    private void prepareProxiedRequest(FullHttpRequest proxiedRequest) {
+        HttpHeaders headers = proxiedRequest.headers();
+        String proxyConnection = headers.get("Proxy-Connection");
+        if(proxyConnection != null) {
+            headers.remove("Proxy-Connection");
+            headers.set("Connection", proxyConnection);
+        }
     }
 
 }
