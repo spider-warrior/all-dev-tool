@@ -28,7 +28,7 @@ public class Socks5ProxyServer {
         ServerConfig serverConfig = ServerConfigUtil.loadServerConfig();
         List<DaemonService> daemonServerList = new ArrayList<>();
         NettyChannelInitializer nettyChannelInitializer = InitializerBuilder.buildLocalToProxyChannelInitializer();
-        NettyTcpServer proxyServer = new NettyTcpServer("socks5-proxy-server", Socks5ServerDaemonConfig.SERVER_PORT, nettyChannelInitializer);
+        NettyTcpServer proxyServer = new NettyTcpServer(String.format("socks5-proxy-server(%s:%s)", Socks5ServerDaemonConfig.SERVER_HOST, Socks5ServerDaemonConfig.SERVER_PORT), Socks5ServerDaemonConfig.SERVER_PORT, nettyChannelInitializer);
         proxyServer.childAttr(Socks5ServerDaemonConfig.SERVER_CONFIG_KEY, serverConfig);
         daemonServerList.add(proxyServer);
         DefaultLauncher defaultLauncher = new DefaultLauncher();
