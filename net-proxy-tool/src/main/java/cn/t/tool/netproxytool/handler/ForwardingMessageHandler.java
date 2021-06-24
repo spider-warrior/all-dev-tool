@@ -6,8 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-
 /**
  * 转发消息处理器
  *
@@ -19,7 +17,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final ChannelHandlerContext remoteChannelHandlerContext;
+    protected final ChannelHandlerContext remoteChannelHandlerContext;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -54,8 +52,7 @@ public class ForwardingMessageHandler extends ChannelDuplexHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         //消息读取失败不能实现消息转发，断开客户端代理
-        InetSocketAddress inetSocketAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-        log.error("读取消息异常, 即将关闭连接: [{}:{}], 原因: {}", inetSocketAddress.getHostString(), inetSocketAddress.getPort(), cause.getMessage());
+        log.error("读取消息异常, 即将关闭连接: [{} -> {}], 原因: {}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), cause.getMessage());
         ctx.close();
     }
 

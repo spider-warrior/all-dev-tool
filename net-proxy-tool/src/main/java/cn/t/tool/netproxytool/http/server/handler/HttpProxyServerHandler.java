@@ -8,9 +8,11 @@ import cn.t.tool.netproxytool.util.NetProxyUtil;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,7 +81,11 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
                 promise.addListener(new ProxyServerConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
                 prepareProxiedRequest(proxiedRequest);
-                remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
+                EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
+                embeddedChannel.writeOutbound(proxiedRequest);
+                ByteBuf byteBuf = embeddedChannel.readOutbound();
+                embeddedChannel.close();
+                remoteChannelHandlerContext.writeAndFlush(byteBuf, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, BAD_GATEWAY));
