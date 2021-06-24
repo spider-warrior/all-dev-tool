@@ -27,16 +27,16 @@ public class ProxyServerViaSocks5ClientBuildResultListener implements ChannelFut
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
-            log.info("{}: 通知客户端代理已就位成功", clientName);
+            log.info("{}: 代理连接已就位", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpRequestDecoder.class);
             channelPipeline.remove(HttpResponseEncoder.class);
             channelPipeline.remove(HttpObjectAggregator.class);
             channelPipeline.remove(HttpProxyServerViaSocks5Handler.class);
-            channelPipeline.addLast(new ForwardingMessageHandler(remoteChannelHandlerContext));
+            channelPipeline.addLast("proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("{}: 通知客户端代理已就位失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
+            log.error("{}: 代理连接失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }

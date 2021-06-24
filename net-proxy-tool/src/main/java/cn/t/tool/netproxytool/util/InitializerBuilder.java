@@ -43,10 +43,14 @@ public class InitializerBuilder {
 
     public static NettyChannelInitializer buildHttpProxyServerViaSocks5ChannelInitializer(Socks5ClientConfig socks5ClientConfig) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
+        //logging
         daemonConfigBuilder.configLogLevel(HttpProxyServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        //idle
         daemonConfigBuilder.configIdleHandler(HttpProxyServerConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
+        //http response encoder
         supplierList.add(HttpResponseEncoder::new);
+        //http request decoder
         supplierList.add(HttpRequestDecoder::new);
         supplierList.add(() -> new HttpObjectAggregator(1024 * 1024));
         supplierList.add(() -> new HttpProxyServerViaSocks5Handler(socks5ClientConfig));
@@ -93,18 +97,28 @@ public class InitializerBuilder {
 
     public static NettyChannelInitializer buildProxyServerViaSocks5ClientChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener, String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
+        //logging
         daemonConfigBuilder.configLogLevel(Socks5ClientDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        //idle
         daemonConfigBuilder.configIdleHandler(Socks5ClientDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        //negotiate
         daemonConfigBuilder.configByteBufAnalyser(NegotiateResponseAnalyse::new);
         List<Supplier<MessageToByteEncoder<?>>> encoderSupplierList = new ArrayList<>();
+        //socks5 methodRequest encoder
         encoderSupplierList.add(MethodRequestEncoder::new);
+        //socks5 usernamePasswordRequest encoder
         encoderSupplierList.add(UsernamePasswordAuthenticationRequestEncoder::new);
+        //socks5 cmdRequest encoder
         encoderSupplierList.add(CmdRequestEncoder::new);
         daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
+
         handlerSupplierList.add(HttpRequestEncoder::new);
+        //negotiate response handler
         handlerSupplierList.add(() -> new NegotiateResponseHandler(targetHost, targetPort, socks5ClientConfig));
+        //authentication response handler
         handlerSupplierList.add(AuthenticationResponseHandler::new);
+        //cmd response handler
         handlerSupplierList.add(() -> new CmdResponseHandler(proxyBuildResultListener, remoteChannelHandlerContext, socks5ClientConfig));
         daemonConfigBuilder.configHandler(handlerSupplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();

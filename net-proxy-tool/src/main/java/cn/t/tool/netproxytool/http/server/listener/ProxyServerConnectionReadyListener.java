@@ -36,7 +36,7 @@ public class ProxyServerConnectionReadyListener implements ChannelFutureListener
             channelPipeline.remove(HttpProxyServerHandler.class);
             channelPipeline.addLast("proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
         } else {
-            log.error("{}: 代理请求发送失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
+            log.error("{}: 代理连接失败, 即将关闭连接, 失败原因: {}", clientName, future.cause().getMessage());
             localChannelHandlerContext.close();
         }
     }
