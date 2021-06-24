@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.daemon;
 
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -16,7 +16,7 @@ public class DaemonConfig {
     private LogLevel loggingHandlerLogLevel = LogLevel.DEBUG;
     private InternalLoggerFactory internalLoggerFactory = Slf4JLoggerFactory.INSTANCE;
     private Supplier<IdleStateHandler> idleStateHandlerSupplier;
-    private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
+    private Supplier<NettyB2mDecoder> nettyB2mDecoderSupplier;
     private Supplier<List<MessageToMessageEncoder<?>>> nettyM2mEncoderListSupplier;
     private Supplier<List<MessageToByteEncoder<?>>> nettyM2bEncoderListSupplier;
     private Supplier<List<ChannelHandler>> channelHandlerListSupplier;
@@ -45,12 +45,12 @@ public class DaemonConfig {
         this.idleStateHandlerSupplier = idleStateHandlerSupplier;
     }
 
-    public Supplier<NettyTcpDecoder> getNettyTcpDecoderSupplier() {
-        return nettyTcpDecoderSupplier;
+    public Supplier<NettyB2mDecoder> getNettyB2mDecoderSupplier() {
+        return nettyB2mDecoderSupplier;
     }
 
-    public void setNettyTcpDecoderSupplier(Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier) {
-        this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
+    public void setNettyB2mDecoderSupplier(Supplier<NettyB2mDecoder> nettyB2mDecoderSupplier) {
+        this.nettyB2mDecoderSupplier = nettyB2mDecoderSupplier;
     }
 
     public Supplier<List<MessageToMessageEncoder<?>>> getNettyM2mEncoderListSupplier() {

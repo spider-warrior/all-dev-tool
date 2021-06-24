@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NettyTcpDecoder extends ByteToMessageDecoder {
+public class NettyB2mDecoder extends ByteToMessageDecoder {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyTcpDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyB2mDecoder.class);
 
     private ByteBufAnalyser byteBufAnalyser;
 
@@ -35,7 +35,7 @@ public class NettyTcpDecoder extends ByteToMessageDecoder {
         }
     }
 
-    public NettyTcpDecoder(ByteBufAnalyser byteBufAnalyser) {
+    public NettyB2mDecoder(ByteBufAnalyser byteBufAnalyser) {
         this.byteBufAnalyser = byteBufAnalyser;
     }
 

@@ -1,8 +1,8 @@
 package cn.t.tool.nettytool.initializer;
 
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
 import cn.t.tool.nettytool.daemon.DaemonConfig;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.tool.nettytool.handler.EventLoggingHandler;
 import cn.t.tool.nettytool.handler.NettyExceptionHandler;
 import cn.t.util.common.CollectionUtil;
@@ -35,8 +35,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
                 channelPipeline.addLast(IDLE_HANDLER, daemonConfig.getIdleStateHandlerSupplier().get());
             }
             // decoder
-            if(daemonConfig.getNettyTcpDecoderSupplier() != null) {
-                channelPipeline.addLast(MSG_DECODER, daemonConfig.getNettyTcpDecoderSupplier().get());
+            if(daemonConfig.getNettyB2mDecoderSupplier() != null) {
+                channelPipeline.addLast(MSG_DECODER, daemonConfig.getNettyB2mDecoderSupplier().get());
             }
             // m2m encoder
             if(daemonConfig.getNettyM2mEncoderListSupplier() != null) {
@@ -56,10 +56,10 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             if(daemonConfig.getChannelHandlerListSupplier() != null) {
                 List<ChannelHandler> channelHandlerList = daemonConfig.getChannelHandlerListSupplier().get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {
-                    NettyTcpDecoder nettyTcpDecoder = (NettyTcpDecoder)channelPipeline.get(MSG_DECODER);
+                    NettyB2mDecoder nettyB2mDecoder = (NettyB2mDecoder)channelPipeline.get(MSG_DECODER);
                     channelHandlerList.forEach(handler -> {
-                        if(handler instanceof NettyTcpDecoderAware) {
-                            ((NettyTcpDecoderAware)handler).setNettyTcpDecoder(nettyTcpDecoder);
+                        if(handler instanceof NettyB2mDecoderAware) {
+                            ((NettyB2mDecoderAware)handler).setNettyB2mDecoder(nettyB2mDecoder);
                         }
                         channelPipeline.addLast(HANDLER_PREFIX + handler.getClass().getName(), handler);
                     });

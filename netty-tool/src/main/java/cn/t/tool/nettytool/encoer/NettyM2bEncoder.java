@@ -6,9 +6,9 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class NettyTcpEncoder<Msg> extends MessageToByteEncoder<Msg> {
+public abstract class NettyM2bEncoder<Msg> extends MessageToByteEncoder<Msg> {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyTcpEncoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyM2bEncoder.class);
 
     @Override
     protected final void encode(ChannelHandlerContext ctx, Msg msg, ByteBuf out) {

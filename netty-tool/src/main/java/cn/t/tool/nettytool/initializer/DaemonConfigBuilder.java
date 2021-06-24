@@ -1,9 +1,9 @@
 package cn.t.tool.nettytool.initializer;
 
 import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
 import cn.t.tool.nettytool.daemon.DaemonConfig;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -23,13 +23,13 @@ public class DaemonConfigBuilder {
 
     public DaemonConfigBuilder configByteBufAnalyser(Supplier<ByteBufAnalyser> byteBufAnalyserSupplier) {
         if(byteBufAnalyserSupplier != null) {
-            daemonConfig.setNettyTcpDecoderSupplier(() -> {
+            daemonConfig.setNettyB2mDecoderSupplier(() -> {
                 ByteBufAnalyser byteBufAnalyser = byteBufAnalyserSupplier.get();
-                NettyTcpDecoder nettyTcpDecoder = new NettyTcpDecoder(byteBufAnalyser);
-                if(byteBufAnalyser instanceof NettyTcpDecoderAware) {
-                    ((NettyTcpDecoderAware)byteBufAnalyser).setNettyTcpDecoder(nettyTcpDecoder);
+                NettyB2mDecoder nettyB2mDecoder = new NettyB2mDecoder(byteBufAnalyser);
+                if(byteBufAnalyser instanceof NettyB2mDecoderAware) {
+                    ((NettyB2mDecoderAware)byteBufAnalyser).setNettyB2mDecoder(nettyB2mDecoder);
                 }
-                return nettyTcpDecoder;
+                return nettyB2mDecoder;
             });
         }
         return this;

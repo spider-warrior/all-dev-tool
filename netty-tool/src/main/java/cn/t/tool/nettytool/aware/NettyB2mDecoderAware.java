@@ -1,6 +1,6 @@
 package cn.t.tool.nettytool.aware;
 
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 
 /**
  * NettyTcpDecoderAware
@@ -11,6 +11,6 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
  * @version V1.0
  * @since 2020-03-07 16:07
  **/
-public interface NettyTcpDecoderAware {
-    void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder);
+public interface NettyB2mDecoderAware {
+    void setNettyB2mDecoder(NettyB2mDecoder nettyB2mDecoder);
 }
