@@ -11,7 +11,7 @@ import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.CmdResponse;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -40,7 +40,7 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
         if(Socks5CmdExecutionStatus.SUCCEEDED.value == status) {
             log.info("[{} : {}]: 连接成功, 回调监听器", remoteChannelHandlerContext.channel().remoteAddress(), ctx.channel().remoteAddress());
             ChannelPipeline channelPipeline = ctx.channel().pipeline();
-            channelPipeline.remove(NettyTcpDecoder.class);
+            channelPipeline.remove(NettyB2mDecoder.class);
             channelPipeline.remove(MethodRequestEncoder.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestEncoder.class);
             channelPipeline.remove(CmdRequestEncoder.class);

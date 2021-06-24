@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.client.encoder;
 
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @version V1.0
  * @since 2020-03-14 19:43
  **/
-public class UsernamePasswordAuthenticationRequestEncoder extends NettyTcpEncoder<UsernamePasswordAuthenticationRequest> {
+public class UsernamePasswordAuthenticationRequestEncoder extends NettyM2bEncoder<UsernamePasswordAuthenticationRequest> {
 
     @Override
     protected void doEncode(ChannelHandlerContext ctx, UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest, ByteBuf out) {

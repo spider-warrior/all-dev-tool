@@ -8,8 +8,8 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.server.listener.AuthenticationResponseWriteListener;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -22,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-20 22:30
  **/
 @Slf4j
-public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelInboundHandler<UsernamePasswordAuthenticationRequest>  implements NettyTcpDecoderAware {
+public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelInboundHandler<UsernamePasswordAuthenticationRequest>  implements NettyB2mDecoderAware {
 
-    private NettyTcpDecoder nettyTcpDecoder;
+    private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest) {
@@ -45,7 +45,7 @@ public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelI
             ctx.channel().attr(Socks5ServerDaemonConfig.CHANNEL_USERNAME).set(username);
             authenticationResponse.setStatus(AuthenticationStatus.SUCCESS.value);
             ChannelPromise promise = ctx.newPromise();
-            promise.addListener(new AuthenticationResponseWriteListener(nettyTcpDecoder));
+            promise.addListener(new AuthenticationResponseWriteListener(nettyB2mDecoder));
             ctx.writeAndFlush(authenticationResponse, promise);
         } else {
             log.info("用户名密码验证失败, password: {}", password);
@@ -54,7 +54,7 @@ public class UsernamePasswordAuthenticationRequestHandler extends SimpleChannelI
         }
     }
     @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public void setNettyB2mDecoder(NettyB2mDecoder nettyB2mDecoder) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
     }
 }

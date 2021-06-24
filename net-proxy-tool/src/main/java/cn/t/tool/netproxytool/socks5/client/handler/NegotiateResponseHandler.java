@@ -12,8 +12,8 @@ import cn.t.tool.netproxytool.socks5.model.MethodRequest;
 import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateResponseHandler extends SimpleChannelInboundHandler<NegotiateResponse> implements NettyTcpDecoderAware {
+public class NegotiateResponseHandler extends SimpleChannelInboundHandler<NegotiateResponse> implements NettyB2mDecoderAware {
 
     private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
 
@@ -34,7 +34,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     private final short targetPort;
     private final Socks5ClientConfig socks5ClientConfig;
 
-    private NettyTcpDecoder nettyTcpDecoder;
+    private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, NegotiateResponse response) {
@@ -52,7 +52,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
             if(Socks5Method.NO_AUTHENTICATION_REQUIRED == socks5Method) {
                 CmdRequest cmdRequest = Socks5MessageUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
+                promise.addListener(new CmdRequestWriteListener(nettyB2mDecoder));
                 ctx.writeAndFlush(cmdRequest, promise);
                 //用户名密码认证
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
@@ -61,7 +61,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
                 }
                 UsernamePasswordAuthenticationRequest usernamePasswordAuthenticationRequest = Socks5MessageUtil.buildUsernamePasswordAuthenticationRequest(socks5ClientConfig.getUsername().getBytes(), socks5ClientConfig.getPassword().getBytes());
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new AuthenticationRequestWriteListener(nettyTcpDecoder));
+                promise.addListener(new AuthenticationRequestWriteListener(nettyB2mDecoder));
                 ctx.writeAndFlush(usernamePasswordAuthenticationRequest, promise);
             } else {
                 throw new ProxyException("客户端未实现的方法处理: " + socks5Method);
@@ -82,8 +82,8 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     }
 
     @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public void setNettyB2mDecoder(NettyB2mDecoder nettyB2mDecoder) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
     }
 
     public NegotiateResponseHandler(String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {

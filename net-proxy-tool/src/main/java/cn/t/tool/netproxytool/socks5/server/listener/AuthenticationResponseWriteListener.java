@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.server.listener;
 
 import cn.t.tool.netproxytool.socks5.server.analyse.CmdRequestAnalyse;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
@@ -16,18 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthenticationResponseWriteListener implements ChannelFutureListener {
 
-    private NettyTcpDecoder nettyTcpDecoder;
+    private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
-            nettyTcpDecoder.setByteBufAnalyser(new CmdRequestAnalyse());
+            nettyB2mDecoder.setByteBufAnalyser(new CmdRequestAnalyse());
         } else {
             log.error("鉴权请求失败", future.cause());
         }
     }
 
-    public AuthenticationResponseWriteListener(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public AuthenticationResponseWriteListener(NettyB2mDecoder nettyB2mDecoder) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
     }
 }

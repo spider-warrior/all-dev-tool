@@ -8,8 +8,8 @@ import cn.t.tool.netproxytool.socks5.server.encoder.UsernamePasswordAuthenticati
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
+import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,8 +39,8 @@ public class Socks5ProxyServerConnectionReadyListener implements ChannelFutureLi
             log.info("{}: 代理连接已就位", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
-            channelPipeline.remove(NettyTcpDecoder.class);
-            channelPipeline.remove(NettyTcpEncoder.class);
+            channelPipeline.remove(NettyB2mDecoder.class);
+            channelPipeline.remove(NettyM2bEncoder.class);
             channelPipeline.remove(NegotiateRequestHandler.class);
             channelPipeline.remove(UsernamePasswordAuthenticationResponseEncoder.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestHandler.class);

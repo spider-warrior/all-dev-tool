@@ -4,7 +4,7 @@ import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.server.analyse.CmdRequestAnalyse;
 import cn.t.tool.netproxytool.socks5.server.analyse.authenticationanalyse.UsernamePasswordAuthenticationAnalyse;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NegotiateSuccessWriteListener implements ChannelFutureListener {
 
-    private final NettyTcpDecoder nettyTcpDecoder;
+    private final NettyB2mDecoder nettyB2mDecoder;
     private final Socks5Method socks5Method;
 
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
             if(Socks5Method.NO_AUTHENTICATION_REQUIRED == socks5Method) {
-                nettyTcpDecoder.setByteBufAnalyser(new CmdRequestAnalyse());
+                nettyB2mDecoder.setByteBufAnalyser(new CmdRequestAnalyse());
             } else if(Socks5Method.USERNAME_PASSWORD == socks5Method) {
-                nettyTcpDecoder.setByteBufAnalyser(new UsernamePasswordAuthenticationAnalyse());
+                nettyB2mDecoder.setByteBufAnalyser(new UsernamePasswordAuthenticationAnalyse());
             } else {
                 throw new ProxyException("未实现的鉴权方法");
             }
@@ -37,8 +37,8 @@ public class NegotiateSuccessWriteListener implements ChannelFutureListener {
         }
     }
 
-    public NegotiateSuccessWriteListener(NettyTcpDecoder nettyTcpDecoder, Socks5Method socks5Method) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public NegotiateSuccessWriteListener(NettyB2mDecoder nettyB2mDecoder, Socks5Method socks5Method) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
         this.socks5Method = socks5Method;
     }
 }

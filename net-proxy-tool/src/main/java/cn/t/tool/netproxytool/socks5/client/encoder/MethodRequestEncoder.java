@@ -1,7 +1,7 @@
 package cn.t.tool.netproxytool.socks5.client.encoder;
 
 import cn.t.tool.netproxytool.socks5.model.MethodRequest;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -12,7 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @version V1.0
  * @since 2020-03-15 09:48
  **/
-public class MethodRequestEncoder extends NettyTcpEncoder<MethodRequest> {
+public class MethodRequestEncoder extends NettyM2bEncoder<MethodRequest> {
 
     @Override
     protected void doEncode(ChannelHandlerContext ctx, MethodRequest methodRequest, ByteBuf out) {

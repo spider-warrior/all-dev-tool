@@ -3,8 +3,8 @@ package cn.t.tool.netproxytool.socks5.client.listener;
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
+import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,8 +28,8 @@ public class ProxyEstablishedListener implements ChannelFutureListener {
             log.info("代理通道建立成功成功, 目的地址: [{}]", localChannelHandlerContext.channel().remoteAddress());
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
-            channelPipeline.remove(NettyTcpDecoder.class);
-            channelPipeline.remove(NettyTcpEncoder.class);
+            channelPipeline.remove(NettyB2mDecoder.class);
+            channelPipeline.remove(NettyM2bEncoder.class);
             channelPipeline.remove(NegotiateResponseHandler.class);
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);

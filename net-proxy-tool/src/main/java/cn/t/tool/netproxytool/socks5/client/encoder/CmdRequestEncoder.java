@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.socks5.client.encoder;
 
 import cn.t.tool.netproxytool.socks5.constants.Socks5AddressType;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
-import cn.t.tool.nettytool.encoer.NettyTcpEncoder;
+import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @version V1.0
  * @since 2020-03-14 19:21
  **/
-public class CmdRequestEncoder extends NettyTcpEncoder<CmdRequest> {
+public class CmdRequestEncoder extends NettyM2bEncoder<CmdRequest> {
 
     @Override
     protected void doEncode(ChannelHandlerContext ctx, CmdRequest cmdRequest, ByteBuf out) {

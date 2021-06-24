@@ -6,8 +6,8 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
 import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
 import cn.t.tool.netproxytool.socks5.server.listener.NegotiateSuccessWriteListener;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -21,9 +21,9 @@ import java.util.List;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateRequestHandler extends SimpleChannelInboundHandler<NegotiateRequest> implements NettyTcpDecoderAware {
+public class NegotiateRequestHandler extends SimpleChannelInboundHandler<NegotiateRequest> implements NettyB2mDecoderAware {
 
-    private NettyTcpDecoder nettyTcpDecoder;
+    private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, NegotiateRequest negotiateRequest) {
@@ -44,7 +44,7 @@ public class NegotiateRequestHandler extends SimpleChannelInboundHandler<Negotia
             negotiateResponse.setSocks5Method(selectedSocks5Method.rangeStart);
 
             ChannelPromise channelPromise = ctx.newPromise();
-            channelPromise.addListener(new NegotiateSuccessWriteListener(nettyTcpDecoder, selectedSocks5Method));
+            channelPromise.addListener(new NegotiateSuccessWriteListener(nettyB2mDecoder, selectedSocks5Method));
             ctx.writeAndFlush(negotiateResponse, channelPromise);
 
         }
@@ -61,7 +61,7 @@ public class NegotiateRequestHandler extends SimpleChannelInboundHandler<Negotia
     }
 
     @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public void setNettyB2mDecoder(NettyB2mDecoder nettyB2mDecoder) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
     }
 }

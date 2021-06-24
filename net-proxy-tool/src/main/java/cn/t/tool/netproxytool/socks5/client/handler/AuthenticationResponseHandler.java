@@ -6,8 +6,8 @@ import cn.t.tool.netproxytool.socks5.client.listener.CmdRequestWriteListener;
 import cn.t.tool.netproxytool.socks5.constants.Socks5CmdExecutionStatus;
 import cn.t.tool.netproxytool.socks5.model.AuthenticationResponse;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
-import cn.t.tool.nettytool.aware.NettyTcpDecoderAware;
-import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
+import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
+import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-20 22:30
  **/
 @Slf4j
-public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<AuthenticationResponse> implements NettyTcpDecoderAware {
+public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<AuthenticationResponse> implements NettyB2mDecoderAware {
 
-    private NettyTcpDecoder nettyTcpDecoder;
+    private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthenticationResponse response) {
@@ -32,14 +32,14 @@ public class AuthenticationResponseHandler extends SimpleChannelInboundHandler<A
             Short targetPort = ctx.channel().attr(Socks5ClientConstants.TARGET_PORT_KEY).get();
             CmdRequest cmdRequest = Socks5MessageUtil.buildCmdRequest(targetHost.getBytes(), targetPort);
             ChannelPromise promise = ctx.newPromise();
-            promise.addListener(new CmdRequestWriteListener(nettyTcpDecoder));
+            promise.addListener(new CmdRequestWriteListener(nettyB2mDecoder));
             ctx.writeAndFlush(cmdRequest, promise);
         }
     }
 
     @Override
-    public void setNettyTcpDecoder(NettyTcpDecoder nettyTcpDecoder) {
-        this.nettyTcpDecoder = nettyTcpDecoder;
+    public void setNettyB2mDecoder(NettyB2mDecoder nettyB2mDecoder) {
+        this.nettyB2mDecoder = nettyB2mDecoder;
     }
 
 }
