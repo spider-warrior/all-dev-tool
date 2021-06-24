@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class HttpProxyServerNotifyClientListener implements ChannelFutureListener {
+public class ProxyServerConnectionReadyListener implements ChannelFutureListener {
 
     private final ChannelHandlerContext localChannelHandlerContext;
     private final ChannelHandlerContext remoteChannelHandlerContext;
@@ -27,7 +27,7 @@ public class HttpProxyServerNotifyClientListener implements ChannelFutureListene
     @Override
     public void operationComplete(ChannelFuture future) {
         if(future.isSuccess()) {
-            log.info("{}: 代理成功消息已发送至客户端", clientName);
+            log.info("{}: 代理连接已就位", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(HttpResponseEncoder.class);
@@ -41,7 +41,7 @@ public class HttpProxyServerNotifyClientListener implements ChannelFutureListene
         }
     }
 
-    public HttpProxyServerNotifyClientListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
+    public ProxyServerConnectionReadyListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.clientName = clientName;

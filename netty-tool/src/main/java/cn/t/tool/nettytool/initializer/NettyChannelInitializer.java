@@ -11,6 +11,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.util.List;
@@ -28,19 +29,30 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         InternalLoggerFactory originalInternalLoggerFactory = InternalLoggerFactory.getDefaultFactory();
         InternalLoggerFactory.setDefaultFactory(daemonConfig.getInternalLoggerFactory());
         try {
+            //logging
             channelPipeline.addLast(LOGGING_HANDLER, new EventLoggingHandler(daemonConfig.getLoggingHandlerLogLevel()));
             if(daemonConfig.getIdleStateHandlerSupplier() != null) {
                 channelPipeline.addLast(IDLE_HANDLER, daemonConfig.getIdleStateHandlerSupplier().get());
             }
+            // decoder
             if(daemonConfig.getNettyTcpDecoderSupplier() != null) {
                 channelPipeline.addLast(MSG_DECODER, daemonConfig.getNettyTcpDecoderSupplier().get());
             }
-            if(daemonConfig.getNettyTcpEncoderListSupplier() != null) {
-                List<MessageToByteEncoder<?>>nettyTcpEncoderList = daemonConfig.getNettyTcpEncoderListSupplier().get();
+            // m2m encoder
+            if(daemonConfig.getNettyM2mEncoderListSupplier() != null) {
+                List<MessageToMessageEncoder<?>>nettyTcpEncoderList = daemonConfig.getNettyM2mEncoderListSupplier().get();
                 if(!CollectionUtil.isEmpty(nettyTcpEncoderList)) {
                     nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast(ENCODER_PREFIX + encoder.getClass().getName(), encoder));
                 }
             }
+            // m2b encoder
+            if(daemonConfig.getNettyM2bEncoderListSupplier() != null) {
+                List<MessageToByteEncoder<?>>nettyTcpEncoderList = daemonConfig.getNettyM2bEncoderListSupplier().get();
+                if(!CollectionUtil.isEmpty(nettyTcpEncoderList)) {
+                    nettyTcpEncoderList.forEach(encoder -> channelPipeline.addLast(ENCODER_PREFIX + encoder.getClass().getName(), encoder));
+                }
+            }
+            // handler
             if(daemonConfig.getChannelHandlerListSupplier() != null) {
                 List<ChannelHandler> channelHandlerList = daemonConfig.getChannelHandlerListSupplier().get();
                 if(!CollectionUtil.isEmpty(channelHandlerList)) {

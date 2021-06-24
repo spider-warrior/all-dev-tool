@@ -2,17 +2,15 @@ package cn.t.tool.netproxytool.http.server.handler;
 
 import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.server.listener.HttpProxyServerNotifyClientListener;
+import cn.t.tool.netproxytool.http.server.listener.ProxyServerConnectionReadyListener;
 import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.NetProxyUtil;
 import cn.t.tool.netproxytool.util.ThreadUtil;
 import cn.t.tool.nettytool.daemon.client.NettyTcpClient;
 import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +56,7 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
             if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[client: {}] -> [local: {}] -> [remote: {}]: 代理创建成功", ctx.channel().remoteAddress(), remoteChannelHandlerContext.channel().localAddress(), remoteChannelHandlerContext.channel().remoteAddress());
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new HttpProxyServerNotifyClientListener(ctx, remoteChannelHandlerContext, clientName));
+                promise.addListener(new ProxyServerConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -79,12 +77,8 @@ public class HttpProxyServerHandler extends SimpleChannelInboundHandler<FullHttp
             if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[client: {}] -> [local: {}] -> [remote: {}]: 代理创建成功", ctx.channel().remoteAddress(), remoteChannelHandlerContext.channel().localAddress(), remoteChannelHandlerContext.channel().remoteAddress());
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new HttpProxyServerNotifyClientListener(ctx, remoteChannelHandlerContext, clientName));
-                EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
-                embeddedChannel.writeOutbound(proxiedRequest);
-                ByteBuf byteBuf = embeddedChannel.readOutbound();
-                embeddedChannel.close();
-                remoteChannelHandlerContext.writeAndFlush(byteBuf, promise);
+                promise.addListener(new ProxyServerConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
+                remoteChannelHandlerContext.writeAndFlush(proxiedRequest, promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, BAD_GATEWAY));

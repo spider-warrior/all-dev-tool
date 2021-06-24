@@ -30,6 +30,7 @@ import cn.t.tool.nettytool.initializer.NettyChannelInitializer;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpRequestEncoder;
@@ -59,6 +60,9 @@ public class InitializerBuilder {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         daemonConfigBuilder.configLogLevel(HttpProxyServerClientConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         daemonConfigBuilder.configIdleHandler(HttpProxyServerClientConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerClientConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
+        List<Supplier<MessageToMessageEncoder<?>>> m2mEncoderSupplierList = new ArrayList<>();
+        m2mEncoderSupplierList.add(HttpRequestEncoder::new);
+        daemonConfigBuilder.configM2mEncoder(m2mEncoderSupplierList);
         List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
         supplierList.add(() -> new FetchMessageHandler(remoteChannelHandlerContext, proxyBuildResultListener));
         daemonConfigBuilder.configHandler(supplierList);
@@ -89,7 +93,7 @@ public class InitializerBuilder {
         encoderSupplierList.add(MethodRequestEncoder::new);
         encoderSupplierList.add(UsernamePasswordAuthenticationRequestEncoder::new);
         encoderSupplierList.add(CmdRequestEncoder::new);
-        daemonConfigBuilder.configEncoder(encoderSupplierList);
+        daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
         handlerSupplierList.add(HttpRequestEncoder::new);
         handlerSupplierList.add(() -> new NegotiateResponseHandler(targetHost, targetPort, socks5ClientConfig));
@@ -109,7 +113,7 @@ public class InitializerBuilder {
         encoderSupplierList.add(NegotiateResponseEncoder::new);
         encoderSupplierList.add(UsernamePasswordAuthenticationResponseEncoder::new);
         encoderSupplierList.add(CmdResponseEncoder::new);
-        daemonConfigBuilder.configEncoder(encoderSupplierList);
+        daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
         handlerSupplierList.add(NegotiateRequestHandler::new);
         handlerSupplierList.add(UsernamePasswordAuthenticationRequestHandler::new);

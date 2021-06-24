@@ -3,6 +3,7 @@ package cn.t.tool.nettytool.daemon;
 import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -16,7 +17,8 @@ public class DaemonConfig {
     private InternalLoggerFactory internalLoggerFactory = Slf4JLoggerFactory.INSTANCE;
     private Supplier<IdleStateHandler> idleStateHandlerSupplier;
     private Supplier<NettyTcpDecoder> nettyTcpDecoderSupplier;
-    private Supplier<List<MessageToByteEncoder<?>>> nettyTcpEncoderListSupplier;
+    private Supplier<List<MessageToMessageEncoder<?>>> nettyM2mEncoderListSupplier;
+    private Supplier<List<MessageToByteEncoder<?>>> nettyM2bEncoderListSupplier;
     private Supplier<List<ChannelHandler>> channelHandlerListSupplier;
 
     public LogLevel getLoggingHandlerLogLevel() {
@@ -51,12 +53,20 @@ public class DaemonConfig {
         this.nettyTcpDecoderSupplier = nettyTcpDecoderSupplier;
     }
 
-    public Supplier<List<MessageToByteEncoder<?>>> getNettyTcpEncoderListSupplier() {
-        return nettyTcpEncoderListSupplier;
+    public Supplier<List<MessageToMessageEncoder<?>>> getNettyM2mEncoderListSupplier() {
+        return nettyM2mEncoderListSupplier;
     }
 
-    public void setNettyTcpEncoderListSupplier(Supplier<List<MessageToByteEncoder<?>>> nettyTcpEncoderListSupplier) {
-        this.nettyTcpEncoderListSupplier = nettyTcpEncoderListSupplier;
+    public void setNettyM2mEncoderListSupplier(Supplier<List<MessageToMessageEncoder<?>>> nettyM2mEncoderListSupplier) {
+        this.nettyM2mEncoderListSupplier = nettyM2mEncoderListSupplier;
+    }
+
+    public Supplier<List<MessageToByteEncoder<?>>> getNettyM2bEncoderListSupplier() {
+        return nettyM2bEncoderListSupplier;
+    }
+
+    public void setNettyM2bEncoderListSupplier(Supplier<List<MessageToByteEncoder<?>>> nettyM2bEncoderListSupplier) {
+        this.nettyM2bEncoderListSupplier = nettyM2bEncoderListSupplier;
     }
 
     public Supplier<List<ChannelHandler>> getChannelHandlerListSupplier() {

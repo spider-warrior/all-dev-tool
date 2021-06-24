@@ -7,6 +7,7 @@ import cn.t.tool.nettytool.decoder.NettyTcpDecoder;
 import cn.t.util.common.CollectionUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -53,9 +54,20 @@ public class DaemonConfigBuilder {
         return this;
     }
 
-    public DaemonConfigBuilder configEncoder(List<Supplier<MessageToByteEncoder<?>>> supplierList) {
+    public DaemonConfigBuilder configM2mEncoder(List<Supplier<MessageToMessageEncoder<?>>> supplierList) {
         if(!CollectionUtil.isEmpty(supplierList)) {
-            daemonConfig.setNettyTcpEncoderListSupplier(() -> {
+            daemonConfig.setNettyM2mEncoderListSupplier(() -> {
+                List<MessageToMessageEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
+                supplierList.forEach(supplier -> nettyTcpEncoderList.add(supplier.get()));
+                return nettyTcpEncoderList;
+            });
+        }
+        return this;
+    }
+
+    public DaemonConfigBuilder configM2bEncoder(List<Supplier<MessageToByteEncoder<?>>> supplierList) {
+        if(!CollectionUtil.isEmpty(supplierList)) {
+            daemonConfig.setNettyM2bEncoderListSupplier(() -> {
                 List<MessageToByteEncoder<?>> nettyTcpEncoderList = new ArrayList<>();
                 supplierList.forEach(supplier -> nettyTcpEncoderList.add(supplier.get()));
                 return nettyTcpEncoderList;
