@@ -13,6 +13,7 @@
     <packaging>jar</packaging>
 
     <properties>
+        <resource.delimiter>@</resource.delimiter>
         <main-class>cn.t.tool.netproxytool.socks5.server.Socks5ProxyServer</main-class>
         <lib-dir>libs/</lib-dir>
         <output-dir>${project.build.directory}/${lib-dir}</output-dir>
@@ -40,6 +41,16 @@
     <build>
         <finalName>net-proxy</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <delimiters>
+                        <delimiter>${resource.delimiter}</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
