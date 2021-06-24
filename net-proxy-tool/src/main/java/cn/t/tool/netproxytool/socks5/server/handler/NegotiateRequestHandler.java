@@ -3,17 +3,17 @@ package cn.t.tool.netproxytool.socks5.server.handler;
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
-import cn.t.tool.netproxytool.socks5.model.NegotiateRequest;
-import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
+import cn.t.tool.netproxytool.socks5.model.MethodRequest;
+import cn.t.tool.netproxytool.socks5.model.MethodResponse;
 import cn.t.tool.netproxytool.socks5.server.listener.NegotiateSuccessWriteListener;
 import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
-import cn.t.util.common.CollectionUtil;
+import cn.t.util.common.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * 协商请求处理器
@@ -21,43 +21,46 @@ import java.util.List;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateRequestHandler extends SimpleChannelInboundHandler<NegotiateRequest> implements NettyB2mDecoderAware {
+public class NegotiateRequestHandler extends SimpleChannelInboundHandler<MethodRequest> implements NettyB2mDecoderAware {
 
     private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, NegotiateRequest negotiateRequest) {
-        byte version = negotiateRequest.getVersion();
+    protected void channelRead0(ChannelHandlerContext ctx, MethodRequest methodRequest) {
+        byte version = methodRequest.getVersion();
         if(version != Socks5ProtocolConstants.VERSION) {
             throw new ProxyException(String.format("不支持的协议版本: %d", version));
         }
-        List<Socks5Method> socks5MethodList = negotiateRequest.getSupportSocks5MethodList();
-        if(CollectionUtil.isEmpty(socks5MethodList)) {
+        byte[] methods= methodRequest.getMethods();
+        if(ArrayUtil.isEmpty(methods)) {
             throw new ProxyException("客户端未提供支持的认证方法");
         } else {
-            Socks5Method selectedSocks5Method = negotiateMethod(socks5MethodList);
+            Socks5Method selectedSocks5Method = negotiateMethod(methods);
             if(selectedSocks5Method == null) {
-                throw new ProxyException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", socks5MethodList));
+                throw new ProxyException(String.format("未协商到合适的认证方法, 客户端支持的内容为: %s", Arrays.toString(methods)));
             }
-            NegotiateResponse negotiateResponse = new NegotiateResponse();
-            negotiateResponse.setVersion(version);
-            negotiateResponse.setSocks5Method(selectedSocks5Method.rangeStart);
+            MethodResponse methodResponse = new MethodResponse();
+            methodResponse.setVersion(version);
+            methodResponse.setSocks5Method(selectedSocks5Method.rangeStart);
 
             ChannelPromise channelPromise = ctx.newPromise();
             channelPromise.addListener(new NegotiateSuccessWriteListener(nettyB2mDecoder, selectedSocks5Method));
-            ctx.writeAndFlush(negotiateResponse, channelPromise);
+            ctx.writeAndFlush(methodResponse, channelPromise);
 
         }
     }
 
-    private Socks5Method negotiateMethod(List<Socks5Method> socks5MethodList) {
-        if(socks5MethodList.contains(Socks5Method.USERNAME_PASSWORD)) {
-            return Socks5Method.USERNAME_PASSWORD;
-        } else if (socks5MethodList.contains(Socks5Method.NO_AUTHENTICATION_REQUIRED)) {
-            return Socks5Method.NO_AUTHENTICATION_REQUIRED;
-        } else {
-            return null;
+    private Socks5Method negotiateMethod(byte[] methods) {
+        Socks5Method socks5Method = null;
+        for(byte b: methods) {
+            if(Socks5Method.USERNAME_PASSWORD.rangeStart == b) {
+                socks5Method = Socks5Method.USERNAME_PASSWORD;
+                break;
+            } else if(Socks5Method.NO_AUTHENTICATION_REQUIRED.rangeStart == b) {
+                socks5Method = Socks5Method.NO_AUTHENTICATION_REQUIRED;
+            }
         }
+        return socks5Method;
     }
 
     @Override

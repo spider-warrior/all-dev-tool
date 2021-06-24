@@ -7,7 +7,7 @@ import cn.t.tool.netproxytool.http.constants.HttpProxyServerClientConfig;
 import cn.t.tool.netproxytool.http.constants.HttpProxyServerConfig;
 import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerHandler;
 import cn.t.tool.netproxytool.http.server.handler.HttpProxyServerViaSocks5Handler;
-import cn.t.tool.netproxytool.socks5.client.analyse.NegotiateResponseAnalyse;
+import cn.t.tool.netproxytool.socks5.client.analyse.MethodResponseAnalyse;
 import cn.t.tool.netproxytool.socks5.client.encoder.CmdRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
@@ -17,7 +17,7 @@ import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientDaemonConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
-import cn.t.tool.netproxytool.socks5.server.analyse.NegotiateRequestAnalyse;
+import cn.t.tool.netproxytool.socks5.server.analyse.MethodRequestAnalyse;
 import cn.t.tool.netproxytool.socks5.server.encoder.CmdResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.encoder.NegotiateResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.encoder.UsernamePasswordAuthenticationResponseEncoder;
@@ -32,7 +32,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
 import java.util.ArrayList;
@@ -102,7 +101,7 @@ public class InitializerBuilder {
         //idle
         daemonConfigBuilder.configIdleHandler(Socks5ClientDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ClientDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         //negotiate
-        daemonConfigBuilder.configByteBufAnalyser(NegotiateResponseAnalyse::new);
+        daemonConfigBuilder.configByteBufAnalyser(MethodResponseAnalyse::new);
         List<Supplier<MessageToByteEncoder<?>>> encoderSupplierList = new ArrayList<>();
         //socks5 methodRequest encoder
         encoderSupplierList.add(MethodRequestEncoder::new);
@@ -112,8 +111,6 @@ public class InitializerBuilder {
         encoderSupplierList.add(CmdRequestEncoder::new);
         daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
-
-        handlerSupplierList.add(HttpRequestEncoder::new);
         //negotiate response handler
         handlerSupplierList.add(() -> new NegotiateResponseHandler(targetHost, targetPort, socks5ClientConfig));
         //authentication response handler
@@ -130,7 +127,7 @@ public class InitializerBuilder {
         daemonConfigBuilder.configLogLevel(Socks5ServerDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         daemonConfigBuilder.configIdleHandler(Socks5ServerDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         //协商消息解析
-        daemonConfigBuilder.configByteBufAnalyser(NegotiateRequestAnalyse::new);
+        daemonConfigBuilder.configByteBufAnalyser(MethodRequestAnalyse::new);
         List<Supplier<MessageToByteEncoder<?>>> m2bEncoderSupplierList = new ArrayList<>();
         //协商响应消息编码
         m2bEncoderSupplierList.add(NegotiateResponseEncoder::new);

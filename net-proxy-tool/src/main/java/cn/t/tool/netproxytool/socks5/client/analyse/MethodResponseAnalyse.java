@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.client.analyse;
 
-import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
+import cn.t.tool.netproxytool.socks5.model.MethodResponse;
 import cn.t.tool.nettytool.analyser.ByteBufAnalyser;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,13 +12,13 @@ import io.netty.channel.ChannelHandlerContext;
  * @version V1.0
  * @since 2020-03-14 20:42
  **/
-public class NegotiateResponseAnalyse extends ByteBufAnalyser {
+public class MethodResponseAnalyse extends ByteBufAnalyser {
 
     @Override
     public Object analyse(ByteBuf byteBuf, ChannelHandlerContext channelHandlerContext) {
-        NegotiateResponse negotiateResponse = new NegotiateResponse();
-        negotiateResponse.setVersion(byteBuf.readByte());
-        negotiateResponse.setSocks5Method(byteBuf.readByte());
-        return negotiateResponse;
+        MethodResponse methodResponse = new MethodResponse();
+        methodResponse.setVersion(byteBuf.readByte());
+        methodResponse.setSocks5Method(byteBuf.readByte());
+        return methodResponse;
     }
 }

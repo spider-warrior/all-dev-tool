@@ -9,7 +9,7 @@ import lombok.Data;
  * @since 2020-02-20 20:37
  **/
 @Data
-public class NegotiateResponse {
+public class MethodResponse {
     private byte version;
     private byte socks5Method;
 }

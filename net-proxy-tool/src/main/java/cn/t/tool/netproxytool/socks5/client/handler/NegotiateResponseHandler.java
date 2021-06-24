@@ -9,7 +9,7 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.model.CmdRequest;
 import cn.t.tool.netproxytool.socks5.model.MethodRequest;
-import cn.t.tool.netproxytool.socks5.model.NegotiateResponse;
+import cn.t.tool.netproxytool.socks5.model.MethodResponse;
 import cn.t.tool.netproxytool.socks5.model.UsernamePasswordAuthenticationRequest;
 import cn.t.tool.netproxytool.socks5.util.Socks5MessageUtil;
 import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateResponseHandler extends SimpleChannelInboundHandler<NegotiateResponse> implements NettyB2mDecoderAware {
+public class NegotiateResponseHandler extends SimpleChannelInboundHandler<MethodResponse> implements NettyB2mDecoderAware {
 
     private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
 
@@ -37,7 +37,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Negoti
     private NettyB2mDecoder nettyB2mDecoder;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, NegotiateResponse response) {
+    protected void channelRead0(ChannelHandlerContext ctx, MethodResponse response) {
         logger.info("协商结果: version: {}, method: {}", response.getVersion(), response.getSocks5Method());
         byte version = response.getVersion();
         if(version != Socks5ProtocolConstants.VERSION) {

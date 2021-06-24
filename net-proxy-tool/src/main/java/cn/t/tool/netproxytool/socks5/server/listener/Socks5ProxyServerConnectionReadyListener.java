@@ -3,8 +3,6 @@ package cn.t.tool.netproxytool.socks5.server.listener;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.handler.LengthBasedDecryptedMessageDecoder;
 import cn.t.tool.netproxytool.handler.LengthBasedEncryptedMessageEncoder;
-import cn.t.tool.netproxytool.socks5.server.encoder.CmdResponseEncoder;
-import cn.t.tool.netproxytool.socks5.server.encoder.UsernamePasswordAuthenticationResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
@@ -39,13 +37,14 @@ public class Socks5ProxyServerConnectionReadyListener implements ChannelFutureLi
             log.info("{}: 代理连接已就位", clientName);
             //已经通知客户端代理成功, 切换handler
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
+            //remove decoders
             channelPipeline.remove(NettyB2mDecoder.class);
+            //remove encoders
             channelPipeline.remove(NettyM2bEncoder.class);
+            //remove handlers
             channelPipeline.remove(NegotiateRequestHandler.class);
-            channelPipeline.remove(UsernamePasswordAuthenticationResponseEncoder.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestHandler.class);
             channelPipeline.remove(CmdRequestHandler.class);
-            channelPipeline.remove(CmdResponseEncoder.class);
             if(security != null) {
                 //默认使用基于length-body结构解密数据
                 channelPipeline.addFirst(new LengthBasedDecryptedMessageDecoder(security));
