@@ -5,7 +5,7 @@ import cn.t.tool.netproxytool.socks5.constants.Socks5Method;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProtocolConstants;
 import cn.t.tool.netproxytool.socks5.model.MethodRequest;
 import cn.t.tool.netproxytool.socks5.model.MethodResponse;
-import cn.t.tool.netproxytool.socks5.server.listener.NegotiateSuccessWriteListener;
+import cn.t.tool.netproxytool.socks5.server.listener.MethodResponseSuccessListener;
 import cn.t.tool.nettytool.aware.NettyB2mDecoderAware;
 import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.util.common.ArrayUtil;
@@ -21,7 +21,7 @@ import java.util.Arrays;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateRequestHandler extends SimpleChannelInboundHandler<MethodRequest> implements NettyB2mDecoderAware {
+public class MethodRequestHandler extends SimpleChannelInboundHandler<MethodRequest> implements NettyB2mDecoderAware {
 
     private NettyB2mDecoder nettyB2mDecoder;
 
@@ -44,9 +44,8 @@ public class NegotiateRequestHandler extends SimpleChannelInboundHandler<MethodR
             methodResponse.setSocks5Method(selectedSocks5Method.rangeStart);
 
             ChannelPromise channelPromise = ctx.newPromise();
-            channelPromise.addListener(new NegotiateSuccessWriteListener(nettyB2mDecoder, selectedSocks5Method));
+            channelPromise.addListener(new MethodResponseSuccessListener(nettyB2mDecoder, selectedSocks5Method));
             ctx.writeAndFlush(methodResponse, channelPromise);
-
         }
     }
 

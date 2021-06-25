@@ -4,7 +4,7 @@ import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.handler.LengthBasedDecryptedMessageDecoder;
 import cn.t.tool.netproxytool.handler.LengthBasedEncryptedMessageEncoder;
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
-import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
+import cn.t.tool.netproxytool.socks5.server.handler.MethodRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
 import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
@@ -42,7 +42,7 @@ public class Socks5ProxyServerConnectionReadyListener implements ChannelFutureLi
             //remove encoders
             channelPipeline.remove(NettyM2bEncoder.class);
             //remove handlers
-            channelPipeline.remove(NegotiateRequestHandler.class);
+            channelPipeline.remove(MethodRequestHandler.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestHandler.class);
             channelPipeline.remove(CmdRequestHandler.class);
             if(security != null) {

@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
  * @version V1.0
  * @since 2020-02-20 22:30
  **/
-public class NegotiateResponseHandler extends SimpleChannelInboundHandler<MethodResponse> implements NettyB2mDecoderAware {
+public class MethodResponseHandler extends SimpleChannelInboundHandler<MethodResponse> implements NettyB2mDecoderAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(NegotiateResponseHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MethodResponseHandler.class);
 
     private final String targetHost;
     private final short targetPort;
@@ -86,7 +86,7 @@ public class NegotiateResponseHandler extends SimpleChannelInboundHandler<Method
         this.nettyB2mDecoder = nettyB2mDecoder;
     }
 
-    public NegotiateResponseHandler(String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {
+    public MethodResponseHandler(String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {
         this.targetHost = targetHost;
         this.targetPort = targetPort;
         this.socks5ClientConfig = socks5ClientConfig;

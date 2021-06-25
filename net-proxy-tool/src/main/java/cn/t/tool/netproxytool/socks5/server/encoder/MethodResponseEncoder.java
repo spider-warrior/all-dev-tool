@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @author yj
  * @since 2020-01-12 16:27
  **/
-public class NegotiateResponseEncoder extends NettyM2bEncoder<MethodResponse> {
+public class MethodResponseEncoder extends NettyM2bEncoder<MethodResponse> {
     @Override
     protected void doEncode(ChannelHandlerContext ctx, MethodResponse methodResponse, ByteBuf out) {
         out.writeByte(methodResponse.getVersion());

@@ -2,7 +2,7 @@ package cn.t.tool.netproxytool.socks5.client.listener;
 
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
-import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
+import cn.t.tool.netproxytool.socks5.client.handler.MethodResponseHandler;
 import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import cn.t.tool.nettytool.encoer.NettyM2bEncoder;
 import io.netty.channel.ChannelFuture;
@@ -30,7 +30,7 @@ public class ProxyEstablishedListener implements ChannelFutureListener {
             ChannelPipeline channelPipeline = localChannelHandlerContext.channel().pipeline();
             channelPipeline.remove(NettyB2mDecoder.class);
             channelPipeline.remove(NettyM2bEncoder.class);
-            channelPipeline.remove(NegotiateResponseHandler.class);
+            channelPipeline.remove(MethodResponseHandler.class);
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);
         } else {

@@ -1,8 +1,6 @@
 package cn.t.tool.netproxytool.http.constants;
 
-import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import io.netty.handler.logging.LogLevel;
-import io.netty.util.AttributeKey;
 
 /**
  * 服务配置
@@ -19,5 +17,4 @@ public class HttpProxyServerClientConfig {
 
     public static final LogLevel LOGGING_HANDLER_LOGGER_LEVEL = LogLevel.DEBUG;
 
-    public static final AttributeKey<Socks5ClientConfig> SOCKS5_CLIENT_CONFIG_KEY = AttributeKey.newInstance("socks5_client_config_key");
 }

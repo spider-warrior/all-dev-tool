@@ -3,7 +3,7 @@ package cn.t.tool.netproxytool.http.server.handler;
 import cn.t.tool.netproxytool.event.ProxyConnectionBuildResultListener;
 import cn.t.tool.netproxytool.http.config.Socks5ClientConfig;
 import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
-import cn.t.tool.netproxytool.http.server.listener.ProxyServerViaSocks5ClientBuildResultListener;
+import cn.t.tool.netproxytool.http.server.listener.ProxyServerViaSocks5ClientConnectionReadyListener;
 import cn.t.tool.netproxytool.util.InitializerBuilder;
 import cn.t.tool.netproxytool.util.NetProxyUtil;
 import cn.t.tool.netproxytool.util.ThreadUtil;
@@ -61,7 +61,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = ctx.newPromise();
-                promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
+                promise.addListener(new ProxyServerViaSocks5ClientConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
                 ctx.writeAndFlush(new DefaultFullHttpResponse(httpVersion, OK), promise);
             } else {
                 log.error("[{}]: 代理客户端失败, remote: {}:{}", clientAddress, targetHost, targetPort);
@@ -83,7 +83,7 @@ public class HttpProxyServerViaSocks5Handler extends SimpleChannelInboundHandler
             if(ProxyBuildExecutionStatus.SUCCEEDED.value == status) {
                 log.info("[{}:{}]: 代理创建成功, remote: {}:{}", clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
                 ChannelPromise promise = remoteChannelHandlerContext.newPromise();
-                promise.addListener(new ProxyServerViaSocks5ClientBuildResultListener(ctx, remoteChannelHandlerContext, clientName));
+                promise.addListener(new ProxyServerViaSocks5ClientConnectionReadyListener(ctx, remoteChannelHandlerContext, clientName));
                 EmbeddedChannel embeddedChannel = new EmbeddedChannel(new HttpRequestEncoder());
                 embeddedChannel.writeOutbound(proxiedRequest);
                 ByteBuf byteBuf = embeddedChannel.readOutbound();

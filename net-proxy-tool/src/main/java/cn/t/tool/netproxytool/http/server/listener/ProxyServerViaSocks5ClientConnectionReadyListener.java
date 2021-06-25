@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-02-27 15:42
  **/
 @Slf4j
-public class ProxyServerViaSocks5ClientBuildResultListener implements ChannelFutureListener {
+public class ProxyServerViaSocks5ClientConnectionReadyListener implements ChannelFutureListener {
 
     private final ChannelHandlerContext localChannelHandlerContext;
     private final ChannelHandlerContext remoteChannelHandlerContext;
@@ -41,7 +41,7 @@ public class ProxyServerViaSocks5ClientBuildResultListener implements ChannelFut
         }
     }
 
-    public ProxyServerViaSocks5ClientBuildResultListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
+    public ProxyServerViaSocks5ClientConnectionReadyListener(ChannelHandlerContext localChannelHandlerContext, ChannelHandlerContext remoteChannelHandlerContext, String clientName) {
         this.localChannelHandlerContext = localChannelHandlerContext;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.clientName = clientName;

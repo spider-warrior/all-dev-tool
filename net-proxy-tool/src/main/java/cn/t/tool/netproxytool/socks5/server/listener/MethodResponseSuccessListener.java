@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2020-03-07 16:31
  **/
 @Slf4j
-public class NegotiateSuccessWriteListener implements ChannelFutureListener {
+public class MethodResponseSuccessListener implements ChannelFutureListener {
 
     private final NettyB2mDecoder nettyB2mDecoder;
     private final Socks5Method socks5Method;
@@ -37,7 +37,7 @@ public class NegotiateSuccessWriteListener implements ChannelFutureListener {
         }
     }
 
-    public NegotiateSuccessWriteListener(NettyB2mDecoder nettyB2mDecoder, Socks5Method socks5Method) {
+    public MethodResponseSuccessListener(NettyB2mDecoder nettyB2mDecoder, Socks5Method socks5Method) {
         this.nettyB2mDecoder = nettyB2mDecoder;
         this.socks5Method = socks5Method;
     }

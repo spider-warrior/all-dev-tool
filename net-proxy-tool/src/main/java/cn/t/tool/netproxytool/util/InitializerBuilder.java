@@ -13,16 +13,16 @@ import cn.t.tool.netproxytool.socks5.client.encoder.MethodRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.encoder.UsernamePasswordAuthenticationRequestEncoder;
 import cn.t.tool.netproxytool.socks5.client.handler.AuthenticationResponseHandler;
 import cn.t.tool.netproxytool.socks5.client.handler.CmdResponseHandler;
-import cn.t.tool.netproxytool.socks5.client.handler.NegotiateResponseHandler;
+import cn.t.tool.netproxytool.socks5.client.handler.MethodResponseHandler;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ClientDaemonConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ProxyConfig;
 import cn.t.tool.netproxytool.socks5.constants.Socks5ServerDaemonConfig;
 import cn.t.tool.netproxytool.socks5.server.analyse.MethodRequestAnalyse;
 import cn.t.tool.netproxytool.socks5.server.encoder.CmdResponseEncoder;
-import cn.t.tool.netproxytool.socks5.server.encoder.NegotiateResponseEncoder;
+import cn.t.tool.netproxytool.socks5.server.encoder.MethodResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.encoder.UsernamePasswordAuthenticationResponseEncoder;
 import cn.t.tool.netproxytool.socks5.server.handler.CmdRequestHandler;
-import cn.t.tool.netproxytool.socks5.server.handler.NegotiateRequestHandler;
+import cn.t.tool.netproxytool.socks5.server.handler.MethodRequestHandler;
 import cn.t.tool.netproxytool.socks5.server.handler.UsernamePasswordAuthenticationRequestHandler;
 import cn.t.tool.nettytool.daemon.DaemonConfig;
 import cn.t.tool.nettytool.initializer.DaemonConfigBuilder;
@@ -112,7 +112,7 @@ public class InitializerBuilder {
         daemonConfigBuilder.configM2bEncoder(encoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
         //negotiate response handler
-        handlerSupplierList.add(() -> new NegotiateResponseHandler(targetHost, targetPort, socks5ClientConfig));
+        handlerSupplierList.add(() -> new MethodResponseHandler(targetHost, targetPort, socks5ClientConfig));
         //authentication response handler
         handlerSupplierList.add(AuthenticationResponseHandler::new);
         //cmd response handler
@@ -130,7 +130,7 @@ public class InitializerBuilder {
         daemonConfigBuilder.configByteBufAnalyser(MethodRequestAnalyse::new);
         List<Supplier<MessageToByteEncoder<?>>> m2bEncoderSupplierList = new ArrayList<>();
         //协商响应消息编码
-        m2bEncoderSupplierList.add(NegotiateResponseEncoder::new);
+        m2bEncoderSupplierList.add(MethodResponseEncoder::new);
         //用户名密码鉴权响应编码
         m2bEncoderSupplierList.add(UsernamePasswordAuthenticationResponseEncoder::new);
         //CMD编码响应
@@ -138,7 +138,7 @@ public class InitializerBuilder {
         daemonConfigBuilder.configM2bEncoder(m2bEncoderSupplierList);
         List<Supplier<ChannelHandler>> handlerSupplierList = new ArrayList<>();
         //协商消息处理器
-        handlerSupplierList.add(NegotiateRequestHandler::new);
+        handlerSupplierList.add(MethodRequestHandler::new);
         //用户名密码鉴权处理器
         handlerSupplierList.add(UsernamePasswordAuthenticationRequestHandler::new);
         //CMD处理器

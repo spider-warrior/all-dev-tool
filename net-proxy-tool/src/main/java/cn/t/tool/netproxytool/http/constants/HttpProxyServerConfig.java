@@ -1,7 +1,5 @@
 package cn.t.tool.netproxytool.http.constants;
 
-import cn.t.util.common.SystemUtil;
-import cn.t.util.common.digital.ByteUtil;
 import io.netty.handler.logging.LogLevel;
 
 /**
@@ -12,8 +10,6 @@ import io.netty.handler.logging.LogLevel;
  * @since 2020-02-22 23:00
  **/
 public class HttpProxyServerConfig {
-    public static final String SERVER_HOST = SystemUtil.getLocalIpV4(true);
-    public static final byte[] SERVER_HOST_BYTES = ByteUtil.stringsToBytes(SERVER_HOST, "\\.");
     public static final short SERVER_PORT = 1080;
 
     public static final int HTTP_PROXY_READ_TIME_OUT_IN_SECONDS = 0;
