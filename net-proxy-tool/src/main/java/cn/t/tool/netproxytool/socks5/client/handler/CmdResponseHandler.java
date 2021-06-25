@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.client.handler;
 
-import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.event.ProxyConnectionBuildResultListener;
 import cn.t.tool.netproxytool.handler.ForwardingMessageHandler;
 import cn.t.tool.netproxytool.handler.LengthBasedDecryptedMessageDecoder;
 import cn.t.tool.netproxytool.handler.LengthBasedEncryptedMessageEncoder;
@@ -15,7 +15,6 @@ import cn.t.tool.nettytool.decoder.NettyB2mDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.HttpRequestEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.NoSuchPaddingException;
@@ -30,7 +29,7 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse> {
 
-    private final ProxyBuildResultListener proxyBuildResultListener;
+    private final ProxyConnectionBuildResultListener proxyConnectionBuildResultListener;
     private final ChannelHandlerContext remoteChannelHandlerContext;
     private final Socks5ClientConfig socks5ClientConfig;
 
@@ -53,14 +52,14 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
                 channelPipeline.addFirst(new LengthBasedEncryptedMessageEncoder(socks5ClientConfig.getSecurity()));
             }
             channelPipeline.addLast("http-via-socks5-proxy-forwarding-handler", new ForwardingMessageHandler(remoteChannelHandlerContext));
-            proxyBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
+            proxyConnectionBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
         } else {
             log.warn("连接代理服务器失败, status: {}", status);
         }
     }
 
-    public CmdResponseHandler(ProxyBuildResultListener proxyBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext, Socks5ClientConfig socks5ClientConfig) {
-        this.proxyBuildResultListener = proxyBuildResultListener;
+    public CmdResponseHandler(ProxyConnectionBuildResultListener proxyConnectionBuildResultListener, ChannelHandlerContext remoteChannelHandlerContext, Socks5ClientConfig socks5ClientConfig) {
+        this.proxyConnectionBuildResultListener = proxyConnectionBuildResultListener;
         this.remoteChannelHandlerContext = remoteChannelHandlerContext;
         this.socks5ClientConfig = socks5ClientConfig;
     }

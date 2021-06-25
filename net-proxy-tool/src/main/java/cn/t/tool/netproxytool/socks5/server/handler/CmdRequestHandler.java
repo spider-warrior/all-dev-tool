@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.socks5.server.handler;
 
-import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.event.ProxyConnectionBuildResultListener;
 import cn.t.tool.netproxytool.exception.ProxyException;
 import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import cn.t.tool.netproxytool.socks5.config.ServerConfig;
@@ -55,7 +55,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
             int targetPort = msg.getTargetPort();
             log.info("[{}]: [{}], 地址类型: {}, 地址: {}:{}", clientAddress, Socks5Cmd.CONNECT, msg.getSocks5AddressType(), targetHost, targetPort);
             String clientName = NetProxyUtil.buildProxyConnectionName(clientAddress.getHostString(), clientAddress.getPort(), targetHost, targetPort);
-            ProxyBuildResultListener proxyBuildResultListener = (status, remoteChannelHandlerContext) -> {
+            ProxyConnectionBuildResultListener proxyConnectionBuildResultListener = (status, remoteChannelHandlerContext) -> {
                 CmdResponse cmdResponse = new CmdResponse();
                 cmdResponse.setVersion(msg.getVersion());
                 cmdResponse.setRsv((byte)0);
@@ -74,7 +74,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
                     ctx.writeAndFlush(cmdResponse);
                 }
             };
-            NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyToRemoteChannelInitializer(ctx, proxyBuildResultListener);
+            NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyToRemoteChannelInitializer(ctx, proxyConnectionBuildResultListener);
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(nettyTcpClient::start);
         } else {

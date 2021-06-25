@@ -1,6 +1,6 @@
 package cn.t.tool.netproxytool.handler;
 
-import cn.t.tool.netproxytool.event.ProxyBuildResultListener;
+import cn.t.tool.netproxytool.event.ProxyConnectionBuildResultListener;
 import cn.t.tool.netproxytool.http.constants.ProxyBuildExecutionStatus;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,11 +18,11 @@ import java.net.SocketAddress;
 @Slf4j
 public class FetchMessageHandler extends ForwardingMessageHandler {
 
-    private final ProxyBuildResultListener proxyBuildResultListener;
+    private final ProxyConnectionBuildResultListener proxyConnectionBuildResultListener;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        proxyBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
+        proxyConnectionBuildResultListener.handle(ProxyBuildExecutionStatus.SUCCEEDED.value, ctx);
     }
 
     @Override
@@ -31,13 +31,13 @@ public class FetchMessageHandler extends ForwardingMessageHandler {
             if (!future.isSuccess()) {
                 //连接失败处理
                 log.info("[{}]: 连接失败, 回调监听器", ctx.channel().remoteAddress());
-                proxyBuildResultListener.handle(ProxyBuildExecutionStatus.FAILED.value, ctx);
+                proxyConnectionBuildResultListener.handle(ProxyBuildExecutionStatus.FAILED.value, ctx);
             }
         }));
     }
 
-    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyBuildResultListener proxyBuildResultListener) {
+    public FetchMessageHandler(ChannelHandlerContext remoteChannelHandlerContext, ProxyConnectionBuildResultListener proxyConnectionBuildResultListener) {
         super(remoteChannelHandlerContext);
-        this.proxyBuildResultListener = proxyBuildResultListener;
+        this.proxyConnectionBuildResultListener = proxyConnectionBuildResultListener;
     }
 }
