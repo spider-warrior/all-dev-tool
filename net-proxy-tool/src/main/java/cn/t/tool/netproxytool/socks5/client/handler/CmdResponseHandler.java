@@ -44,7 +44,6 @@ public class CmdResponseHandler extends SimpleChannelInboundHandler<CmdResponse>
             channelPipeline.remove(MethodRequestEncoder.class);
             channelPipeline.remove(UsernamePasswordAuthenticationRequestEncoder.class);
             channelPipeline.remove(CmdRequestEncoder.class);
-            channelPipeline.remove(HttpRequestEncoder.class);
             channelPipeline.remove(AuthenticationResponseHandler.class);
             channelPipeline.remove(CmdResponseHandler.class);
             if(socks5ClientConfig != null) {

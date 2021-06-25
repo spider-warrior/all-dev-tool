@@ -23,6 +23,7 @@ public class MethodRequestAnalyse extends ByteBufAnalyser {
         byte methodLength = byteBuf.readByte();
         byte[] methodBytes = new byte[methodLength];
         byteBuf.readBytes(methodBytes);
+        methodRequest.setMethods(methodBytes);
         return methodRequest;
     }
 
