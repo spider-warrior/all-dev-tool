@@ -40,19 +40,15 @@ import java.util.function.Supplier;
 
 public class InitializerBuilder {
 
-    public static NettyChannelInitializer buildHttpProxyServerViaSocks5ChannelInitializer(Socks5ClientConfig socks5ClientConfig) {
+    public static NettyChannelInitializer buildHttpProxyServerChannelInitializer() {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
-        //logging
         daemonConfigBuilder.configLogLevel(HttpProxyServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
-        //idle
         daemonConfigBuilder.configIdleHandler(HttpProxyServerConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
-        //http response encoder
-        supplierList.add(HttpResponseEncoder::new);
-        //http request decoder
         supplierList.add(HttpRequestDecoder::new);
+        supplierList.add(HttpResponseEncoder::new);
         supplierList.add(() -> new HttpObjectAggregator(1024 * 1024));
-        supplierList.add(() -> new HttpProxyServerViaSocks5Handler(socks5ClientConfig));
+        supplierList.add(HttpProxyServerHandler::new);
         daemonConfigBuilder.configHandler(supplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();
         return new NettyChannelInitializer(daemonConfig);
@@ -80,21 +76,25 @@ public class InitializerBuilder {
         return new NettyChannelInitializer(daemonConfig);
     }
 
-    public static NettyChannelInitializer buildHttpProxyServerChannelInitializer() {
+    public static NettyChannelInitializer buildHttpProxyServerViaSocks5ChannelInitializer(Socks5ClientConfig socks5ClientConfig) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
+        //logging
         daemonConfigBuilder.configLogLevel(HttpProxyServerConfig.LOGGING_HANDLER_LOGGER_LEVEL);
+        //idle
         daemonConfigBuilder.configIdleHandler(HttpProxyServerConfig.HTTP_PROXY_READ_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_WRITE_TIME_OUT_IN_SECONDS, HttpProxyServerConfig.HTTP_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
         List<Supplier<ChannelHandler>> supplierList = new ArrayList<>();
-        supplierList.add(HttpRequestDecoder::new);
+        //http response encoder
         supplierList.add(HttpResponseEncoder::new);
+        //http request decoder
+        supplierList.add(HttpRequestDecoder::new);
         supplierList.add(() -> new HttpObjectAggregator(1024 * 1024));
-        supplierList.add(HttpProxyServerHandler::new);
+        supplierList.add(() -> new HttpProxyServerViaSocks5Handler(socks5ClientConfig));
         daemonConfigBuilder.configHandler(supplierList);
         DaemonConfig daemonConfig = daemonConfigBuilder.build();
         return new NettyChannelInitializer(daemonConfig);
     }
 
-    public static NettyChannelInitializer buildProxyServerViaSocks5ClientChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyConnectionBuildResultListener proxyConnectionBuildResultListener, String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {
+    public static NettyChannelInitializer buildHttpProxyServerViaSocks5ClientChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyConnectionBuildResultListener proxyConnectionBuildResultListener, String targetHost, short targetPort, Socks5ClientConfig socks5ClientConfig) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         //logging
         daemonConfigBuilder.configLogLevel(Socks5ClientDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
@@ -122,7 +122,7 @@ public class InitializerBuilder {
         return new NettyChannelInitializer(daemonConfig);
     }
 
-    public static NettyChannelInitializer buildLocalToProxyChannelInitializer() {
+    public static NettyChannelInitializer buildSocks5ProxyServerChannelInitializer() {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         daemonConfigBuilder.configLogLevel(Socks5ServerDaemonConfig.LOGGING_HANDLER_LOGGER_LEVEL);
         daemonConfigBuilder.configIdleHandler(Socks5ServerDaemonConfig.SOCKS5_PROXY_READ_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_WRITE_TIME_OUT_IN_SECONDS, Socks5ServerDaemonConfig.SOCKS5_PROXY_ALL_IDLE_TIME_OUT_IN_SECONDS);
@@ -148,7 +148,7 @@ public class InitializerBuilder {
         return new NettyChannelInitializer(daemonConfig);
     }
 
-    public static NettyChannelInitializer buildProxyToRemoteChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyConnectionBuildResultListener proxyConnectionBuildResultListener) {
+    public static NettyChannelInitializer buildSocks5ProxyServerClientChannelInitializer(ChannelHandlerContext remoteChannelHandlerContext, ProxyConnectionBuildResultListener proxyConnectionBuildResultListener) {
         DaemonConfigBuilder daemonConfigBuilder = DaemonConfigBuilder.newInstance();
         //logging config
         daemonConfigBuilder.configLogLevel(Socks5ProxyConfig.LOGGING_HANDLER_LOGGER_LEVEL);

@@ -74,7 +74,7 @@ public class CmdRequestHandler extends SimpleChannelInboundHandler<CmdRequest> {
                     ctx.writeAndFlush(cmdResponse);
                 }
             };
-            NettyChannelInitializer channelInitializer = InitializerBuilder.buildProxyToRemoteChannelInitializer(ctx, proxyConnectionBuildResultListener);
+            NettyChannelInitializer channelInitializer = InitializerBuilder.buildSocks5ProxyServerClientChannelInitializer(ctx, proxyConnectionBuildResultListener);
             NettyTcpClient nettyTcpClient = new NettyTcpClient(clientName, targetHost, targetPort, channelInitializer);
             ThreadUtil.submitProxyTask(nettyTcpClient::start);
         } else {
