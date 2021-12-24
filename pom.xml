@@ -19,7 +19,6 @@
         <module>integrated-tool</module>
         <module>netty-tool</module>
         <module>crypto-tool</module>
-        <module>dns-tool</module>
         <module>net-proxy-tool</module>
         <module>dhcp-tool</module>
     </modules>
