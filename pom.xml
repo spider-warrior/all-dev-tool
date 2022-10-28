@@ -17,7 +17,6 @@
         <module>rmdb-tool</module>
         <module>redis-tool</module>
         <module>integrated-tool</module>
-        <module>netty-tool</module>
         <module>crypto-tool</module>
         <module>net-proxy-tool</module>
         <module>dhcp-tool</module>
