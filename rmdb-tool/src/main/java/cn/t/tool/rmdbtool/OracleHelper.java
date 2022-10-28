@@ -25,7 +25,7 @@ public class OracleHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(OracleHelper.class);
 
-    private DbDao dbDao;
+    private final DbDao dbDao;
     private final String dbName;
 
     public Constraint queryPrimaryKeyConstraint(String tableName) throws SQLException, ClassNotFoundException {
